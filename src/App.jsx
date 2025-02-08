@@ -4,6 +4,10 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
+import { ItemDetails } from "./pages/index";
+import AddToCart from "./components/Cards/AddToCart";
+
+
 const App = () => {
   const router = createBrowserRouter([
     {
@@ -12,7 +16,7 @@ const App = () => {
       children : [
         {
           path : "/", 
-          element : <Home /> 
+          element : <ItemDetails /> 
         },
         {
           path : "/login",
@@ -21,6 +25,10 @@ const App = () => {
         {
           path : "/register",
           element : <Register />
+        },
+        {
+          path: "/test",
+          element: <AddToCart />,
         }
       ]
     }
@@ -29,6 +37,7 @@ const App = () => {
   return (
     <RouterProvider router={router} />
   )
+
 }
 
 export default App;
