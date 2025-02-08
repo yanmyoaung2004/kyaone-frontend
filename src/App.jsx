@@ -1,9 +1,29 @@
-import { Button } from "@/components/ui/button";
+import React from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Home from "./pages/Home";
+import Login from "./pages/Login";
 
-export default function App() {
+const App = () => {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Home />,
+      children : [
+        {
+          path : "/", 
+          element : <Home /> 
+        },
+        {
+          path : "/login",
+          element : <Login />
+        }
+      ]
+    }
+  ])
+
   return (
-    <div>
-      <Button>Click me</Button>
-    </div>
-  );
+    <RouterProvider router={router} />
+  )
 }
+
+export default App;
