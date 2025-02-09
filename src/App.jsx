@@ -1,4 +1,9 @@
+import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+
 import { ItemDetails } from "./pages/index";
 import AddToCart from "./components/Cards/AddToCart";
 import DataProvider from "./context/DataContext";
@@ -6,7 +11,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import ProductDetail from "./pages/ProductDetail";
 import CheckoutPage from "./pages/CheckoutPage";
 
-export default function App() {
+const App = () => {
   const router = createBrowserRouter([
     {
       path: "/",
@@ -28,13 +33,23 @@ export default function App() {
       path: "/test",
       element: <AddToCart />,
     },
+    {
+      path: "/login",
+      element: <Login />,
+    },
+    {
+      path: "/register",
+      element: <Register />,
+    },
   ]);
+};
 
-  return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <DataProvider>
-        <RouterProvider router={router} />;
-      </DataProvider>
-    </ThemeProvider>
-  );
-}
+return (
+  <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <DataProvider>
+      <RouterProvider router={router} />;
+    </DataProvider>
+  </ThemeProvider>
+);
+
+export default App;

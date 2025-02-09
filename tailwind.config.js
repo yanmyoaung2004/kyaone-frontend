@@ -1,7 +1,8 @@
 /** @type {import('tailwindcss').Config} */
+const flowbite = require("flowbite-react/tailwind");
 module.exports = {
     darkMode: ["class"],
-    content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
+    content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}",flowbite.content(),],
   theme: {
   	extend: {
   		borderRadius: {
@@ -53,5 +54,5 @@ module.exports = {
   		}
   	}
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"),flowbite.plugin()],
 };
