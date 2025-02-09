@@ -8,7 +8,7 @@ import CheckoutPage from './pages/CheckoutPage'
 
 
 import { ItemDetails } from "./pages/index";
-import HistoryCard from "./components/Cards/TableComponent";
+import TableComponent from "./components/Cards/TableComponent";
 import { ThemeProvider } from "./components/theme-provider";
 import DataProvider from "./context/DataContext";
 
@@ -32,7 +32,7 @@ const App = () => {
     },
     {
       path: "/history",
-      element: <HistoryCard />,
+      element: <TableComponent />,
     }
   ]);
 

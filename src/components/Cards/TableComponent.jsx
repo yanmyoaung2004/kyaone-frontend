@@ -33,6 +33,7 @@ import axios from "axios";
 
 import TableDetailComponent from "./TableDetailComponent";
 import CustomerLayout from "../../layout/CustomerLayout";
+import { PaginationForItems } from "../PaginationForItems";
 
 const invoices = [
   {
@@ -144,7 +145,7 @@ const TableComponent = ({ isCustomer }) => {
 
   return (
     <CustomerLayout>
-      <Card className="max-w-6xl mx-auto">
+      <Card className="max-w-6xl mb-10 mx-auto">
         <CardHeader>
           <CardTitle>
             {isCustomer ? "Invoice History" : "Sale Record"}
@@ -180,7 +181,11 @@ const TableComponent = ({ isCustomer }) => {
             </div>
           </div>
           <div className="rounded-md border responsive-table">
-            <ScrollArea className={`${isSmallScreen ? "w-full" : "max-w-6xl"} whitespace-nowrap rounded-md border`}>
+            <ScrollArea
+              className={`${
+                isSmallScreen ? "w-full" : "max-w-6xl"
+              } whitespace-nowrap rounded-md border`}
+            >
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -241,7 +246,10 @@ const TableComponent = ({ isCustomer }) => {
                             <DialogHeader>
                               <DialogTitle>Invoice Details</DialogTitle>
                             </DialogHeader>
-                            <TableDetailComponent isSmallScreen={isSmallScreen} invoice={selectedInvoice} />
+                            <TableDetailComponent
+                              isSmallScreen={isSmallScreen}
+                              invoice={selectedInvoice}
+                            />
                           </DialogContent>
                         </Dialog>
                       </TableCell>
@@ -259,6 +267,7 @@ const TableComponent = ({ isCustomer }) => {
           </div>
         </CardContent>
       </Card>
+      <PaginationForItems />
     </CustomerLayout>
   );
 };
