@@ -3,14 +3,14 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import ProductDetail from './pages/ProductDetail'
-import CheckoutPage from './pages/CheckoutPage'
-
+import ProductDetail from "./pages/ProductDetail";
+import CheckoutPage from "./pages/CheckoutPage";
 
 import { ItemDetails } from "./pages/index";
-import TableComponent from "./components/Cards/TableComponent";
 import { ThemeProvider } from "./components/theme-provider";
 import DataProvider from "./context/DataContext";
+import SaleHistory from "./pages/SaleHistory";
+import CustomerComplaint from "./pages/CustomerComplaint";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -32,8 +32,12 @@ const App = () => {
     },
     {
       path: "/history",
-      element: <TableComponent />,
-    }
+      element: <SaleHistory />,
+    },
+    {
+      path: "/customer-complaint",
+      element: <CustomerComplaint />,
+    },
   ]);
 
   return (
