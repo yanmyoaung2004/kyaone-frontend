@@ -42,14 +42,14 @@ const App = () => {
       element: <Register />,
     },
   ]);
-};
 
-return (
-  <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-    <DataProvider>
-      <RouterProvider router={router} />;
-    </DataProvider>
-  </ThemeProvider>
-);
+  return (
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <DataProvider>
+        <RouterProvider router={router} />;
+      </DataProvider>
+    </ThemeProvider>
+  );
+};
 
 export default App;
