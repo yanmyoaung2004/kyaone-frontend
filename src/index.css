@@ -117,3 +117,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media (max-width: 500px) {
+  .responsive-table {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 300px; 
+  }
+}
