@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import CustomerLayout from "../layout/CustomerLayout";
 
 const complaintSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -38,7 +39,7 @@ export function ComplaintForm({ department, onSubmit }) {
       email: "",
       orderNumber: "",
       complaintType: "Delivery late",
-      description: "",
+      complain: "",
     },
   });
 
@@ -56,59 +57,99 @@ export function ComplaintForm({ department, onSubmit }) {
   };
 
   return (
-    <Card className="w-full max-w-lg mx-auto bg-white text-black mt-10">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">Submit a Complaint</CardTitle>
-        <CardDescription>
-          {department === "sales"
-            ? "Sales Department"
-            : department === "warehouse"
-            ? "Warehouse Department"
-            : "Customer"}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          <Input type="email" placeholder="Email" {...form.register("email")} />
-          <Input
-            name="name"
-            label="Name"
-            placeholder="Your full name"
-            {...form.register("name")}
-          />
-          <Input
-            name="email"
-            label="Email"
-            placeholder="your.email@example.com"
-            {...form.register("email")}
-          />
-          <Input
-            name="orderNumber"
-            label="Order Number"
-            placeholder="e.g., ORD-12345"
-            {...form.register("orderNumber")}
-          />
-          <Select {...form.register("complaintType")}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Complaint type..." />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="delivery_late">Delivery Late</SelectItem>
-              <SelectItem value="wrong_order">Wrong Order</SelectItem>
-              <SelectItem value="faulty_order">Faulty Order</SelectItem>
-            </SelectContent>
-          </Select>
-          <Textarea
-            name="description"
-            label="Description"
-            placeholder="Please provide details about your complaint"
-            {...form.register("description")}
-          />
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit Complaint"}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+    <CustomerLayout>
+      <Card className="w-full max-w-lg mx-auto bg-white text-black mt-10">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold">
+            Submit a Complaint
+          </CardTitle>
+          <CardDescription>
+            {department === "sales"
+              ? "Sales Department"
+              : department === "warehouse"
+              ? "Warehouse Department"
+              : "Customer"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form
+            onSubmit={form.handleSubmit(handleSubmit)}
+            className="space-y-4"
+          >
+            <div>
+              <Input
+                name="name"
+                label="Name"
+                placeholder="Your full name"
+                {...form.register("name")}
+              />
+              {form.formState.errors.name && (
+                <p className="text-red-500 text-sm">
+                  {form.formState.errors.name.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <Input
+                name="email"
+                label="Email"
+                placeholder="your.email@example.com"
+                {...form.register("email")}
+              />
+              {form.formState.errors.name && (
+                <p className="text-red-500 text-sm">
+                  {form.formState.errors.email.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <Input
+                name="orderNumber"
+                label="Order Number"
+                placeholder="e.g., ORD-12345"
+                {...form.register("orderNumber")}
+              />
+              {form.formState.errors.name && (
+                <p className="text-red-500 text-sm">
+                  {form.formState.errors.orderNumber.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <Select {...form.register("complaintType")}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Complaint type..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="delivery_late">Delivery Late</SelectItem>
+                  <SelectItem value="wrong_order">Wrong Order</SelectItem>
+                  <SelectItem value="faulty_order">Faulty Order</SelectItem>
+                </SelectContent>
+              </Select>
+              {form.formState.errors.complaintType && (
+                <p className="text-red-500 text-sm">
+                  {form.formState.errors.complaintType.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <Textarea
+                name="description"
+                placeholder="Please provide details about your complaint"
+                {...form.register("description")}
+              />
+              {form.formState.errors.description && (
+                <p className="text-red-500 text-sm">
+                  {form.formState.errors.description.message}
+                </p>
+              )}
+            </div>
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit Complaint"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </CustomerLayout>
   );
 }
