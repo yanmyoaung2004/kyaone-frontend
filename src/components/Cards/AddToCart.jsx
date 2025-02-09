@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import {
   Card,
   CardContent,
@@ -10,9 +12,10 @@ import {
 import { Button } from "@/components/ui/button";
 
 import image from "./download.jpg";
+import { addToCart, removeFromCart, setShowCart } from "../../redux/Slice/Item";
+import CartItem from "./CartItem";
 
 const AddToCart = () => {
-  const [count, setCount] = useState(0);
   const itemDetail = {
     name: "Premium Wireless Headphones",
     description:
@@ -21,13 +24,22 @@ const AddToCart = () => {
     image,
     category: "Electronics",
   };
+  const dispatch = useDispatch();
+  const con = useSelector(state => console.log(state))
+  const cartItems = useSelector((state) => state.cart.itemList) || [];
+  const totalQuantity = useSelector((state) => state.cart.totalQuantity);
+  const showCart = useSelector((state) => state.cart.showCart);
 
-  const increaseHandler = () => {
-    setCount((prev) => prev + 1);
+  const handleAddToCart = (item) => {
+    dispatch(addToCart(itemDetail));
   };
 
-  const decreaseHandler = () => {
-    setCount((prev) => prev + 1);
+  const handleRemoveFromCart = (item) => {
+    dispatch(removeFromCart(item));
+  };
+
+  const toggleCart = () => {
+    dispatch(setShowCart());
   };
 
   return (
@@ -39,14 +51,9 @@ const AddToCart = () => {
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
-            <div>
-              <Button className="mr-1" onClick={increaseHandler}>+</Button>
-              *{count}
-              <Button onclick={decreaseHandler}>-</Button>
-            </div>
-            <div>
-              <img src={itemDetail.image} alt="" className="w-24" />
-            </div>
+            {cartItems.map((item) => (
+              <CartItem key={item.id} item={item} />
+            ))}
           </div>
         </CardContent>
         <CardFooter></CardFooter>

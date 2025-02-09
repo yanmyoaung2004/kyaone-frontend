@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ItemDetails } from "./pages/index";
 import AddToCart from "./components/Cards/AddToCart";
+import HistoryCard from "./components/Cards/HIstoryCard";
 
 export default function App() {
   const router = createBrowserRouter([
@@ -10,7 +11,7 @@ export default function App() {
     },
     {
       path: "/test",
-      element: <AddToCart />,
+      element: <HistoryCard />,
     }
   ]);
 
