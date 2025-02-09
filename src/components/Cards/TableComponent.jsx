@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FileText, Search, X } from "lucide-react";
+import { FileText, Search, X, RefreshCcw } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -82,13 +82,15 @@ const invoices = [
   },
 ];
 
-const TableComponent = ({ isCustomer }) => {
+const TableComponent = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [isSmallScreen, setIsSmallScreen] = useState(
-    window.matchMedia("(max-width: 500px)").matches
+      window.matchMedia("(max-width: 500px)").matches
   );
-  //   const [invoices, setInvoices] = useState([]);
+  // const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const filteredInvoices = invoices.filter((invoice) => {
     const idMatch = invoice.invoiceId
@@ -115,18 +117,21 @@ const TableComponent = ({ isCustomer }) => {
   };
 
   const fetchData = async () => {
+    setLoading(true);
+    setError(null);
     try {
-      const res = await axios.get(url);
-      const data = res.data;
-      console.log(data);
-      // setInvoices(data);
+      const res = await axios.get("/api/invoices");
+      // setInvoices(res.data);
     } catch (err) {
       console.error(err);
+      setError("Failed to fetch invoices. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    // fetchData();
+    fetchData();
 
     const mediaQuery = window.matchMedia("(max-width: 500px)");
 
@@ -143,17 +148,40 @@ const TableComponent = ({ isCustomer }) => {
     };
   }, []);
 
+  if (loading) {
+    return (
+      <CustomerLayout>
+        <Card className="max-w-6xl mb-10 mx-auto">
+          <CardContent className="flex items-center justify-center h-64">
+            <RefreshCcw className="w-8 h-8 animate-spin" />
+          </CardContent>
+        </Card>
+      </CustomerLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <CustomerLayout>
+        <Card className="max-w-6xl mb-10 mx-auto">
+          <CardContent className="flex flex-col items-center justify-center h-64">
+            <p className="text-red-500 mb-4">{error}</p>
+            <Button onClick={fetchData}>Try Again</Button>
+          </CardContent>
+        </Card>
+      </CustomerLayout>
+    );
+  }
+
   return (
     <CustomerLayout>
       <Card className="max-w-6xl mb-10 mx-auto">
         <CardHeader>
           <CardTitle>
-            {isCustomer ? "Invoice History" : "Sale Record"}
+            Invoice History
           </CardTitle>
           <CardDescription>
-            {isCustomer
-              ? "View and manage your recent purchases"
-              : "Viewing Sale record"}
+            View and manage your recent purchases
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -179,6 +207,10 @@ const TableComponent = ({ isCustomer }) => {
                 </Button>
               )}
             </div>
+            <Button onClick={fetchData} className="flex items-center">
+              <RefreshCcw className="w-4 h-4 mr-2" />
+              Refresh
+            </Button>
           </div>
           <div className="rounded-md border responsive-table">
             <ScrollArea
@@ -192,7 +224,7 @@ const TableComponent = ({ isCustomer }) => {
                     <TableHead className="w-[100px]">Invoice ID</TableHead>
                     <TableHead>Product Name</TableHead>
                     <TableHead>
-                      {isCustomer ? "Buy Date" : "Sell Date"}
+                      Buy Date
                     </TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Total Amount</TableHead>
@@ -213,7 +245,7 @@ const TableComponent = ({ isCustomer }) => {
                         ))}
                       </TableCell>
                       <TableCell>
-                        {format(invoice.buyDate, "MMM d, yyyy")}
+                        {format(new Date(invoice.buyDate), "MMM d, yyyy")}
                       </TableCell>
                       <TableCell>
                         <Badge
@@ -260,14 +292,14 @@ const TableComponent = ({ isCustomer }) => {
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
           </div>
-          <div className="flex justify-end mt-4">
+          <div className="flex justify-between items-center mt-4">
+            <PaginationForItems />
             <p className="text-sm font-medium">
               Total: <span className="text-lg">${totalAmount.toFixed(2)}</span>
             </p>
           </div>
         </CardContent>
       </Card>
-      <PaginationForItems />
     </CustomerLayout>
   );
 };

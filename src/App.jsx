@@ -11,6 +11,7 @@ import { ThemeProvider } from "./components/theme-provider";
 import DataProvider from "./context/DataContext";
 import SaleHistory from "./pages/SaleHistory";
 import CustomerComplaint from "./pages/CustomerComplaint";
+import SaleRecord from "./pages/SaleRecord";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -38,6 +39,10 @@ const App = () => {
       path: "/customer-complaint",
       element: <CustomerComplaint />,
     },
+    {
+      path: "/sales-record",
+      element: <SaleRecord />
+    }
   ]);
 
   return (

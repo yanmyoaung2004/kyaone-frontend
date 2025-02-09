@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-
 const complaintSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
@@ -70,19 +69,26 @@ export function ComplaintForm({ department, onSubmit }) {
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-          <Input type="email" placeholder="Email" />
-          <Input name="name" label="Name" placeholder="Your full name" />
+          <Input type="email" placeholder="Email" {...form.register("email")} />
+          <Input
+            name="name"
+            label="Name"
+            placeholder="Your full name"
+            {...form.register("name")}
+          />
           <Input
             name="email"
             label="Email"
             placeholder="your.email@example.com"
+            {...form.register("email")}
           />
           <Input
             name="orderNumber"
             label="Order Number"
             placeholder="e.g., ORD-12345"
+            {...form.register("orderNumber")}
           />
-          <Select>
+          <Select {...form.register("complaintType")}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder="Complaint type..." />
             </SelectTrigger>
@@ -96,6 +102,7 @@ export function ComplaintForm({ department, onSubmit }) {
             name="description"
             label="Description"
             placeholder="Please provide details about your complaint"
+            {...form.register("description")}
           />
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "Submitting..." : "Submit Complaint"}
