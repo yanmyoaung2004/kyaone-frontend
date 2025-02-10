@@ -87,7 +87,7 @@ export default function CheckoutPage() {
               ))
               )}
 
-              <Card>
+              <Card>  
                 <CardHeader>
                   <CardTitle>Order Total</CardTitle>
                 </CardHeader>
