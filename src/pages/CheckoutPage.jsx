@@ -119,8 +119,13 @@ export default function CheckoutPage() {
 
   const submit = async (e) => {
     e.preventDefault();
+    if (currentUser === null) {
+      handleWarningToast("You have to login first!");
+      return;
+    }
     if (cartItems.length === 0) {
       handleWarningToast("You haven't selected any product to buy yet!");
+      return;
     }
     if (
       shipmentInfo.name === "" ||
@@ -131,6 +136,7 @@ export default function CheckoutPage() {
       shipmentInfo.state === ""
     ) {
       handleWarningToast("Please fill all the required fields!");
+      return;
     }
     const items = cartItems.map((item) => ({
       id: item.id,

@@ -11,7 +11,7 @@ const CardComponent = ({ item, addToCart, isAdded }) => {
   return (
     <Card
       className={`w-full max-w-md mx-auto shadow-md ${
-        theme === "dark" ? "bg-white text-black" : "bg-black text-white"
+        theme !== "dark" ? "bg-white text-black" : "bg-black text-white"
       }`}
     >
       <CardHeader>

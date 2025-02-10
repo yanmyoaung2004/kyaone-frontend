@@ -17,46 +17,60 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
-const orders = [
-  {
-    id: "12345",
-    customer: "Alice Johnson",
-    address: "123 Main St, City",
-    eta: "11:00 AM",
-    status: "In Progress",
-  },
-  {
-    id: "67890",
-    customer: "Bob Smith",
-    address: "456 Elm St, Town",
-    eta: "12:00 PM",
-    status: "Delayed",
-  },
-  {
-    id: "54321",
-    customer: "Charlie Brown",
-    address: "789 Oak St, Village",
-    eta: "1:30 PM",
-    status: "On Time",
-  },
-  {
-    id: "98765",
-    customer: "Diana Prince",
-    address: "321 Pine St, County",
-    eta: "2:45 PM",
-    status: "Pending",
-  },
-  {
-    id: "13579",
-    customer: "Ethan Hunt",
-    address: "654 Maple St, State",
-    eta: "3:15 PM",
-    status: "Delivered",
-  },
-];
+// const orders = [
+//   {
+//     id: "12345",
+//     customer: "Alice Johnson",
+//     address: "123 Main St, City",
+//     eta: "11:00 AM",
+//     status: "In Progress",
+//   },
+//   {
+//     id: "67890",
+//     customer: "Bob Smith",
+//     address: "456 Elm St, Town",
+//     eta: "12:00 PM",
+//     status: "Delayed",
+//   },
+//   {
+//     id: "54321",
+//     customer: "Charlie Brown",
+//     address: "789 Oak St, Village",
+//     eta: "1:30 PM",
+//     status: "On Time",
+//   },
+//   {
+//     id: "98765",
+//     customer: "Diana Prince",
+//     address: "321 Pine St, County",
+//     eta: "2:45 PM",
+//     status: "Pending",
+//   },
+//   {
+//     id: "13579",
+//     customer: "Ethan Hunt",
+//     address: "654 Maple St, State",
+//     eta: "3:15 PM",
+//     status: "Delivered",
+//   },
+// ];
 
 export default function OrdersPage() {
+  const [orders, setOrders] = useState([]);
+
+  const fetchOrder = async () => {
+    try {
+      const res = await axios.get("/api/orders");
+      setOrders(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchOrder();
+  }, []);
   // const createOrder = async () => {
   //   try {
   //     const res = await axios.post("url", data);
@@ -123,7 +137,7 @@ export default function OrdersPage() {
                           ? "bg-red-100 text-red-800"
                           : order.status === "On Time"
                           ? "bg-green-100 text-green-800"
-                          : order.status === "Pending"
+                          : order.status === "pending"
                           ? "bg-yellow-100 text-yellow-800"
                           : "bg-gray-100 text-gray-800"
                       }`}
