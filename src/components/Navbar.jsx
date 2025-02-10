@@ -3,9 +3,13 @@ import { Menu, X, Moon, Sun, ShoppingCart, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataContext } from "../context/DataContext";
 import { useTheme } from "./theme-provider";
+<<<<<<< HEAD
 import { Link, useLocation } from "react-router-dom";
 import { PopoverDemo } from "./Cards/NotiBar";
 import { motion } from "framer-motion";
+=======
+import { Link } from "react-router-dom";
+>>>>>>> 2b603828913a9c65c6aed59f8a8475b3e3b90c33
 
 export default function Navbar({ setIsCartOpen }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -20,7 +24,9 @@ export default function Navbar({ setIsCartOpen }) {
       transition={{ duration : 1}}
       className="w-4/5 mx-auto">
         <div className="container flex justify-between items-center">
-          <h1 className="text-white text-2xl font-semibold">Kyaone</h1>
+          <Link to={"/"}>
+            <h1 className="text-white text-2xl font-semibold">Kyaone</h1>
+          </Link>
           <div className="md:hidden">
             <button onClick={() => setIsOpen(!isOpen)} className="text-white">
               {isOpen ? <X size={28} /> : <Menu size={28} />}
@@ -36,7 +42,10 @@ export default function Navbar({ setIsCartOpen }) {
               </Link>
             </li>
             <li className="w-16">
-              <Link to="/history" className="hover:font-bold font-semibold text-sm">
+              <Link
+                to="/history"
+                className="hover:font-bold font-semibold text-sm"
+              >
                 History
               </Link>
             </li>

@@ -22,8 +22,8 @@ const chartConfig = {
 
 export function Profit() {
   return (
-    <div className="w-[500px] mx-auto">
-      <Card className="bg-blue-50">
+    <div>
+      <Card className="max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle className="text-black">Profit/Revenue</CardTitle>
         <CardDescription className="text-gray-700">January - June 2024</CardDescription>

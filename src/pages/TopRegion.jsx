@@ -1,5 +1,3 @@
-"use client"
-
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts"
 
@@ -7,13 +5,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
 const chartData = [
-  { month: "Dagon", desktop: 186 },
+{ month: "Dagon", desktop: 186 },
   { month: "Pazundaung", desktop: 305 },
   { month: "Tamwe", desktop: 237 },
   { month: "Thingangyun", desktop: 73 },
   { month: "Yankin ", desktop: 209 },
   { month: "Seikkan", desktop: 214 },
 ]
+
+
 
 const chartConfig = {
   desktop: {
@@ -22,10 +22,12 @@ const chartConfig = {
   },
 }
 
+
+
 export function TopRegion() {
   return (
-    <div className="w-[500px] mx-auto">
-      <Card>
+    <div>
+      <Card className="max-w-3xl mx-auto">
       <CardHeader>
         <CardTitle>Top Selling Regions</CardTitle>
         <CardDescription>January - June 2024</CardDescription>

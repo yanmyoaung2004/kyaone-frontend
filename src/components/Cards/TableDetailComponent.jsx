@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-const HistoryDetailCard = ({ invoice, isCustomer, isSmallScreen }) => {
+const HistoryDetailCard = ({ invoice, isSmallScreen }) => {
   function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -45,7 +45,7 @@ const HistoryDetailCard = ({ invoice, isCustomer, isSmallScreen }) => {
           <Badge variant="outline">{invoice.status}</Badge>
         </div>
         <CardDescription>
-          {isCustomer ? "Purchase Date" : "Sell Date"}:{" "}
+          Purchase Date
           {formatDate(invoice.buyDate)}
         </CardDescription>
       </CardHeader>
@@ -83,21 +83,15 @@ const HistoryDetailCard = ({ invoice, isCustomer, isSmallScreen }) => {
           </ScrollArea>
         </div>
         <Separator />
-        {isCustomer ? (
-          <>
-            <div>
-              <h3 className="font-semibold mb-2">Additional Information</h3>
-              <ul className="list-disc list-inside text-sm text-muted-foreground">
-                <li>Warranty: 1 year limited warranty on all products</li>
-                <li>Return Policy: 30-day money-back guarantee</li>
-                <li>Support: 24/7 customer support available</li>
-              </ul>
-            </div>
-            <Separator />
-          </>
-        ) : (
-          <div>Hello</div>
-        )}
+        <div>
+          <h3 className="font-semibold mb-2">Additional Information</h3>
+          <ul className="list-disc list-inside text-sm text-muted-foreground">
+            <li>Warranty: 1 year limited warranty on all products</li>
+            <li>Return Policy: 30-day money-back guarantee</li>
+            <li>Support: 24/7 customer support available</li>
+          </ul>
+        </div>
+        <Separator />
         <div className="flex justify-between items-center">
           <div>
             <p className="text-sm text-muted-foreground">Total Items</p>
@@ -113,7 +107,7 @@ const HistoryDetailCard = ({ invoice, isCustomer, isSmallScreen }) => {
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline">Download Invoice</Button>
-        {isCustomer && <Button>Contact Support</Button>}
+        <Button>Contact Support</Button>
       </CardFooter>
     </Card>
   );

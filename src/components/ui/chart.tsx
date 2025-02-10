@@ -91,7 +91,7 @@ ${colorConfig
   .join("\n")}
 }
 `
-            )
+          )
           .join("\n"),
       }}
     />
