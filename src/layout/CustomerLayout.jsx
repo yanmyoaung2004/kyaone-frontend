@@ -10,9 +10,6 @@ const CustomerLayout = ({ children }) => {
       <div className="sticky top-0 z-50 bg-white shadow-md">
         <Navbar setIsCartOpen={setIsCartOpen} />
       </div>
-      <div className="overflow-x-hidden">
-        <Hero />
-      </div>
       <div className="my-5">{children}</div>
       <ShoppingCartModal
         isOpen={isCartOpen}

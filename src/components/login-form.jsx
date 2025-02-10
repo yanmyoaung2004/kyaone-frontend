@@ -1,42 +1,41 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import {Link} from 'react-router-dom'
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import {
+  signInFailure,
+  signInStart,
+  signInSuccess,
+} from "../redux/user/userSlice";
+import axios from "axios";
 
-export function LoginForm({
-  className,
-  ...props
-}) {
-  
-  let [email, setEmail] = useState('');
-    let [password, setPassword] = useState('');
-    let [error, setError] = useState(null);
-    // let navigate = useNavigate();
-  
+export function LoginForm({ className, ...props }) {
+  let [email, setEmail] = useState("");
+  let [password, setPassword] = useState("");
+  let navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    let login = async (e) => {
-        try {
-            e.preventDefault();
-            setError(null);
+  let login = async (e) => {
+    try {
+      e.preventDefault();
+      const res = await axios.post("/api/login", {
+        email: email,
+        password: password,
+      });
 
-            let data = {
-                email,
-                password
-            }
-
-            // let res = await axios.post('/api/users/login', data, {
-            //     withCredentials : true
-            // });
-            // if(res.status === 200) {
-            //     navigate('/');
-            // } ;
-        } catch(e) {
-            setError(e.response.data.error);
-        }
+      if (res.status === 200) {
+        dispatch(signInSuccess(res.data.user));
+        localStorage.setItem("token", JSON.stringify(res.data.token));
+        navigate("/");
+      }
+    } catch (e) {
+      console.log(e);
     }
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -54,7 +53,7 @@ export function LoginForm({
                 <Label htmlFor="email">Email</Label>
                 <Input
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   id="email"
                   type="email"
                   placeholder="m@example.com"
@@ -71,7 +70,13 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input value={password} onChange={e => setPassword(e.target.value)} id="password" type="password" required />
+                <Input
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  id="password"
+                  type="password"
+                  required
+                />
               </div>
               <Button type="submit" className="w-full">
                 Login
@@ -112,7 +117,7 @@ export function LoginForm({
               </div>
               <div className="text-center text-sm">
                 Don&apos;t have an account?{" "}
-                <Link to={'/register'} className="underline underline-offset-4">
+                <Link to={"/register"} className="underline underline-offset-4">
                   Sign up
                 </Link>
               </div>
@@ -132,5 +137,5 @@ export function LoginForm({
         and <a href="#">Privacy Policy</a>.
       </div>
     </div>
-  )
+  );
 }

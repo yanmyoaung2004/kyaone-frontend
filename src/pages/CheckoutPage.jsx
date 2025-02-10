@@ -1,44 +1,163 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CustomerLayout from "../layout/CustomerLayout";
 import { DataContext } from "../context/DataContext";
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { ShoppingCart, Truck, CreditCard } from "lucide-react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+
+const initialLocation = {
+  state: "Illinois",
+  cities: [
+    { city: "Chicago" },
+    { city: "Springfield" },
+    { city: "Naperville" },
+    { city: "Peoria" },
+  ],
+};
+
+const locations = [
+  {
+    state: "Illinois",
+    cities: [
+      { city: "Chicago" },
+      { city: "Springfield" },
+      { city: "Naperville" },
+      { city: "Peoria" },
+    ],
+  },
+  {
+    state: "California",
+    cities: [
+      { city: "Los Angeles" },
+      { city: "San Francisco" },
+      { city: "San Diego" },
+      { city: "Sacramento" },
+    ],
+  },
+  {
+    state: "New York",
+    cities: [
+      { city: "New York City" },
+      { city: "Buffalo" },
+      { city: "Rochester" },
+      { city: "Albany" },
+    ],
+  },
+  {
+    state: "Texas",
+    cities: [
+      { city: "Houston" },
+      { city: "Dallas" },
+      { city: "Austin" },
+      { city: "San Antonio" },
+    ],
+  },
+  {
+    state: "Florida",
+    cities: [
+      { city: "Miami" },
+      { city: "Orlando" },
+      { city: "Tampa" },
+      { city: "Jacksonville" },
+    ],
+  },
+];
 
 export default function CheckoutPage() {
   const { cartItems } = useContext(DataContext);
-  const [shipmentCost, setShipmentCost] = useState(0.0);
+  const [shipmentCost, setShipmentCost] = useState(10.0);
   const [total, setTotal] = useState(0.0);
-  const { pathname } = useLocation();
+  const [selectedLocation, setSelectedLocation] = useState(initialLocation);
+  const { currentUser } = useSelector((state) => state.user);
+
+  const [shipmentInfo, setShipmentInfo] = useState({
+    name: "",
+    phone: "",
+    state: "",
+    city: "",
+    address: "",
+    zipCode: "",
+  });
 
   const subTotal = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
 
+  const changeState = (value) => {
+    setSelectedLocation(() => {
+      const matchingLocation = locations.filter((location) => {
+        if (location.state === value) return true;
+        return location.cities.some((cityObj) => cityObj.city === value);
+      });
+      return matchingLocation.length > 0 ? matchingLocation[0] : null;
+    });
+  };
+
+  const handleFormChange = (field, value) => {
+    setShipmentInfo((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    const items = cartItems.map((item) => ({
+      id: item.id,
+      quantity: item.quantity,
+      unitprice_id: item.price_id,
+    }));
+
+    try {
+      const res = await axios.post("/api/orders", {
+        shipmentInfo: shipmentInfo,
+        items: items,
+        payment: "paypal",
+        total: total,
+        customer_id: currentUser.id,
+      });
+      if (res.status === 201) {
+        console.log("Order placed successfully:", res.data);
+      }
+    } catch (error) {
+      console.error(
+        "Error placing order:",
+        error.response?.data || error.message
+      );
+    }
+  };
+
   useEffect(() => {
     setTotal(subTotal + shipmentCost);
-  }, [shipmentCost]);
+  }, [shipmentCost, subTotal]);
 
   return (
     <CustomerLayout>
-      <div className="min-h-screen bg-gray-50 pb-12 w-5/6 mx-auto">
-        <div className="mx-auto max-w-7xl px-4 pt-2 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-semibold tracking-tight text-gray-900">
+      <div className="min-h-screen bg-gray-50 pb-12">
+        <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-8">
             Checkout
           </h1>
 
-          <div className="mt-8 grid gap-8 md:grid-cols-2">
+          <div className="grid gap-8 lg:grid-cols-2">
             <div className="space-y-6">
-              <Card>
+              <Card className="shadow-md">
                 <CardHeader>
-                  <CardTitle>Order Summary</CardTitle>
+                  <CardTitle className="flex items-center text-primary">
+                    <ShoppingCart className="mr-2 h-5 w-5" />
+                    Order Summary
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flow-root">
@@ -52,12 +171,23 @@ export default function CheckoutPage() {
                               className="h-full w-full object-cover object-center"
                             />
                           </div>
-                          <div className="ml-4 flex flex-1 flex-col items-start gap-2">
-                            <h3 className="font-medium text-gray-900">
-                              {item.name}
-                            </h3>
-                            <p className="font-semibold">${item.price}</p>
-                            <p>{item.quantity}x</p>
+                          <div className="ml-4 flex flex-1 flex-col">
+                            <div>
+                              <h3 className="font-medium text-gray-900">
+                                {item.name}
+                              </h3>
+                              <p className="mt-1 text-sm text-gray-500">
+                                Quantity: {item.quantity}
+                              </p>
+                            </div>
+                            <div className="mt-4 flex items-end justify-between flex-1 text-sm">
+                              <p className="text-gray-500">
+                                ${item.price.toFixed(2)} each
+                              </p>
+                              <p className="font-medium text-gray-900">
+                                ${(item.price * item.quantity).toFixed(2)}
+                              </p>
+                            </div>
                           </div>
                         </li>
                       ))}
@@ -66,22 +196,25 @@ export default function CheckoutPage() {
                 </CardContent>
               </Card>
 
-              <Card>
+              <Card className="shadow-md">
                 <CardHeader>
-                  <CardTitle>Order Total</CardTitle>
+                  <CardTitle className="flex items-center text-primary">
+                    <CreditCard className="mr-2 h-5 w-5" />
+                    Order Total
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-gray-600">Subtotal</p>
                       <p className="text-sm font-medium text-gray-900">
-                        ${subTotal}
+                        ${subTotal.toFixed(2)}
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-gray-600">Shipping</p>
                       <p className="text-sm font-medium text-gray-900">
-                        ${shipmentCost}
+                        ${shipmentCost.toFixed(2)}
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
@@ -92,8 +225,8 @@ export default function CheckoutPage() {
                       <p className="text-base font-medium text-gray-900">
                         Order total
                       </p>
-                      <p className="text-base font-medium text-gray-900">
-                        ${total}
+                      <p className="text-base font-bold text-primary">
+                        ${total.toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -102,57 +235,123 @@ export default function CheckoutPage() {
             </div>
 
             <div className="space-y-6">
-              <Card>
+              <Card className="shadow-md">
                 <CardHeader>
-                  <CardTitle>Shipping Information</CardTitle>
+                  <CardTitle className="flex items-center text-primary">
+                    <Truck className="mr-2 h-5 w-5" />
+                    Shipping Information
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div>
-                      <Label htmlFor="firstName">First name</Label>
-                      <Input id="firstName" className="mt-1" />
+                  <form onSubmit={submit}>
+                    <div className="grid gap-4 sm:grid-cols-2 mb-3">
+                      <div>
+                        <Label htmlFor="name">Full Name</Label>
+                        <Input
+                          id="name"
+                          type="text"
+                          className="mt-1"
+                          placeholder="John Doe"
+                          value={shipmentInfo.name}
+                          onChange={(e) =>
+                            handleFormChange("name", e.target.value)
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">Phone Number</Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          className="mt-1"
+                          placeholder="(123) 456-7890"
+                          value={shipmentInfo.phone}
+                          onChange={(e) =>
+                            handleFormChange("phone", e.target.value)
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className="grid gap-4 sm:grid-cols-2 mb-3">
+                      <div>
+                        <Label htmlFor="state">State</Label>
+                        <Select
+                          onValueChange={(value) => {
+                            handleFormChange("state", value);
+                            changeState(value);
+                          }}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select State" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {locations.map((location) => (
+                              <SelectItem
+                                key={location.state}
+                                value={location.state}
+                              >
+                                {location.state}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div>
+                        <Label htmlFor="city">City</Label>
+                        <Select
+                          onValueChange={(value) =>
+                            handleFormChange("city", value)
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select City" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {selectedLocation.cities.map((city) => (
+                              <SelectItem key={city.city} value={city.city}>
+                                {city.city}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                     <div>
-                      <Label htmlFor="lastName">Last name</Label>
-                      <Input id="lastName" className="mt-1" />
+                      <Label htmlFor="address">Street Address</Label>
+                      <Input
+                        id="address"
+                        className="mt-1"
+                        placeholder="123 Main St"
+                        value={shipmentInfo.address}
+                        onChange={(e) =>
+                          handleFormChange("address", e.target.value)
+                        }
+                      />
                     </div>
-                  </div>
-                  <div>
-                    <Label htmlFor="email">Email</Label>
-                    <Input id="email" type="email" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="phone">Phone</Label>
-                    <Input id="phone" type="tel" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="address">Address</Label>
-                    <Input id="address" className="mt-1" />
-                  </div>
-                  <div>
-                    <Label htmlFor="apartment">Apartment, suite, etc.</Label>
-                    <Input id="apartment" className="mt-1" />
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-3">
-                    <div className="sm:col-span-1">
-                      <Label htmlFor="city">City</Label>
-                      <Input id="city" className="mt-1" />
+                    <div className=" mt-3">
+                      <Label htmlFor="zip">ZIP Code</Label>
+                      <Input
+                        id="zip"
+                        className="mt-1"
+                        placeholder="12345"
+                        value={shipmentInfo.zipCode}
+                        onChange={(e) =>
+                          handleFormChange("zipCode", e.target.value)
+                        }
+                      />
                     </div>
-                    <div className="sm:col-span-1">
-                      <Label htmlFor="state">State</Label>
-                      <Input id="state" className="mt-1" />
+                    <div className="mt-8 flex justify-end">
+                      <Button
+                        size="lg"
+                        type="submit"
+                        className="font-semibold px-6"
+                      >
+                        Complete Order
+                      </Button>
                     </div>
-                    <div className="sm:col-span-1">
-                      <Label htmlFor="zip">ZIP</Label>
-                      <Input id="zip" className="mt-1" />
-                    </div>
-                  </div>
+                  </form>
                 </CardContent>
               </Card>
-
-              <Button size="lg" className="w-full">
-                Complete Order
-              </Button>
             </div>
           </div>
         </div>
