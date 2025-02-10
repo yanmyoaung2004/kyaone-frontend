@@ -11,6 +11,8 @@ import { ItemDetails } from "./pages/index";
 import TableComponent from "./components/Cards/TableComponent";
 import { ThemeProvider } from "./components/theme-provider";
 import DataProvider from "./context/DataContext";
+import { TopRegion } from "./pages/TopRegion";
+import { Profit } from "./pages/Profit";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -33,7 +35,15 @@ const App = () => {
     {
       path: "/history",
       element: <TableComponent />,
-    }
+    },
+    {
+      path : "/topRegion",
+      element : <TopRegion />
+    },
+    {
+      path : "/Profit",
+      element : <Profit />
+    },
   ]);
 
   return (
