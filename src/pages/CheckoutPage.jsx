@@ -17,6 +17,11 @@ import { DataContext } from "../context/DataContext";
 import { ShoppingCart, Truck, CreditCard } from "lucide-react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import {
+  handleSuccessToast,
+  handleWarningToast,
+} from "../helpers/ToastService";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const initialLocation = {
   state: "Illinois",
@@ -77,11 +82,12 @@ const locations = [
 ];
 
 export default function CheckoutPage() {
-  const { cartItems } = useContext(DataContext);
+  const { cartItems, setCartItems } = useContext(DataContext);
   const [shipmentCost, setShipmentCost] = useState(10.0);
   const [total, setTotal] = useState(0.0);
   const [selectedLocation, setSelectedLocation] = useState(initialLocation);
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   const [shipmentInfo, setShipmentInfo] = useState({
     name: "",
@@ -113,6 +119,19 @@ export default function CheckoutPage() {
 
   const submit = async (e) => {
     e.preventDefault();
+    if (cartItems.length === 0) {
+      handleWarningToast("You haven't selected any product to buy yet!");
+    }
+    if (
+      shipmentInfo.name === "" ||
+      shipmentInfo.address === "" ||
+      shipmentInfo.city === "" ||
+      shipmentInfo.phone === "" ||
+      shipmentInfo.phone === "" ||
+      shipmentInfo.state === ""
+    ) {
+      handleWarningToast("Please fill all the required fields!");
+    }
     const items = cartItems.map((item) => ({
       id: item.id,
       quantity: item.quantity,
@@ -128,13 +147,12 @@ export default function CheckoutPage() {
         customer_id: currentUser.id,
       });
       if (res.status === 201) {
-        console.log("Order placed successfully:", res.data);
+        setCartItems([]);
+        handleSuccessToast("Order has been successfully!");
+        navigate("/products");
       }
     } catch (error) {
-      console.error(
-        "Error placing order:",
-        error.response?.data || error.message
-      );
+      handleFailureToast("Ordering failed: " + error.message);
     }
   };
 

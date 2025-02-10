@@ -6,12 +6,17 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { Toaster } from "@/components/ui/toaster";
 import {
   signInFailure,
   signInStart,
   signInSuccess,
 } from "../redux/user/userSlice";
 import axios from "axios";
+import {
+  handleFailureToast,
+  handleSuccessToast,
+} from "../helpers/ToastService";
 
 export function LoginForm({ className, ...props }) {
   let [email, setEmail] = useState("");
@@ -22,24 +27,28 @@ export function LoginForm({ className, ...props }) {
   let login = async (e) => {
     try {
       e.preventDefault();
+      if (email === "" || password === "") {
+        handleWarningToast("Please fill all the fields!");
+      }
       const res = await axios.post("/api/login", {
         email: email,
         password: password,
       });
-
       if (res.status === 200) {
         dispatch(signInSuccess(res.data.user));
         localStorage.setItem("token", JSON.stringify(res.data.token));
         navigate("/");
       }
     } catch (e) {
-      console.log(e);
+      handleFailureToast(e.response.data.message.message);
     }
   };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden">
+        <Toaster />
+
         <CardContent className="grid p-0 md:grid-cols-2">
           <form onSubmit={login} className="p-6 md:p-8">
             <div className="flex flex-col gap-6">

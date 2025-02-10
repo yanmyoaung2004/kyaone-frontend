@@ -8,6 +8,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import { signInSuccess } from "../redux/user/userSlice";
+import {
+  handleFailureToast,
+  handleWarningToast,
+} from "../helpers/ToastService";
+import { Toaster } from "@/components/ui/toaster";
 
 export function RegisterForm({ className, ...props }) {
   let [email, setEmail] = useState("");
@@ -18,6 +23,9 @@ export function RegisterForm({ className, ...props }) {
   const dispatch = useDispatch();
 
   let register = async (e) => {
+    if (name === "" || email === "" || password === "") {
+      handleWarningToast("Please fill all the fields!");
+    }
     try {
       e.preventDefault();
       const res = await axios.post("/api/register", {
@@ -33,12 +41,14 @@ export function RegisterForm({ className, ...props }) {
       }
     } catch (e) {
       console.log(e);
+      handleFailureToast("Internal Server Error!");
     }
   };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden">
+        <Toaster />
         <CardContent className="grid p-0 md:grid-cols-2">
           <form onSubmit={register} className="p-6 md:p-8">
             <div className="flex flex-col gap-6">

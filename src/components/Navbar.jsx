@@ -15,10 +15,11 @@ export default function Navbar({ setIsCartOpen }) {
   return (
     <nav className="bg-black opacity-95 p-4 px-8">
       <motion.div
-      initial={{ opacity : 0 }} 
-      animate={{ opacity : 1 }}
-      transition={{ duration : 1}}
-      className="w-4/5 mx-auto">
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="w-4/5 mx-auto"
+      >
         <div className="container flex justify-between items-center">
           <h1 className="text-white text-2xl font-semibold">MyanTech</h1>
           <div className="md:hidden">
