@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { DataContext } from "../context/DataContext";
 import { useTheme } from "./theme-provider";
 import { Link, useLocation } from "react-router-dom";
+import { PopoverDemo } from "./Cards/NotiBar";
+import { motion } from "framer-motion";
 
 export default function Navbar({ setIsCartOpen }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +14,11 @@ export default function Navbar({ setIsCartOpen }) {
 
   return (
     <nav className="bg-black opacity-95 p-4 px-8">
-      <div className="w-4/5 mx-auto">
+      <motion.div
+      initial={{ opacity : 0 }} 
+      animate={{ opacity : 1 }}
+      transition={{ duration : 1}}
+      className="w-4/5 mx-auto">
         <div className="container flex justify-between items-center">
           <h1 className="text-white text-2xl font-semibold">Kyaone</h1>
           <div className="md:hidden">
@@ -50,7 +56,7 @@ export default function Navbar({ setIsCartOpen }) {
             </li>
             <li className="relative w-16 flex items-center">
               <div className="relative inline-block hover:cursor-pointer">
-                <Bell size={22} />
+                <PopoverDemo size={22} />
                 <div className="absolute -top-2 -right-3.5 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full dark:border-gray-900">
                   2
                 </div>
@@ -127,7 +133,7 @@ export default function Navbar({ setIsCartOpen }) {
             </li>
           </ul>
         )}
-      </div>
+      </motion.div>
     </nav>
   );
 }
