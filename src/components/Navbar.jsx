@@ -14,7 +14,7 @@ export default function Navbar({ setIsCartOpen }) {
     <nav className="bg-black opacity-95 p-4 px-8">
       <div className="w-4/5 mx-auto">
         <div className="container flex justify-between items-center">
-          <h1 className="text-white text-2xl font-semibold">Kyaone</h1>
+          <h1 className="text-white text-2xl font-semibold">MyanTech</h1>
           <div className="md:hidden">
             <button onClick={() => setIsOpen(!isOpen)} className="text-white">
               {isOpen ? <X size={28} /> : <Menu size={28} />}

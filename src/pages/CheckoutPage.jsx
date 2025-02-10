@@ -1,15 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CustomerLayout from "../layout/CustomerLayout";
+import { DataContext } from "../context/DataContext";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 export default function CheckoutPage() {
-  const [paymentMethod, setPaymentMethod] = useState("credit");
+  const { cartItems } = useContext(DataContext);
+  const [shipmentCost, setShipmentCost] = useState(0.0);
+  const [total, setTotal] = useState(0.0);
+  const { pathname } = useLocation();
+
+  const subTotal = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
+  useEffect(() => {
+    setTotal(subTotal + shipmentCost);
+  }, [shipmentCost]);
 
   return (
     <CustomerLayout>
@@ -28,38 +43,24 @@ export default function CheckoutPage() {
                 <CardContent>
                   <div className="flow-root">
                     <ul className="-my-6 divide-y divide-gray-200">
-                      <li className="flex py-6">
-                        <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-                          <img
-                            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-EGoUBVmYOALYumdqsUsOMdhyjfxBV8.png"
-                            alt="Premium Wireless Headphones"
-                            className="h-full w-full object-cover object-center"
-                          />
-                        </div>
-                        <div className="ml-4 flex flex-1 flex-col">
-                          <div>
-                            <div className="flex justify-between text-base font-medium text-gray-900">
-                              <h3>Premium Wireless Headphones</h3>
-                              <p className="ml-4">$249.99</p>
-                            </div>
-                            <p className="mt-1 text-sm text-gray-500">Black</p>
+                      {cartItems.map((item) => (
+                        <li className="flex py-6" key={item.id}>
+                          <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                            <img
+                              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-EGoUBVmYOALYumdqsUsOMdhyjfxBV8.png"
+                              alt="Premium Wireless Headphones"
+                              className="h-full w-full object-cover object-center"
+                            />
                           </div>
-                          <div className="flex flex-1 items-end justify-between text-sm">
-                            <div className="flex items-center space-x-2">
-                              <button className="rounded-md border p-1 hover:bg-gray-100">
-                                -
-                              </button>
-                              <span>1</span>
-                              <button className="rounded-md border p-1 hover:bg-gray-100">
-                                +
-                              </button>
-                            </div>
-                            <button className="text-red-600 hover:text-red-500">
-                              Remove
-                            </button>
+                          <div className="ml-4 flex flex-1 flex-col items-start gap-2">
+                            <h3 className="font-medium text-gray-900">
+                              {item.name}
+                            </h3>
+                            <p className="font-semibold">${item.price}</p>
+                            <p>{item.quantity}x</p>
                           </div>
-                        </div>
-                      </li>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                 </CardContent>
@@ -74,25 +75,25 @@ export default function CheckoutPage() {
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-gray-600">Subtotal</p>
                       <p className="text-sm font-medium text-gray-900">
-                        $249.99
+                        ${subTotal}
                       </p>
                     </div>
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-gray-600">Shipping</p>
-                      <p className="text-sm font-medium text-gray-900">$9.99</p>
+                      <p className="text-sm font-medium text-gray-900">
+                        ${shipmentCost}
+                      </p>
                     </div>
                     <div className="flex items-center justify-between">
                       <p className="text-sm text-gray-600">Tax</p>
-                      <p className="text-sm font-medium text-gray-900">
-                        $25.00
-                      </p>
+                      <p className="text-sm font-medium text-gray-900">$0.00</p>
                     </div>
                     <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                       <p className="text-base font-medium text-gray-900">
                         Order total
                       </p>
                       <p className="text-base font-medium text-gray-900">
-                        $284.98
+                        ${total}
                       </p>
                     </div>
                   </div>
@@ -146,60 +147,6 @@ export default function CheckoutPage() {
                       <Input id="zip" className="mt-1" />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Payment Method</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <RadioGroup
-                    defaultValue="credit"
-                    onValueChange={setPaymentMethod}
-                    className="space-y-4"
-                  >
-                    <div className="flex items-center space-x-4 rounded-lg border p-4">
-                      <RadioGroupItem value="credit" id="credit" />
-                      <Label htmlFor="credit" className="flex-1">
-                        Credit Card
-                      </Label>
-                      <div className="flex items-center space-x-2">
-                        <div className="h-8 w-12 rounded bg-gray-200" />
-                        <div className="h-8 w-12 rounded bg-gray-200" />
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-4 rounded-lg border p-4">
-                      <RadioGroupItem value="paypal" id="paypal" />
-                      <Label htmlFor="paypal" className="flex-1">
-                        PayPal
-                      </Label>
-                      <div className="h-8 w-12 rounded bg-gray-200" />
-                    </div>
-                  </RadioGroup>
-
-                  {paymentMethod === "credit" && (
-                    <div className="mt-6 space-y-4">
-                      <div>
-                        <Label htmlFor="cardNumber">Card number</Label>
-                        <Input id="cardNumber" className="mt-1" />
-                      </div>
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="col-span-2">
-                          <Label htmlFor="expiration">Expiration date</Label>
-                          <Input
-                            id="expiration"
-                            placeholder="MM / YY"
-                            className="mt-1"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="cvc">CVC</Label>
-                          <Input id="cvc" className="mt-1" />
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
 
