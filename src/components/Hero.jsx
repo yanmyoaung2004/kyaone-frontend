@@ -7,6 +7,15 @@ import { ComputerData } from '../data/MockData';
 import {motion, AnimatePresence, easeInOut} from 'framer-motion';
 import { SlideRight } from './icon/util/animation';
 
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+
 export default function Hero() {
     const [activeData, setActiveData] = useState(ComputerData[1])
 
@@ -27,24 +36,17 @@ export default function Hero() {
 
 
     return (
-        <motion.section
-        initial = {{
-            backgroundImage: `radial-gradient(circle, ${activeData.bgColor}
-            0%, ${activeData.bgColor} 0%)`,
-        }}
-        animate={{
-            backgroundImage: `radial-gradient(circle, ${activeData.bgColor}
-            0%, ${activeData.bgColor} 100%)`
-        }}
-        transition={{ duration: 0.8 }}
-        className='text-white'
-        >   
-            <div className='container grid grid-cols-1 md:grid-cols-2 p-7
-            h-screen md:h-[700px] relative mx-auto'>
+        <Card className="border-b-0">
+            <CardContent className="md:mx-auto md:w-[1500px] bg-white">
+                <motion.section
+                    
+                >   
+            <div className='container grid grid-cols-1 md:grid-cols-2 p-10
+            h-screen md:h-[500px] relative '>
                 <div className='flex flex-col justify-center py-14 md:py-0 
                 5rem:max-w-[500px] order-2 md:order-1 mx-auto '>
                     <div className='space-y-5 md:space-y-7 text-center  
-                    md:text-left'>
+                    md:text-left p-20'>
                         <AnimatePresence mode='wait'>
                             <motion.h1 key={activeData.id} variants={SlideRight(0.2)} initial="hidden" animate="show" exit="exit" className='text-black text-3xl 4rem:text-4xl 5rem:text-5xl font-bold'>{activeData.title}</motion.h1>
                         </AnimatePresence>
@@ -53,7 +55,7 @@ export default function Hero() {
                         </AnimatePresence>
                         <motion.p key={activeData.id} variants={SlideRight(0.6)} initial="hidden" animate="show" exit="exit" className='text-black text-3xl 4rem:text-4xl 5rem:text-5xl font-bold'>{activeData.price}</motion.p>
                         <div className='flex items-center justify-center 
-                        md:justify-start gap-4 text-3xl'>
+                        md:justify-start gap-4 text-3xl text-black'>
                             <Instragram className="cursor-pointer border rounded-full
                             p-[6px]" />
                             <Facebook className="cursor-pointer border rounded-full
@@ -82,6 +84,9 @@ export default function Hero() {
                     </div> */}
                 </div>
             </div>
-        </motion.section>
+                </motion.section>
+            </CardContent>
+        </Card>
     )
 }
+        
