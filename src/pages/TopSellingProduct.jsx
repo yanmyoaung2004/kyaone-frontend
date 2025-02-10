@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import axios from "axios";
 
 const chartData = [
   {
@@ -69,6 +70,22 @@ export function TopSellingProduct() {
   const [isMiddleScreen, setIsMiddleScreen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isXsScreen, setIsXsScreen] = useState(false);
+  // const [chartData, setChartData] = useState([]);
+
+  // const fetchData = async () => {
+  //   try{
+  //     const res = await axios.get("url");
+
+  //     if(!res.ok) {
+  //       console.error("Error fetching data");
+  //     };
+  //     const data = res.data;
+  //     setChartData(data);
+
+  //   } catch(err) {
+  //     console.error(err);
+  //   }
+  // }
 
   useEffect(() => {
     const screenSize = window.matchMedia("(max-width: 1300px)");
@@ -95,7 +112,7 @@ export function TopSellingProduct() {
   }, []);
 
   return (
-    <Card className="w-full max-w-3xl mx-auto p-4 shadow-lg mt-10">
+    <Card className="w-full max-w-3xl mx-auto p-4 shadow-lg">
       <CardHeader>
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
           <div>

@@ -7,7 +7,7 @@ import { Sidebar, SidebarContent, SidebarHeader } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 
 const navItems = [
-  { icon: Home, label: "Dashboard", href: "/" },
+  { icon: Home, label: "Dashboard", href: "/sales-dashboard" },
   { icon: Package, label: "Orders", href: "/orders" },
   { icon: Truck, label: "Deliveries", href: "/deliveries" },
   { icon: MessageSquare, label: "Customer Interaction", href: "/customers" },

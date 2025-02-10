@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
 import { TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import axios from "axios";
 
 import {
   Card,
@@ -32,13 +34,33 @@ const chartConfig = {
 };
 
 export function SalePerformance() {
+  // const [chartData, setChartData] = useState([]);
   const currentMonth = chartData[chartData.length - 1];
   const previousMonth = chartData[chartData.length - 2];
   const percentageChange =
     ((currentMonth.orders - previousMonth.orders) / previousMonth.orders) * 100;
 
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+        // const res =  await axios.get("url");
+
+  //       if (!res.ok) {
+  //         console.error("Error fetching data...");
+  //       }
+  //       const data = res.data();
+
+  //       setChartData(data);
+  //     } catch (err) {
+  //       console.error(err);
+  //     }
+
+  //     fetchData();
+  //   };
+  // }, []);
+
   return (
-    <Card className="w-full max-w-2xl mx-auto mt-10">
+    <Card className="max-w-3xl w-full mx-auto flex flex-col justify-between">
       <CardHeader>
         <CardTitle>Order Performance</CardTitle>
         <CardDescription>Total Orders: January - June 2024</CardDescription>

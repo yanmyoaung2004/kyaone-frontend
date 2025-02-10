@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import axios from "axios";
 
 const orders = [
   {
@@ -56,6 +57,20 @@ const orders = [
 ];
 
 export default function OrdersPage() {
+  // const createOrder = async () => {
+  //   try {
+  //     const res = await axios.post("url", data);
+
+  //     if (!res.ok) {
+  //       throw new Error("Error");
+  //     }
+
+  //     const data = res.data;
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // };
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
@@ -80,7 +95,6 @@ export default function OrdersPage() {
                 </SelectContent>
               </Select>
             </div>
-            <Button>Add New Order</Button>
           </div>
           <Table>
             <TableHeader>
@@ -90,7 +104,7 @@ export default function OrdersPage() {
                 <TableHead>Delivery Address</TableHead>
                 <TableHead>ETA</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-center">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -117,8 +131,11 @@ export default function OrdersPage() {
                       {order.status}
                     </span>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-center">
                     <Button variant="outline" size="sm">
+                      Create Order
+                    </Button>
+                    <Button variant="outline" size="sm" className="ml-2">
                       View Details
                     </Button>
                   </TableCell>

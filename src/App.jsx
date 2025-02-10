@@ -20,6 +20,7 @@ import Order from "./pages/orders/page";
 import Delivery from "./pages/deliveries/page";
 import Escalations from "./pages/escalations/page";
 import Customer from "./pages/customers/page";
+import { Truck } from "./pages/Truck";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -99,6 +100,10 @@ const App = () => {
       path: "/settings",
       element: <Layout></Layout>,
     },
+    {
+      path: "/test",
+      element: <Truck />
+    }
   ]);
 
   return (
