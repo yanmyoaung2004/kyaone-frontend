@@ -21,7 +21,9 @@ export default function Navbar({ setIsCartOpen }) {
         className="w-4/5 mx-auto"
       >
         <div className="container flex justify-between items-center">
-          <h1 className="text-white text-2xl font-semibold">MyanTech</h1>
+          <Link to={"/"}>
+            <h1 className="text-white text-2xl font-semibold">Kyaone</h1>
+          </Link>
           <div className="md:hidden">
             <button onClick={() => setIsOpen(!isOpen)} className="text-white">
               {isOpen ? <X size={28} /> : <Menu size={28} />}
@@ -37,7 +39,10 @@ export default function Navbar({ setIsCartOpen }) {
               </Link>
             </li>
             <li className="w-16">
-              <Link href="#" className="hover:font-bold font-semibold text-sm">
+              <Link
+                to="/history"
+                className="hover:font-bold font-semibold text-sm"
+              >
                 History
               </Link>
             </li>

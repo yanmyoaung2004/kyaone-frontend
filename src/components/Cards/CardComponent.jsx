@@ -3,23 +3,34 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../theme-provider";
 
 const CardComponent = ({ item, addToCart, isAdded }) => {
   const navigate = useNavigate();
+  const { theme } = useTheme();
   return (
-    <Card className="w-full max-w-md mx-auto bg-white shadow-md">
+    <Card
+      className={`w-full max-w-md mx-auto shadow-md ${
+        theme === "dark" ? "bg-white text-black" : "bg-black text-white"
+      }`}
+    >
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-black">
-          {item.name}
-        </CardTitle>
+        <CardTitle className="text-2xl font-bol">{item.name}</CardTitle>
         <div>
-          <Badge variant="outline" className="text-black border-black">
+          <Badge
+            variant="outline"
+            className={`${
+              theme === "dark"
+                ? "text-black border-black"
+                : "text-white border-white"
+            }`}
+          >
             {item.category}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="relative w-full h-48 overflow-hidden rounded-lg">
+        <div className={`relative w-full h-48 overflow-hidden rounded-lg`}>
           <img
             src={item.image || "/placeholder.svg"}
             alt={item.name}
@@ -27,9 +38,7 @@ const CardComponent = ({ item, addToCart, isAdded }) => {
           />
         </div>
         <div className="flex justify-between items-center">
-          <p className="text-xl font-semibold text-black">
-            ${item.price.toFixed(2)}
-          </p>
+          <p className="text-xl font-semibold">${item.price.toFixed(2)}</p>
           <div className="flex gap-3">
             <Button
               variant="outline"
@@ -39,7 +48,11 @@ const CardComponent = ({ item, addToCart, isAdded }) => {
                 navigate(`/${item.name}/${item.id}`);
               }}
             >
-              <Eye className="h-5 w-5" />
+              <Eye
+                className={`h-5 w-5 ${
+                  theme === "dark" ? "text-white" : "text-black"
+                }`}
+              />
               <span className="sr-only">See details</span>
             </Button>
             <div
