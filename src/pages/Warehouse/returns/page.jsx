@@ -1,0 +1,105 @@
+"use client"
+
+import { useState } from "react"
+import { ReturnList } from "../../../components/Warehouse/returns/return-list"
+import { ReturnDetails } from "../../../components/Warehouse/returns/return-details"
+import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { RotateCcw } from "lucide-react"
+
+// Mock data for demonstration
+const mockReturns = [
+  {
+    id: "R001",
+    orderId: "O123",
+    productName: "Widget A",
+    customerName: "John Doe",
+    status: "Pending",
+    reason: "Wrong Product",
+  },
+  {
+    id: "R002",
+    orderId: "O456",
+    productName: "Gadget B",
+    customerName: "Jane Smith",
+    status: "Processed",
+    reason: "Damaged Item",
+  },
+  {
+    id: "R003",
+    orderId: "O789",
+    productName: "Doohickey C",
+    customerName: "Bob Johnson",
+    status: "Rejected",
+    reason: "Changed Mind",
+  },
+]
+
+export default function Returns() {
+  const [returns, setReturns] = useState(mockReturns)
+  const [selectedReturn, setSelectedReturn] = useState(null)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [statusFilter, setStatusFilter] = useState("All")
+
+  const filteredReturns = returns.filter(
+    (returnItem) =>
+      (returnItem.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        returnItem.id.includes(searchTerm) ||
+        returnItem.orderId.includes(searchTerm)) &&
+      (statusFilter === "All" || returnItem.status === statusFilter),
+  )
+
+  const handleReturnClick = (returnItem) => {
+    setSelectedReturn(returnItem)
+  }
+
+  const handleStatusUpdate = (returnId, newStatus) => {
+    setReturns(
+      returns.map((returnItem) => (returnItem.id === returnId ? { ...returnItem, status: newStatus } : returnItem)),
+    )
+    if (selectedReturn && selectedReturn.id === returnId) {
+      setSelectedReturn({ ...selectedReturn, status: newStatus })
+    }
+  }
+
+  return (
+    <div className="space-y-6">
+      <Card className="bg-white shadow-lg">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+          <CardTitle className="text-2xl font-bold flex items-center">
+            <RotateCcw className="mr-2 h-6 w-6" />
+            Returns Management
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            <Input
+              placeholder="Search by Return ID, Order ID or Customer Name"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-grow"
+            />
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Filter by Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Statuses</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="Processed">Processed</SelectItem>
+                <SelectItem value="Rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-6">
+            <ReturnList returns={filteredReturns} onReturnClick={handleReturnClick} />
+            {selectedReturn && <ReturnDetails returnItem={selectedReturn} onStatusUpdate={handleStatusUpdate} />}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
+

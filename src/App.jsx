@@ -10,10 +10,9 @@ import ProductList from "./pages/ProductList";
 import Register from "./pages/Register";
 import SaleHistory from "./pages/SaleHistory";
 import SaleRecord from "./pages/SaleRecord";
-import { TopSellingProduct } from "./pages/TopSellingProduct";
-import { SalePerformance } from "./pages/SalePerformance";
 import Sale from "./pages/Sale";
-import Layout from "./pages/layout";
+import SaleLayout from "./pages/layout";
+import WarehouseLayout from "./pages/Warehouse/Layout";
 import Order from "./pages/orders/page";
 import Delivery from "./pages/deliveries/page";
 import Escalations from "./pages/escalations/page";
@@ -22,6 +21,15 @@ import { Truck } from "./pages/Truck";
 import DeliveryDetail from "./pages/deliveries/deliveryDetail";
 import { element } from "prop-types";
 import { useSelector } from "react-redux";
+import ComplaintsPage from "./pages/complaints/Page";
+import Page from "./pages/Warehouse/Page";
+import Orders from "./pages/Warehouse/orders/page";
+import Complaints from "./pages/Warehouse/complaints/page";
+import StockManagement from "./pages/Warehouse/stock/page";
+import Returns from "./pages/Warehouse/returns/page";
+import TruckManagement from "./pages/Warehouse/trucks/page";
+import Settings from "./pages/Warehouse/settings/page";
+import Products from "./components/Warehouse/products/Products";
 
 const App = () => {
   console.log(useSelector((state)=>state.user.currentUser));
