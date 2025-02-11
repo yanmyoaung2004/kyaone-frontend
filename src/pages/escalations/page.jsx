@@ -41,28 +41,8 @@ export default function EscalationsPage() {
       <h1 className="text-3xl font-bold text-gray-900">Escalations</h1>
       <div className="flex justify-between items-center">
         <div className="flex space-x-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="text"
-              placeholder="Search..."
-              value={searchTerm}
-              onChange={handleInputChange}
-              className="pl-8 pr-10 py-4 rounded-md"
-            />
-            {searchTerm && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-0 top-0 h-full"
-                onClick={handleClear}
-              >
-                <X className="h-4 w-4" />
-                <span className="sr-only">Clear search</span>
-              </Button>
-            )}
-          </div>
-          <Select onValueChange={handleStatusChange}>
+          <Input placeholder="Search escalations..." className="w-[300px]" />
+          <Select>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Filter by priority" />
             </SelectTrigger>
