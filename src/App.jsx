@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProductDetail from './pages/ProductDetail'
 import CheckoutPage from './pages/CheckoutPage'
+import { LowStock } from "./pages/LowStock";
 
 
 import { ItemDetails } from "./pages/index";
@@ -42,6 +43,10 @@ const App = () => {
     {
       path : "/Profit",
       element : <Profit />
+    },
+    {
+      path : "/LowStock",
+      element : <LowStock />
     },
   ]);
 

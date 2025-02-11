@@ -3,13 +3,9 @@ import { Menu, X, Moon, Sun, ShoppingCart, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataContext } from "../context/DataContext";
 import { useTheme } from "./theme-provider";
-<<<<<<< HEAD
 import { Link, useLocation } from "react-router-dom";
 import { PopoverDemo } from "./Cards/NotiBar";
 import { motion } from "framer-motion";
-=======
-import { Link } from "react-router-dom";
->>>>>>> 2b603828913a9c65c6aed59f8a8475b3e3b90c33
 
 export default function Navbar({ setIsCartOpen }) {
   const [isOpen, setIsOpen] = useState(false);
