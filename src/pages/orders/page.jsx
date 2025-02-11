@@ -9,54 +9,9 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import OrderDetailsModal from "../../components/OrderDetailModel";
-
-// const orders = [
-//   {
-//     id: "12345",
-//     customer: "Alice Johnson",
-//     address: "123 Main St, City",
-//     eta: "11:00 AM",
-//     status: "In Progress",
-//   },
-//   {
-//     id: "67890",
-//     customer: "Bob Smith",
-//     address: "456 Elm St, Town",
-//     eta: "12:00 PM",
-//     status: "Delayed",
-//   },
-//   {
-//     id: "54321",
-//     customer: "Charlie Brown",
-//     address: "789 Oak St, Village",
-//     eta: "1:30 PM",
-//     status: "On Time",
-//   },
-//   {
-//     id: "98765",
-//     customer: "Diana Prince",
-//     address: "321 Pine St, County",
-//     eta: "2:45 PM",
-//     status: "Pending",
-//   },
-// {
-//   id: "13579",
-//   customer: "Ethan Hunt",
-//   address: "654 Maple St, State",
-//   eta: "3:15 PM",
-//   status: "Delivered",
-// },
-// ];
 
 export default function OrdersPage() {
   const [allOrders, setAllOrders] = useState([]);
@@ -93,6 +48,24 @@ export default function OrdersPage() {
     setOrders(fuzzySearch(search));
   }, [search]);
 
+  const filterOrders = orders.filter((order) => {
+    const customerMatch = order.customer
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const orderIdMatch = order.id
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const statusMatch =
+      searchStatus === "all" ||
+      order.status.toLowerCase().includes(searchStatus.toLowerCase());
+
+    return searchStatus === ""
+      ? customerMatch || orderIdMatch
+      : (customerMatch || orderIdMatch) && statusMatch;
+  });
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
@@ -122,7 +95,7 @@ export default function OrdersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orders.map((order) => (
+              {filterOrders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="font-medium">{order.id}</TableCell>
                   <TableCell>{order.customer}</TableCell>
@@ -153,6 +126,10 @@ export default function OrdersPage() {
                     >
                       View Details
                     </Button>
+                    <OrderDetails
+                      isOpen={isModalOpen}
+                      onClose={() => setIsModalOpen(false)}
+                    />
                   </TableCell>
                   <OrderDetailsModal
                     order={order}
