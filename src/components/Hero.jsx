@@ -32,7 +32,7 @@ export default function Hero() {
   useEffect(() => {
     setActiveData(ComputerData[currentIndex]);
   }, [currentIndex]);
-
+ return "";
   return (
     <Card className="border-none">
       <CardContent className="md:mx-auto md:w-[1500px] bg-white">

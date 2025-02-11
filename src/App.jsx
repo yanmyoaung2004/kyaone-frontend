@@ -1,5 +1,5 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login";
 import { ItemDetails } from "./pages/index";
 import DataProvider from "./context/DataContext";
@@ -9,7 +9,6 @@ import CheckoutPage from "./pages/CheckoutPage";
 import ProductList from "./pages/ProductList";
 import Register from "./pages/Register";
 import SaleHistory from "./pages/SaleHistory";
-import CustomerComplaint from "./pages/CustomerComplaint";
 import SaleRecord from "./pages/SaleRecord";
 import { TopSellingProduct } from "./pages/TopSellingProduct";
 import { SalePerformance } from "./pages/SalePerformance";
@@ -21,8 +20,19 @@ import Escalations from "./pages/escalations/page";
 import Customer from "./pages/customers/page";
 import { Truck } from "./pages/Truck";
 import DeliveryDetail from "./pages/deliveries/deliveryDetail";
+import { element } from "prop-types";
+import { useSelector } from "react-redux";
 
 const App = () => {
+  console.log(useSelector((state)=>state.user.currentUser));
+  
+  const PrivateRoute = ({element,allowedRoles = []}) => {
+    const currentUser = useSelector((state)=>state.user.currentUser);
+    if(!currentUser) return  <Navigate to="/login" />;
+    if(!allowedRoles.includes(currentUser.role)) return <Navigate to="/" />
+    return element;
+  }
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -46,79 +56,70 @@ const App = () => {
     },
     {
       path: "/checkout",
-      element: <CheckoutPage />,
+      element: <PrivateRoute element={<CheckoutPage />}/>,
     },
     {
       path: "/history",
-      element: <SaleHistory />,
+      element: <PrivateRoute element={<SaleHistory />}/>,
     },
-    {
-      path: "/customer-complaint",
-      element: <CustomerComplaint />,
-    },
+   
     {
       path: "/sales-record",
-      element: <SaleRecord />,
+      element: <PrivateRoute element={<SaleRecord />}/>,
     },
     {
       path: "/sales-dashboard",
-      element: (
+      element: <PrivateRoute element={
         <Layout>
           <Sale />
         </Layout>
-      ),
+      }/>,
     },
     {
       path: "/orders",
-      element: (
+      element: <PrivateRoute element={
         <Layout>
           <Order />
         </Layout>
-      ),
+      }/>,
     },
     {
       path: "/deliveries",
-      element: (
+      element: <PrivateRoute element={
         <Layout>
           <Delivery />
         </Layout>
-      ),
+      }/>,
     },
     {
       path: "/deliveries/detail/:truckId",
-      element: (
-        <Layout>
-          <DeliveryDetail />
-        </Layout>
-      ),
+      element: <PrivateRoute element={<Layout>
+        <DeliveryDetail />
+      </Layout>}/>,
     },
     {
       path: "/customers",
-      element: (
-        <Layout>
-          <Customer />
-        </Layout>
-      ),
+      element: <PrivateRoute element={<Layout>
+        <Customer />
+      </Layout>}/>,
     },
     {
       path: "/escalations",
-      element: (
-        <Layout>
-          <Escalations />
-        </Layout>
-      ),
+      element: <PrivateRoute element={<Layout>
+        <Escalations />
+      </Layout>}/>,
     },
     {
       path: "/reports",
-      element: <Layout></Layout>,
+      element: <PrivateRoute element={<Layout></Layout>}/>,
     },
     {
       path: "/settings",
-      element: <Layout></Layout>,
+      element: <PrivateRoute element={<Layout></Layout>}/>,
     },
     {
       path: "/test",
-      element: <Truck />,
+      element: <PrivateRoute element={<Layout></Layout>}/>,
     },
   ]);
 

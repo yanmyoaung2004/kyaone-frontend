@@ -39,9 +39,12 @@ const ProductList = () => {
     setError(null);
     try {
       const res = await fetch(`/api/categories`);
+      
       setCategories(await res.json());
     } catch (error) {
       setError("Failed to load products. Please try again.");
+      console.log(error);
+      
     } finally {
       setLoading(false);
     }
@@ -52,21 +55,13 @@ const ProductList = () => {
   }, []);
 
   const fetchProducts = useCallback(
-    async (page = 1) => {
+    async () => {
       setLoading(true);
       setError(null);
       try {
-        const queryParams = new URLSearchParams({
-          page,
-          search: searchQuery,
-          category: category !== "all" ? category : "",
-        }).toString();
-
-        const res = await fetch(`/api/stocks?${queryParams}`);
-        const { data, ...paginationData } = await res.json();
-
-        setItemList(data);
-        setPagination(paginationData);
+        const res = await fetch(`/api/stocks`);
+      
+        setItemList(await res.json());
       } catch (error) {
         setError("Failed to load products. Please try again.");
       } finally {

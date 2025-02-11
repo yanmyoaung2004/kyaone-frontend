@@ -19,26 +19,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import CustomerLayout from "../layout/CustomerLayout";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
 
 const complaintSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
-  orderNumber: z.string().min(1, "Order number is required"),
-  complaintType: z.enum(["Delivery late", "Wrong order", "Faulty Order"]),
+  complaintType: z.enum(["delayed","faulty","wrong","missing"]),
   description: z.string().min(10, "Description must be at least 10 characters"),
 });
 
-export function ComplaintForm({ department, onSubmit }) {
+export function ComplaintForm({ department, onSubmit, invoiceId }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const currentUser = useSelector((state)=>state.user.currentUser);
 
+  
   const form = useForm({
     resolver: zodResolver(complaintSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      orderNumber: "",
-      complaintType: "Delivery late",
+      name: currentUser.name,
+      email: currentUser.email,
+      complaintType: "delayed",
       complain: "",
     },
   });
@@ -46,9 +47,18 @@ export function ComplaintForm({ department, onSubmit }) {
   const handleSubmit = async (data) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
+      // await onSubmit(data);
       form.reset();
-      console.log("Success");
+    
+      await axios.post("/api/complaints", {
+        customer_id: currentUser.id,
+        order_id: invoiceId,
+        description: data.description,
+        type: data.complaintType,
+        status: 'open',
+      }).then(res=>console.log(res))
+      .catch(e=>console.log(e)
+      );
     } catch (error) {
       console.error(error);
     } finally {
@@ -57,8 +67,7 @@ export function ComplaintForm({ department, onSubmit }) {
   };
 
   return (
-    <CustomerLayout>
-      <Card className="w-full max-w-lg mx-auto bg-white text-black mt-10">
+<Card className="w-full max-w-lg mx-auto bg-white text-black mt-10 shadow-none border-none">
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
             Submit a Complaint
@@ -98,20 +107,7 @@ export function ComplaintForm({ department, onSubmit }) {
               />
               {form.formState.errors.name && (
                 <p className="text-red-500 text-sm">
-                  {form.formState.errors.email.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <Input
-                name="orderNumber"
-                label="Order Number"
-                placeholder="e.g., ORD-12345"
-                {...form.register("orderNumber")}
-              />
-              {form.formState.errors.name && (
-                <p className="text-red-500 text-sm">
-                  {form.formState.errors.orderNumber.message}
+                  {form.formState.errors.email?.message}
                 </p>
               )}
             </div>
@@ -121,9 +117,10 @@ export function ComplaintForm({ department, onSubmit }) {
                   <SelectValue placeholder="Complaint type..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="delivery_late">Delivery Late</SelectItem>
-                  <SelectItem value="wrong_order">Wrong Order</SelectItem>
-                  <SelectItem value="faulty_order">Faulty Order</SelectItem>
+                  <SelectItem value="delayed">Delivery delay</SelectItem>
+                  <SelectItem value="wrong">Wrong Order</SelectItem>
+                  <SelectItem value="faulty">Faulty Order</SelectItem>
+                  <SelectItem value="missing">Order miss</SelectItem>
                 </SelectContent>
               </Select>
               {form.formState.errors.complaintType && (
@@ -150,6 +147,5 @@ export function ComplaintForm({ department, onSubmit }) {
           </form>
         </CardContent>
       </Card>
-    </CustomerLayout>
   );
 }
