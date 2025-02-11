@@ -49,22 +49,25 @@ import OrderDetailsModal from "../../components/OrderDetailModel";
 //     eta: "2:45 PM",
 //     status: "Pending",
 //   },
-//   {
-//     id: "13579",
-//     customer: "Ethan Hunt",
-//     address: "654 Maple St, State",
-//     eta: "3:15 PM",
-//     status: "Delivered",
-//   },
+// {
+//   id: "13579",
+//   customer: "Ethan Hunt",
+//   address: "654 Maple St, State",
+//   eta: "3:15 PM",
+//   status: "Delivered",
+// },
 // ];
 
 export default function OrdersPage() {
+  const [allOrders, setAllOrders] = useState([]);
   const [orders, setOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   const fetchOrder = async () => {
     try {
       const res = await axios.get("/api/orders");
+      setAllOrders(res.data);
       setOrders(res.data);
     } catch (error) {
       console.log(error);
@@ -73,19 +76,22 @@ export default function OrdersPage() {
   useEffect(() => {
     fetchOrder();
   }, []);
-  // const createOrder = async () => {
-  //   try {
-  //     const res = await axios.post("url", data);
 
-  //     if (!res.ok) {
-  //       throw new Error("Error");
-  //     }
+  const fuzzySearch = (query) => {
+    if (!query.trim()) return allOrders;
 
-  //     const data = res.data;
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
+    const lowerQuery = query.toLowerCase();
+
+    return allOrders.filter((item) =>
+      Object.values(item).some(
+        (value) =>
+          typeof value === "string" && value.toLowerCase().includes(lowerQuery)
+      )
+    );
+  };
+  useEffect(() => {
+    setOrders(fuzzySearch(search));
+  }, [search]);
 
   return (
     <div className="space-y-6">
@@ -97,19 +103,11 @@ export default function OrdersPage() {
         <CardContent>
           <div className="flex justify-between items-center mb-4">
             <div className="flex space-x-2">
-              <Input placeholder="Search orders..." className="w-[300px]" />
-              <Select>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="delivered">Delivered</SelectItem>
-                  <SelectItem value="delayed">Delayed</SelectItem>
-                </SelectContent>
-              </Select>
+              <Input
+                placeholder="Search orders..."
+                className="w-[300px]"
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
           </div>
           <Table>

@@ -2,10 +2,16 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Clock, Package, Truck, User } from "lucide-react";
+import { Clock, Truck, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import DeliveryDetailCustomerList from "@/components/Sales/DeliveryDetailCustomerList";
 import OrderDetailProfile from "@/components/Sales/OrderDetailProfile";
@@ -28,6 +34,7 @@ export default function DeliveryDetail() {
       const res = await axios.get(`/api/deliveries/${truckId}`);
       setOrders(res.data.orders);
       setDriver(res.data.driver);
+
       setTruck(res.data.truck);
       setSelectedOrder(res.data.orders[0]);
       setTruckInfo({
@@ -97,7 +104,19 @@ export default function DeliveryDetail() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-1">
           <CardHeader>
-            <CardTitle>Customers</CardTitle>
+            <div className="flex gap-3 items-center justify-between">
+              <CardTitle>Orders</CardTitle>
+              <Select>
+                <SelectTrigger className="w-[130px]">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Open">Open</SelectItem>
+                  <SelectItem value="In Progress">All</SelectItem>
+                  <SelectItem value="Resolved">By Order</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </CardHeader>
           <CardContent>
             <DeliveryDetailCustomerList
@@ -110,7 +129,7 @@ export default function DeliveryDetail() {
           <Tabs defaultValue="profile">
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle>Customer Details</CardTitle>
+                <CardTitle className="text-xl">Order Details</CardTitle>
                 <TabsList>
                   <TabsTrigger value="profile">Profile</TabsTrigger>
                   <TabsTrigger value="chat">Chat</TabsTrigger>

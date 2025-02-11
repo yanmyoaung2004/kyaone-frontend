@@ -126,22 +126,19 @@ const TableComponent = () => {
   };
 
   useEffect(() => {
-    if (!searchTerm && !category) {
-      setFilterInvoices(invoices);
-      return;
+    let filtered = invoices;
+    if (searchTerm) {
+      filtered = filtered.filter((invoice) =>
+        invoice.product?.some((p) =>
+          p.productName.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+    if (category && category !== "all") {
+      filtered = filtered.filter((invoice) => invoice.status === category);
     }
 
-    setFilterInvoices(
-      invoices.filter((invoice) => {
-        const matchesSearch =
-          searchTerm &&
-          invoice.product?.some((p) =>
-            p.productName.toLowerCase().includes(searchTerm.toLowerCase())
-          );
-        const matchesCategory = category && invoice.status === category;
-        return matchesSearch || matchesCategory;
-      })
-    );
+    setFilterInvoices(filtered);
   }, [searchTerm, category, invoices]);
 
   useEffect(() => {

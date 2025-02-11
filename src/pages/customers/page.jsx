@@ -5,13 +5,56 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CustomerList from "../../components/Sales/CustomerList";
 import CustomerProfile from "../../components/Sales/CustomerProfile";
 import ChatInterface from "../../components/Sales/ChatInterface";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 export default function CustomerInteractionPage() {
+  const [allComplaints, setAllComplaints] = useState([]);
+  const [complaints, setComplaints] = useState([]);
+  const [selectedComplaints, setSelectedComplaints] = useState();
+  const [search, setSearch] = useState("");
+
+  const fetchData = async () => {
+    try {
+      const res = await axios.get("/api/complaints");
+      setComplaints(res.data);
+      setAllComplaints(res.data);
+      setSelectedComplaints(res.data[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const changeOrder = (id) => {
+    setSelectedComplaints(complaints.find((c) => c.id === id));
+  };
+
+  useEffect(() => {
+    if (search.trim() === "") {
+      setComplaints(allComplaints);
+    } else {
+      setComplaints(
+        allComplaints.filter((c) =>
+          c.customer.user.name.toLowerCase().includes(search.toLowerCase())
+        )
+      );
+    }
+  }, [search, allComplaints]);
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Customer Interaction</h1>
       <div className="flex justify-between items-center">
-        <Input placeholder="Search customers..." className="w-[300px]" />
+        <Input
+          placeholder="Search customers..."
+          className="w-[300px]"
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
         <Button>New Interaction</Button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -20,7 +63,15 @@ export default function CustomerInteractionPage() {
             <CardTitle>Customers</CardTitle>
           </CardHeader>
           <CardContent>
-            <CustomerList />
+            {complaints.length > 0 ? (
+              <CustomerList
+                complaints={complaints}
+                changeOrder={changeOrder}
+                selectedId={selectedComplaints.id}
+              />
+            ) : (
+              <>No Customer Complaints</>
+            )}
           </CardContent>
         </Card>
         <Card className="md:col-span-2">
@@ -36,7 +87,9 @@ export default function CustomerInteractionPage() {
             </CardHeader>
             <CardContent>
               <TabsContent value="profile">
-                <CustomerProfile />
+                {selectedComplaints && (
+                  <CustomerProfile selectedComplaints={selectedComplaints} />
+                )}
               </TabsContent>
               <TabsContent value="chat">
                 <ChatInterface />

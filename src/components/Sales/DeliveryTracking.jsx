@@ -16,18 +16,26 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
-import axios from "axios";
 
 const deliveries = [
   {
-    id: "12345",
-    customer: "Alice Johnson",
-    eta: "11:00 AM",
+    id: 1,
+    customer: "John Doe",
+    eta: "2025-02-15T14:30:00Z",
+    status: "Pending",
+  },
+  {
+    id: 2,
+    customer: "Jane Smith",
+    eta: "2025-02-16T10:00:00Z",
     status: "In Progress",
   },
-  { id: "67890", customer: "Bob Smith", eta: "12:00 PM", status: "Delayed" },
-  { id: "54321", customer: "Charlie Brown", eta: "1:30 PM", status: "On Time" },
+  {
+    id: 3,
+    customer: "Alice Brown",
+    eta: "2025-02-17T08:45:00Z",
+    status: "Completed",
+  },
 ];
 
 export default function DeliveryTracking() {
@@ -108,10 +116,7 @@ export default function DeliveryTracking() {
                       </DialogHeader>
                       <CardContent>
                         <ul className="space-y-4">
-                          <li
-                            key={deliveries[0].id}
-                            className="bg-gray-50 p-3 rounded-md text-sm"
-                          >
+                          <li className="bg-gray-50 p-3 rounded-md text-sm">
                             <p>Customer: {deliveries[0].customer}</p>
                             <p>ETA: {deliveries[0].eta}</p>
                             <p>Status: {deliveries[0].status}</p>

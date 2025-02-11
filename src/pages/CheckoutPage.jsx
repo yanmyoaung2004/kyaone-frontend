@@ -18,6 +18,7 @@ import { ShoppingCart, Truck, CreditCard } from "lucide-react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import {
+  handleFailureToast,
   handleSuccessToast,
   handleWarningToast,
 } from "../helpers/ToastService";
@@ -85,6 +86,7 @@ export default function CheckoutPage() {
   const { cartItems, setCartItems } = useContext(DataContext);
   const [shipmentCost, setShipmentCost] = useState(10.0);
   const [total, setTotal] = useState(0.0);
+  const [cities, setCities] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState(initialLocation);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -103,6 +105,18 @@ export default function CheckoutPage() {
     0
   );
 
+  const fetchCity = async () => {
+    try {
+      const res = await axios.get("/api/cities");
+      setCities(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchCity();
+  }, []);
+
   const changeState = (value) => {
     setSelectedLocation(() => {
       const matchingLocation = locations.filter((location) => {
@@ -114,10 +128,13 @@ export default function CheckoutPage() {
   };
 
   const handleFormChange = (field, value) => {
+    console.log(field, value);
     setShipmentInfo((prev) => ({ ...prev, [field]: value }));
+    console.log(shipmentInfo);
   };
 
   const submit = async (e) => {
+    console.log("submit", e);
     e.preventDefault();
     if (currentUser === null) {
       handleWarningToast("You have to login first!");
@@ -127,6 +144,7 @@ export default function CheckoutPage() {
       handleWarningToast("You haven't selected any product to buy yet!");
       return;
     }
+
     if (
       shipmentInfo.name === "" ||
       shipmentInfo.address === "" ||
@@ -152,12 +170,14 @@ export default function CheckoutPage() {
         total: total,
         customer_id: currentUser.id,
       });
+
       if (res.status === 201) {
         setCartItems([]);
         handleSuccessToast("Order has been successfully!");
         navigate("/products");
       }
     } catch (error) {
+      console.log(error);
       handleFailureToast("Ordering failed: " + error.message);
     }
   };
@@ -331,9 +351,9 @@ export default function CheckoutPage() {
                             <SelectValue placeholder="Select City" />
                           </SelectTrigger>
                           <SelectContent>
-                            {selectedLocation.cities.map((city) => (
-                              <SelectItem key={city.city} value={city.city}>
-                                {city.city}
+                            {cities.map((city) => (
+                              <SelectItem key={city.id} value={city.id}>
+                                {city.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
