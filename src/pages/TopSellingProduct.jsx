@@ -42,13 +42,13 @@ const chartData = [
   {
     category: "Extensions",
     product: "Edge Extension",
-    orders: 1730,
+    orders: 500,
     color: "hsl(var(--chart-4))",
   },
   {
     category: "Others",
     product: "Other",
-    orders: 900,
+    orders: 700,
     color: "hsl(var(--chart-5))",
   },
 ];
@@ -66,10 +66,13 @@ export function TopSellingProduct() {
     .slice(0, 5);
   const totalOrders = topProducts.reduce((sum, item) => sum + item.orders, 0);
   const topProduct = topProducts[0];
-  const percentageChange = 5.2;
   const [isMiddleScreen, setIsMiddleScreen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isXsScreen, setIsXsScreen] = useState(false);
+  const currentMonth = chartData[chartData.length - 1];
+  const lastMonth = chartData[chartData.length - 2];
+  const percentageChange =
+    ((currentMonth.orders - lastMonth.orders) / lastMonth.orders) * 100;
   // const [chartData, setChartData] = useState([]);
 
   // const fetchData = async () => {
@@ -180,14 +183,14 @@ export function TopSellingProduct() {
             <p className="text-muted-foreground">Top Selling Product</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 font-medium">
+        <div className="flex gap-2 font-medium leading-none">
+          {percentageChange > 0 ? "Trending up " : "Trending down "}
+          {Math.abs(percentageChange).toFixed(1)}% this month{" "}
           <TrendingUp
             className={`h-4 w-4 ${
               percentageChange > 0 ? "text-green-500" : "text-red-500"
             }`}
           />
-          {percentageChange > 0 ? "Up" : "Down"} by{" "}
-          {Math.abs(percentageChange).toFixed(1)}% this month
         </div>
       </CardFooter>
     </Card>

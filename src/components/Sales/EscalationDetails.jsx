@@ -1,10 +1,16 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const escalationData = {
   id: 1,
@@ -16,28 +22,47 @@ const escalationData = {
   description:
     "Customer reports that their order #12345 was supposed to be delivered yesterday but hasn't arrived yet.",
   timeline: [
-    { date: "2023-06-01 10:00 AM", action: "Escalation created", user: "System" },
-    { date: "2023-06-01 10:15 AM", action: "Assigned to shipping department", user: "John Doe" },
-    { date: "2023-06-01 11:30 AM", action: "Contacted courier for status update", user: "Jane Smith" },
+    {
+      date: "2023-06-01 10:00 AM",
+      action: "Escalation created",
+      user: "System",
+    },
+    {
+      date: "2023-06-01 10:15 AM",
+      action: "Assigned to shipping department",
+      user: "John Doe",
+    },
+    {
+      date: "2023-06-01 11:30 AM",
+      action: "Contacted courier for status update",
+      user: "Jane Smith",
+    },
   ],
-}
+};
 
 export default function EscalationDetails() {
-  const [status, setStatus] = useState(escalationData.status)
-  const [newNote, setNewNote] = useState("")
+  const [status, setStatus] = useState(escalationData.status);
+  const [newNote, setNewNote] = useState("");
 
-  const handleAddNote = () => {
+  const handleSubmit = async () => {
     if (newNote.trim()) {
-      // In a real application, you would send this to your backend
-      console.log("Adding note:", newNote)
-      setNewNote("")
+      try {
+        const res = await axios.post("url", { newNote, status });
+
+        if (!res.ok) {
+          console.error("Error adding note");
+        }
+
+        console.log("Success");
+      } catch (err) {
+        console.error(err);
+      }
     }
-  }
+  };
 
   const handleStatusChange = (newStatus) => {
-    // In a real application, you would update this in your backend
-    setStatus(newStatus)
-  }
+    setStatus(newStatus);
+  };
 
   return (
     <div className="space-y-6">
@@ -81,7 +106,8 @@ export default function EscalationDetails() {
         <ul className="space-y-2">
           {escalationData.timeline.map((event, index) => (
             <li key={index} className="text-sm">
-              <span className="font-medium">{event.date}</span> - {event.action} by {event.user}
+              <span className="font-medium">{event.date}</span> - {event.action}{" "}
+              by {event.user}
             </li>
           ))}
         </ul>
@@ -94,9 +120,10 @@ export default function EscalationDetails() {
           onChange={(e) => setNewNote(e.target.value)}
           className="mb-2"
         />
-        <Button onClick={handleAddNote}>Add Note</Button>
+        <div className="flex justify-end">
+          <Button onClick={handleSubmit}>Submit</Button>
+        </div>
       </div>
     </div>
-  )
+  );
 }
-

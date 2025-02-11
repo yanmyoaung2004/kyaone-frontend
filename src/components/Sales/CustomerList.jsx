@@ -1,14 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const customers = [
-  { id: 1, name: "Alice Johnson", email: "alice@example.com", avatar: "/avatars/alice.jpg" },
-  { id: 2, name: "Bob Smith", email: "bob@example.com", avatar: "/avatars/bob.jpg" },
-  { id: 3, name: "Charlie Brown", email: "charlie@example.com", avatar: "/avatars/charlie.jpg" },
-  { id: 4, name: "Diana Prince", email: "diana@example.com", avatar: "/avatars/diana.jpg" },
-  { id: 5, name: "Ethan Hunt", email: "ethan@example.com", avatar: "/avatars/ethan.jpg" },
-]
 
-export default function CustomerList() {
+export default function CustomerList({ customers }) {
   return (
     <ul className="space-y-4">
       {customers.map((customer) => (

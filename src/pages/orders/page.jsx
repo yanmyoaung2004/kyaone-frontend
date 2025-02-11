@@ -17,6 +17,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import axios from "axios";
+import { useState } from "react";
+import { Search } from "lucide-react";
+import { X } from "lucide-react";
+import OrderDetails from "./OrderDetials";
 
 const orders = [
   {
@@ -57,6 +61,23 @@ const orders = [
 ];
 
 export default function OrdersPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchStatus, setSearchStatus] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleStatusChange = (value) => {
+    setSearchStatus(value);
+  };
+
+  console.log(searchStatus);
+
+  const handleClear = () => {
+    setSearchTerm("");
+  };
   // const createOrder = async () => {
   //   try {
   //     const res = await axios.post("url", data);
@@ -71,6 +92,24 @@ export default function OrdersPage() {
   //   }
   // };
 
+  const filterOrders = orders.filter((order) => {
+    const customerMatch = order.customer
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const orderIdMatch = order.id
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const statusMatch =
+      searchStatus === "all" ||
+      order.status.toLowerCase().includes(searchStatus.toLowerCase());
+
+    return searchStatus === ""
+      ? customerMatch || orderIdMatch
+      : (customerMatch || orderIdMatch) && statusMatch;
+  });
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
@@ -81,17 +120,38 @@ export default function OrdersPage() {
         <CardContent>
           <div className="flex justify-between items-center mb-4">
             <div className="flex space-x-2">
-              <Input placeholder="Search orders..." className="w-[300px]" />
-              <Select>
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={handleInputChange}
+                  className="pl-8 pr-10 py-4 rounded-md"
+                />
+                {searchTerm && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full"
+                    onClick={handleClear}
+                  >
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Clear search</span>
+                  </Button>
+                )}
+              </div>
+              <Select onValueChange={handleStatusChange}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  <SelectItem value="in progress">In Progress</SelectItem>
                   <SelectItem value="delivered">Delivered</SelectItem>
                   <SelectItem value="delayed">Delayed</SelectItem>
+                  <SelectItem value="on time">On Time</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -108,7 +168,7 @@ export default function OrdersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {orders.map((order) => (
+              {filterOrders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="font-medium">{order.id}</TableCell>
                   <TableCell>{order.customer}</TableCell>
@@ -132,12 +192,20 @@ export default function OrdersPage() {
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" className="mr-2">
                       Create Order
                     </Button>
-                    <Button variant="outline" size="sm" className="ml-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsModalOpen(!isModalOpen)}
+                    >
                       View Details
                     </Button>
+                    <OrderDetails
+                      isOpen={isModalOpen}
+                      onClose={() => setIsModalOpen(false)}
+                    />
                   </TableCell>
                 </TableRow>
               ))}

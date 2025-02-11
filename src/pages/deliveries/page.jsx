@@ -17,6 +17,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import QuickStats from "../../components/Sales/QuickStats";
+import { useEffect } from "react";
+import axios from "axios";
+import { useState } from "react";
+import { X } from "lucide-react";
+import { Search } from "lucide-react";
+import DeliveryTracking from "./DeliveryTracking";
 
 const deliveries = [
   {
@@ -40,7 +46,7 @@ const deliveries = [
     customer: "Charlie Brown",
     address: "789 Oak St, Village",
     eta: "1:30 PM",
-    status: "On Time",
+    status: "In Progress",
     driver: "Mike Johnson",
   },
   {
@@ -62,6 +68,59 @@ const deliveries = [
 ];
 
 export default function DeliveriesPage() {
+  // const [deliveries, setDeliveries] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchStatus, setSearchStatus] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleInputChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleStatusChange = (value) => {
+    setSearchStatus(value);
+  };
+
+  const handleClear = () => {
+    setSearchTerm("");
+  };
+
+  const filterDeliveries = deliveries.filter((delivery) => {
+    const customerMatch = delivery.customer
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const orderIdMatch = delivery.id
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+    const statusMatch =
+      searchStatus === "all" ||
+      delivery.status.toLowerCase().includes(searchStatus.toLowerCase());
+
+    return searchStatus === ""
+      ? customerMatch || orderIdMatch
+      : (customerMatch || orderIdMatch) && statusMatch;
+  });
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try{
+  //       const res = await axios.get("url");
+
+  //       if(!res.ok) {
+  //         console.error("Error fetching data");
+  //       }
+
+  //       const data = res.data;
+
+  //       setDeliveries(data);
+  //     } catch(err) {
+  //       console.error(err);
+  //     }
+  //   }
+  // }, []);
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Delivery Tracking</h1>
@@ -73,15 +132,35 @@ export default function DeliveriesPage() {
         <CardContent>
           <div className="flex justify-between items-center mb-4">
             <div className="flex space-x-2">
-              <Input placeholder="Search deliveries..." className="w-[300px]" />
-              <Select>
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchTerm}
+                  onChange={handleInputChange}
+                  className="pl-8 pr-10 py-4 rounded-md"
+                />
+                {searchTerm && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full"
+                    onClick={handleClear}
+                  >
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Clear search</span>
+                  </Button>
+                )}
+              </div>
+              <Select onValueChange={handleStatusChange}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
+                  <SelectItem value="in progress">In Progress</SelectItem>
                   <SelectItem value="delivered">Delivered</SelectItem>
                   <SelectItem value="delayed">Delayed</SelectItem>
                 </SelectContent>
@@ -102,7 +181,7 @@ export default function DeliveriesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {deliveries.map((delivery) => (
+              {filterDeliveries.map((delivery) => (
                 <TableRow key={delivery.id}>
                   <TableCell className="font-medium">{delivery.id}</TableCell>
                   <TableCell>{delivery.customer}</TableCell>
@@ -127,10 +206,19 @@ export default function DeliveriesPage() {
                   </TableCell>
                   <TableCell>{delivery.driver}</TableCell>
                   <TableCell className="text-right">
-                    <Button variant="outline" size="sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsOpen(!isOpen)}
+                    >
                       Track
                     </Button>
                   </TableCell>
+                  <DeliveryTracking
+                    isOpen={isOpen}
+                    onClose={() => setIsOpen(!isOpen)}
+                    delivery={delivery}
+                  />
                 </TableRow>
               ))}
             </TableBody>
