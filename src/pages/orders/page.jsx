@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
 import axios from "axios";
 import { useEffect, useState } from "react";
 import OrderDetailsModal from "../../components/OrderDetailModel";
@@ -48,24 +49,6 @@ export default function OrdersPage() {
     setOrders(fuzzySearch(search));
   }, [search]);
 
-  const filterOrders = orders.filter((order) => {
-    const customerMatch = order.customer
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
-    const orderIdMatch = order.id
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
-    const statusMatch =
-      searchStatus === "all" ||
-      order.status.toLowerCase().includes(searchStatus.toLowerCase());
-
-    return searchStatus === ""
-      ? customerMatch || orderIdMatch
-      : (customerMatch || orderIdMatch) && statusMatch;
-  });
-
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Order Management</h1>
@@ -95,7 +78,7 @@ export default function OrdersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filterOrders.map((order) => (
+              {orders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell className="font-medium">{order.id}</TableCell>
                   <TableCell>{order.customer}</TableCell>
@@ -126,10 +109,6 @@ export default function OrdersPage() {
                     >
                       View Details
                     </Button>
-                    <OrderDetails
-                      isOpen={isModalOpen}
-                      onClose={() => setIsModalOpen(false)}
-                    />
                   </TableCell>
                   <OrderDetailsModal
                     order={order}
