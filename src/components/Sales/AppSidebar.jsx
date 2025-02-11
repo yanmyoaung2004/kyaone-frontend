@@ -21,13 +21,13 @@ import { MessageSquareWarning } from "lucide-react";
 
 const navItems = [
   { icon: Home, label: "Dashboard", href: "/sales-dashboard" },
-  { icon: Package, label: "Orders", href: "/orders" },
-  { icon: Truck, label: "Deliveries", href: "/deliveries" },
-  { icon: MessageSquare, label: "Customer Interaction", href: "/customers" },
-  { icon: MessageSquareWarning, label: "Complaints", href: "/complaints" },
-  { icon: AlertTriangle, label: "Escalations", href: "/escalations" },
-  { icon: BarChart2, label: "Reports", href: "/reports" },
-  { icon: Settings, label: "Settings", href: "/settings" },
+  { icon: Package, label: "Orders", href: "/sales-orders" },
+  { icon: Truck, label: "Deliveries", href: "/sales-deliveries" },
+  { icon: MessageSquare, label: "Customer Interaction", href: "/sales-customers" },
+  { icon: MessageSquareWarning, label: "Complaints", href: "/sales-complaints" },
+  { icon: AlertTriangle, label: "Escalations", href: "/sales-escalations" },
+  { icon: BarChart2, label: "Reports", href: "/sales-reports" },
+  { icon: Settings, label: "Settings", href: "/sales-settings" },
 ];
 
 export function AppSidebar() {

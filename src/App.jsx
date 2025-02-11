@@ -12,16 +12,22 @@ import DataProvider from "./context/DataContext";
 import SaleHistory from "./pages/SaleHistory";
 import CustomerComplaint from "./pages/CustomerComplaint";
 import SaleRecord from "./pages/SaleRecord";
-import { TopSellingProduct } from "./pages/TopSellingProduct";
-import { SalePerformance } from "./pages/SalePerformance";
 import Sale from "./pages/Sale";
-import Layout from "./pages/layout";
+import SaleLayout from "./pages/layout";
+import WarehouseLayout from "./pages/Warehouse/Layout";
 import Order from "./pages/orders/page";
 import Delivery from "./pages/deliveries/page";
 import Escalations from "./pages/escalations/page";
 import Customer from "./pages/customers/page";
-import { Truck } from "./pages/Truck";
 import ComplaintsPage from "./pages/complaints/Page";
+import Page from "./pages/Warehouse/Page";
+import Orders from "./pages/Warehouse/orders/page";
+import Complaints from "./pages/Warehouse/complaints/page";
+import StockManagement from "./pages/Warehouse/stock/page";
+import Returns from "./pages/Warehouse/returns/page";
+import TruckManagement from "./pages/Warehouse/trucks/page";
+import Settings from "./pages/Warehouse/settings/page";
+import Products from "./components/Warehouse/products/Products";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -56,62 +62,118 @@ const App = () => {
     {
       path: "/sales-dashboard",
       element: (
-        <Layout>
+        <SaleLayout>
           <Sale />
-        </Layout>
+        </SaleLayout>
       ),
     },
     {
-      path: "/orders",
+      path: "/sales-orders",
       element: (
-        <Layout>
+        <SaleLayout>
           <Order />
-        </Layout>
+        </SaleLayout>
       ),
     },
     {
-      path: "/deliveries",
+      path: "/sales-deliveries",
       element: (
-        <Layout>
+        <SaleLayout>
           <Delivery />
-        </Layout>
+        </SaleLayout>
       ),
     },
     {
-      path: "/customers",
+      path: "/sales-customers",
       element: (
-        <Layout>
+        <SaleLayout>
           <Customer />
-        </Layout>
+        </SaleLayout>
       ),
     },
     {
-      path: "/escalations",
+      path: "/sales-escalations",
       element: (
-        <Layout>
+        <SaleLayout>
           <Escalations />
-        </Layout>
+        </SaleLayout>
       ),
     },
     {
-      path: "/reports",
-      element: <Layout></Layout>,
+      path: "/sales-reports",
+      element: <SaleLayout></SaleLayout>,
     },
     {
-      path: "/settings",
-      element: <Layout></Layout>,
+      path: "/sales-settings",
+      element: <SaleLayout></SaleLayout>,
     },
     {
-      path: "/complaints",
+      path: "/sales-complaints",
       element: (
-        <Layout>
+        <SaleLayout>
           <ComplaintsPage />
-        </Layout>
+        </SaleLayout>
       ),
     },
     {
-      path: "/test",
-      element: <Truck />,
+      path: "/warehouse-dashboard",
+      element: (
+        <WarehouseLayout>
+          <Page />
+        </WarehouseLayout>
+      ),
+    },
+    {
+      path: "/warehouse-orders",
+      element: (
+        <WarehouseLayout>
+          <Orders />
+        </WarehouseLayout>
+      ),
+    },
+    {
+      path: "/warehouse-complaints",
+      element: (
+        <WarehouseLayout>
+          <Complaints />
+        </WarehouseLayout>
+      ),
+    },
+    {
+      path: "/warehouse-stock",
+      element: (
+        <WarehouseLayout>
+          <StockManagement />
+        </WarehouseLayout>
+      ),
+    },
+    {
+      path: "/product-management",
+      element: (
+        <WarehouseLayout>
+          <Products />
+        </WarehouseLayout>
+      ),
+    },
+    {
+      path: "/warehouse-returns",
+      element: (
+        <WarehouseLayout>
+          <Returns />
+        </WarehouseLayout>
+      ),
+    },
+    {
+      path: "/warehouse-trucks",
+      element: (
+        <WarehouseLayout>
+          <TruckManagement />
+        </WarehouseLayout>
+      ),
+    },
+    {
+      path: "/warehouse-setting",
+      element: <WarehouseLayout>{/* <Settings /> */}</WarehouseLayout>,
     },
   ]);
 
