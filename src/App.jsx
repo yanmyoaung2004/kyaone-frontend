@@ -20,6 +20,7 @@ import Delivery from "./pages/deliveries/page";
 import Escalations from "./pages/escalations/page";
 import Customer from "./pages/customers/page";
 import { Truck } from "./pages/Truck";
+import DeliveryDetail from "./pages/deliveries/deliveryDetail";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -80,6 +81,14 @@ const App = () => {
       element: (
         <Layout>
           <Delivery />
+        </Layout>
+      ),
+    },
+    {
+      path: "/deliveries/detail/:truckId",
+      element: (
+        <Layout>
+          <DeliveryDetail />
         </Layout>
       ),
     },

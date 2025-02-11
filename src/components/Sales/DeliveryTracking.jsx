@@ -16,6 +16,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import axios from "axios";
 
 const deliveries = [
   {
@@ -106,14 +108,14 @@ export default function DeliveryTracking() {
                       </DialogHeader>
                       <CardContent>
                         <ul className="space-y-4">
-                            <li
-                              key={deliveries[0].id}
-                              className="bg-gray-50 p-3 rounded-md text-sm"
-                            >
-                              <p>Customer: {deliveries[0].customer}</p>
-                              <p>ETA: {deliveries[0].eta}</p>
-                              <p>Status: {deliveries[0].status}</p>
-                            </li>
+                          <li
+                            key={deliveries[0].id}
+                            className="bg-gray-50 p-3 rounded-md text-sm"
+                          >
+                            <p>Customer: {deliveries[0].customer}</p>
+                            <p>ETA: {deliveries[0].eta}</p>
+                            <p>Status: {deliveries[0].status}</p>
+                          </li>
                         </ul>
                       </CardContent>
                     </DialogContent>

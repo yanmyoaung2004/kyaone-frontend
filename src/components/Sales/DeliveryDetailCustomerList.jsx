@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState } from "react";
 
 const customers = [
   {
@@ -33,26 +34,35 @@ const customers = [
   },
 ];
 
-export default function CustomerList() {
+export default function DeliveryDetailCustomerList({
+  orders,
+  changeSelectedOrder,
+}) {
   return (
     <ul className="space-y-4">
-      {customers.map((customer) => (
+      {orders.map((order) => (
         <li
-          key={customer.id}
+          key={order.id}
           className="flex items-center space-x-4 cursor-pointer hover:bg-gray-100 p-2 rounded"
+          onClick={() => {
+            changeSelectedOrder(order.id);
+          }}
         >
           <Avatar>
-            <AvatarImage src={customer.avatar} alt={customer.name} />
+            <AvatarImage
+              src="https://img.freepik.com/premium-vector/avatar-icon0002_750950-43.jpg?semt=ais_hybrid"
+              alt={order.customer.user.name}
+            />
             <AvatarFallback>
-              {customer.name
+              {order.customer.user.name
                 .split(" ")
                 .map((n) => n[0])
                 .join("")}
             </AvatarFallback>
           </Avatar>
           <div>
-            <p className="font-medium">{customer.name}</p>
-            <p className="text-sm text-gray-500">{customer.email}</p>
+            <p className="font-medium">{order.customer.user.name}</p>
+            <p className="text-sm text-gray-500">{order.customer.user.email}</p>
           </div>
         </li>
       ))}

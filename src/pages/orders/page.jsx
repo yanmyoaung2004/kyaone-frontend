@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import OrderDetailsModal from "../../components/OrderDetailModel";
 
 // const orders = [
 //   {
@@ -59,6 +60,7 @@ import { useEffect, useState } from "react";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchOrder = async () => {
     try {
@@ -118,7 +120,7 @@ export default function OrdersPage() {
                 <TableHead>Delivery Address</TableHead>
                 <TableHead>ETA</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-center">Action</TableHead>
+                <TableHead className="text-right">Action</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -137,7 +139,7 @@ export default function OrdersPage() {
                           ? "bg-red-100 text-red-800"
                           : order.status === "On Time"
                           ? "bg-green-100 text-green-800"
-                          : order.status === "pending"
+                          : order.status === "Pending"
                           ? "bg-yellow-100 text-yellow-800"
                           : "bg-gray-100 text-gray-800"
                       }`}
@@ -145,14 +147,20 @@ export default function OrdersPage() {
                       {order.status}
                     </span>
                   </TableCell>
-                  <TableCell className="text-center">
-                    <Button variant="outline" size="sm">
-                      Create Order
-                    </Button>
-                    <Button variant="outline" size="sm" className="ml-2">
+                  <TableCell className="text-right">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsModalOpen(true)}
+                    >
                       View Details
                     </Button>
                   </TableCell>
+                  <OrderDetailsModal
+                    order={order}
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                  />
                 </TableRow>
               ))}
             </TableBody>
