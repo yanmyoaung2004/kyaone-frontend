@@ -1,18 +1,31 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import axios from "axios";
 
 export function RestockForm({ product, onRestock }) {
-  const [quantity, setQuantity] = useState(0)
+  const [quantity, setQuantity] = useState(0);
+
+  const restock = async () => {
+    try {
+      const res = await axios.post(`/api/warehouse/stocks/update`, {
+        productId: product.id,
+        quantity: quantity,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    onRestock(product.id, Number(quantity))
-    setQuantity(0)
-  }
+    e.preventDefault();
+    restock();
+    onRestock(product.id, Number(quantity));
+    setQuantity(0);
+  };
 
   return (
     <Card className="w-full lg:w-1/3">
@@ -33,7 +46,10 @@ export function RestockForm({ product, onRestock }) {
             </p>
           </div>
           <div>
-            <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="quantity"
+              className="block text-sm font-medium text-gray-700"
+            >
               Quantity to Add
             </label>
             <Input
@@ -49,6 +65,5 @@ export function RestockForm({ product, onRestock }) {
         </form>
       </CardContent>
     </Card>
-  )
+  );
 }
-

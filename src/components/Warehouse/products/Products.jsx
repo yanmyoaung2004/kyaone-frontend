@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,6 +15,7 @@ import { PlusCircle, Search } from "lucide-react";
 import ProductModal from "./ProductModal";
 import { PackageSearch } from "lucide-react";
 import { X } from "lucide-react";
+import axios from "axios";
 
 const initialProducts = [
   {
@@ -41,10 +42,23 @@ const initialProducts = [
 ];
 
 export default function Products() {
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const fetchProducts = async () => {
+    try {
+      const res = await axios.get(`/api/products`);
+      setProducts(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   const handleAddProduct = (newProduct) => {
     setProducts([...products, { ...newProduct, id: Date.now().toString() }]);
@@ -56,11 +70,18 @@ export default function Products() {
     );
   };
 
-  const handleDeleteProduct = (id) => {
-    setProducts(products.filter((p) => p.id !== id));
+  const handleDeleteProduct = async (id) => {
+    try {
+      const res = await axios.delete(`/api/products/${id} `);
+      if (res.status === 200) {
+        setProducts(products.filter((p) => p.id !== id));
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const filterProducts = initialProducts.filter((product) => {
+  const filterProducts = products.filter((product) => {
     const productNameMatch = product.name
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
@@ -112,6 +133,7 @@ export default function Products() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Quantity</TableHead>
@@ -120,34 +142,36 @@ export default function Products() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filterProducts.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell>{product.quantity}</TableCell>
-                <TableCell>${product.price.toFixed(2)}</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mr-2"
-                    onClick={() => {
-                      setEditingProduct(product);
-                      setIsModalOpen(true);
-                    }}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    size="sm"
-                    onClick={() => handleDeleteProduct(product.id)}
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {filterProducts.length > 0 &&
+              filterProducts.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell>PD-{product.id}</TableCell>
+                  <TableCell>{product.name}</TableCell>
+                  <TableCell>{product.category}</TableCell>
+                  <TableCell>{product.description}</TableCell>
+                  <TableCell>${product.price}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mr-2"
+                      onClick={() => {
+                        setEditingProduct(product);
+                        setIsModalOpen(true);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => handleDeleteProduct(product.id)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </div>

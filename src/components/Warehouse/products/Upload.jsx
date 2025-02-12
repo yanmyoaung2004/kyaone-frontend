@@ -33,6 +33,7 @@ const Upload = () => {
   };
 
   const handleSubmit = async (e) => {
+    console.log("submit");
     e.preventDefault();
     setLoading(true);
     if (savedMode) {
@@ -90,9 +91,7 @@ const Upload = () => {
         action=""
         method="post"
         encType="multipart/form-data"
-        onSubmit={(e) => {
-          handleSubmit(e);
-        }}
+        onSubmit={handleSubmit}
       >
         <label
           htmlFor="upload"
@@ -107,9 +106,7 @@ const Upload = () => {
           name="product_image"
           multiple
           accept="image/png, image/jpg, image/jpeg"
-          onChange={(e) => {
-            handleOnChange(e);
-          }}
+          onChange={(e) => handleOnChange(e)}
         />
         <div className="m-4 flex items-center justify-center gap-4 flex-wrap">
           {previewImages.length > 0 &&

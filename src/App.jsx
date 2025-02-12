@@ -1,9 +1,13 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
+
+// Pages
 import Login from "./pages/Login";
 import { ItemDetails } from "./pages/index";
-import DataProvider from "./context/DataContext";
-import { ThemeProvider } from "./components/theme-provider";
 import ProductDetail from "./pages/ProductDetail";
 import CheckoutPage from "./pages/CheckoutPage";
 import ProductList from "./pages/ProductList";
@@ -12,7 +16,8 @@ import SaleHistory from "./pages/SaleHistory";
 import CustomerComplaint from "./pages/CustomerComplaint";
 import SaleRecord from "./pages/SaleRecord";
 import Sale from "./pages/Sale";
-import SaleLayout from "./pages/layout";
+
+// Warehouse Pages
 import WarehouseLayout from "./pages/Warehouse/Layout";
 import Order from "./pages/orders/page";
 import Delivery from "./pages/deliveries/page";
@@ -23,15 +28,26 @@ import Page from "./pages/Warehouse/Page";
 import Orders from "./pages/Warehouse/orders/page";
 import Complaints from "./pages/Warehouse/complaints/page";
 import StockManagement from "./pages/Warehouse/stock/page";
+import Products from "./components/Warehouse/products/Products";
 import Returns from "./pages/Warehouse/returns/page";
 import TruckManagement from "./pages/Warehouse/trucks/page";
 import Settings from "./pages/Warehouse/settings/page";
-import Products from "./components/Warehouse/products/Products";
+
+// Auth
+import SaleProtectedRoute from "./auth/SaleProtectedRoute";
+import WarehouseProtectedRoute from "./auth/WarehouseProtectedRoute";
+
+// Context and Theme
+import DataProvider from "./context/DataContext";
+import { ThemeProvider } from "./components/theme-provider";
+
+// Sales Pages
+import SaleLayout from "./pages/layout";
 import DeliveryDetail from "./pages/deliveries/deliveryDetail";
-import Layout from "./pages/Warehouse/Layout";
 
 const App = () => {
   const router = createBrowserRouter([
+    // Public Routes
     {
       path: "/",
       element: <ItemDetails />,
@@ -64,149 +80,176 @@ const App = () => {
       path: "/customer-complaint",
       element: <CustomerComplaint />,
     },
+
+    // Protected Routes (Sales)
     {
       path: "/sales-record",
-      element: <SaleRecord />,
+      element: (
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <SaleRecord />
+          </SaleLayout>
+        </SaleProtectedRoute>
+      ),
     },
     {
       path: "/sales-dashboard",
       element: (
-        <SaleLayout>
-          <Sale />
-        </SaleLayout>
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <Sale />
+          </SaleLayout>
+        </SaleProtectedRoute>
       ),
     },
     {
       path: "/sales-orders",
       element: (
-        <SaleLayout>
-          <Order />
-        </SaleLayout>
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <Order />
+          </SaleLayout>
+        </SaleProtectedRoute>
       ),
     },
     {
       path: "/sales-deliveries",
       element: (
-        <SaleLayout>
-          <Delivery />
-        </SaleLayout>
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <Delivery />
+          </SaleLayout>
+        </SaleProtectedRoute>
       ),
     },
     {
-      path: "/deliveries/detail/:truckId",
+      path: "/sales-deliveries/detail/:truckId",
       element: (
-        <Layout>
-          <DeliveryDetail />
-        </Layout>
-      ),
-    },
-    {
-      path: "/deliveries/detail/:truckId",
-      element: (
-        <Layout>
-          <DeliveryDetail />
-        </Layout>
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <DeliveryDetail />
+          </SaleLayout>
+        </SaleProtectedRoute>
       ),
     },
     {
       path: "/sales-customers",
       element: (
-        <SaleLayout>
-          <Customer />
-        </SaleLayout>
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <Customer />
+          </SaleLayout>
+        </SaleProtectedRoute>
       ),
     },
     {
       path: "/sales-escalations",
       element: (
-        <SaleLayout>
-          <Escalations />
-        </SaleLayout>
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <Escalations />
+          </SaleLayout>
+        </SaleProtectedRoute>
       ),
-    },
-    {
-      path: "/sales-reports",
-      element: <SaleLayout></SaleLayout>,
-    },
-    {
-      path: "/sales-settings",
-      element: <SaleLayout></SaleLayout>,
     },
     {
       path: "/sales-complaints",
       element: (
-        <SaleLayout>
-          <ComplaintsPage />
-        </SaleLayout>
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <ComplaintsPage />
+          </SaleLayout>
+        </SaleProtectedRoute>
       ),
     },
+
+    // Protected Routes (Warehouse)
     {
       path: "/warehouse-dashboard",
       element: (
-        <WarehouseLayout>
-          <Page />
-        </WarehouseLayout>
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <Page />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
       ),
     },
     {
       path: "/warehouse-orders",
       element: (
-        <WarehouseLayout>
-          <Orders />
-        </WarehouseLayout>
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <Orders />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
       ),
     },
     {
       path: "/warehouse-complaints",
       element: (
-        <WarehouseLayout>
-          <Complaints />
-        </WarehouseLayout>
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <Complaints />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
       ),
     },
     {
       path: "/warehouse-stock",
       element: (
-        <WarehouseLayout>
-          <StockManagement />
-        </WarehouseLayout>
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <StockManagement />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
       ),
     },
     {
       path: "/product-management",
       element: (
-        <WarehouseLayout>
-          <Products />
-        </WarehouseLayout>
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <Products />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
       ),
     },
     {
       path: "/warehouse-returns",
       element: (
-        <WarehouseLayout>
-          <Returns />
-        </WarehouseLayout>
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <Returns />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
       ),
     },
     {
       path: "/warehouse-trucks",
       element: (
-        <WarehouseLayout>
-          <TruckManagement />
-        </WarehouseLayout>
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <TruckManagement />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
       ),
     },
     {
       path: "/warehouse-setting",
-      element: <WarehouseLayout>{/* <Settings /> */}</WarehouseLayout>,
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <Settings />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
+      ),
     },
-    ,
   ]);
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <DataProvider>
-        <RouterProvider router={router} />;
+        <RouterProvider router={router} />
       </DataProvider>
     </ThemeProvider>
   );

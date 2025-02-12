@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StockList } from "../../../components/Warehouse/stock/stock-list";
 import { RestockForm } from "../../../components/Warehouse/stock/restock-form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart2 } from "lucide-react";
+import axios from "axios";
 
 // Mock data for demonstration
 const mockStock = [
@@ -20,7 +21,6 @@ const mockStock = [
   {
     id: "P002",
     name: "Gadget B",
-    sku: "GB-002",
     currentStock: 15,
     reorderLevel: 30,
     lastRestockDate: "2023-05-20",
@@ -28,7 +28,6 @@ const mockStock = [
   {
     id: "P003",
     name: "Doohickey C",
-    sku: "DC-003",
     currentStock: 75,
     reorderLevel: 50,
     lastRestockDate: "2023-05-10",
@@ -36,14 +35,25 @@ const mockStock = [
 ];
 
 export default function StockManagement() {
-  const [stock, setStock] = useState(mockStock);
+  const [stock, setStock] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const filteredStock = stock.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.sku.toLowerCase().includes(searchTerm.toLowerCase())
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(`api/warehouse/stocks`);
+      setStock(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const filteredStock = stock.filter((item) =>
+    item.name.toLowerCase()?.includes(searchTerm.toLowerCase())
   );
 
   const handleRestock = (productId, quantity) => {

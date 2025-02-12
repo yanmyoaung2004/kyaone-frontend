@@ -1,4 +1,12 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatToSpecificDateTime } from "../../../helpers/services";
 
 export function StockList({ stock, onProductSelect }) {
   return (
@@ -7,7 +15,6 @@ export function StockList({ stock, onProductSelect }) {
         <TableHeader>
           <TableRow>
             <TableHead>Product Name</TableHead>
-            <TableHead>SKU</TableHead>
             <TableHead>Current Stock</TableHead>
             <TableHead>Reorder Level</TableHead>
             <TableHead>Last Restock Date</TableHead>
@@ -18,18 +25,20 @@ export function StockList({ stock, onProductSelect }) {
             <TableRow
               key={item.id}
               onClick={() => onProductSelect(item)}
-              className={`cursor-pointer ${item.currentStock < item.reorderLevel ? "bg-red-100" : ""}`}
+              className={`cursor-pointer ${
+                item.currentStock < item.reorderLevel ? "bg-red-100" : ""
+              }`}
             >
               <TableCell>{item.name}</TableCell>
-              <TableCell>{item.sku}</TableCell>
               <TableCell>{item.currentStock}</TableCell>
               <TableCell>{item.reorderLevel}</TableCell>
-              <TableCell>{item.lastRestockDate}</TableCell>
+              <TableCell>
+                {formatToSpecificDateTime(item.lastRestockDate)}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </div>
-  )
+  );
 }
-

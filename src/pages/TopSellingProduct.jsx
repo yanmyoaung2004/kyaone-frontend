@@ -18,44 +18,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import axios from "axios";
 
-const chartData = [
-  {
-    category: "Extensions",
-    product: "Chrome Extension",
-    orders: 2750,
-    color: "hsl(var(--chart-1))",
-  },
-  {
-    category: "Mobile",
-    product: "Redmi",
-    orders: 2000,
-    color: "hsl(var(--chart-2))",
-  },
-  {
-    category: "Laptop",
-    product: "ASUS",
-    orders: 1870,
-    color: "hsl(var(--chart-3))",
-  },
-  {
-    category: "Extensions",
-    product: "Edge Extension",
-    orders: 500,
-    color: "hsl(var(--chart-4))",
-  },
-  {
-    category: "Others",
-    product: "Other",
-    orders: 700,
-    color: "hsl(var(--chart-5))",
-  },
-];
-
-const categories = ["All", ...new Set(chartData.map((item) => item.category))];
-
-export function TopSellingProduct() {
+export function TopSellingProduct({ chartData }) {
+  const categories = [
+    "All",
+    ...new Set(chartData.map((item) => item.category)),
+  ];
   const [selectedCategory, setSelectedCategory] = useState("All");
   const filteredData =
     selectedCategory === "All"
@@ -73,22 +41,6 @@ export function TopSellingProduct() {
   const lastMonth = chartData[chartData.length - 2];
   const percentageChange =
     ((currentMonth.orders - lastMonth.orders) / lastMonth.orders) * 100;
-  // const [chartData, setChartData] = useState([]);
-
-  // const fetchData = async () => {
-  //   try{
-  //     const res = await axios.get("url");
-
-  //     if(!res.ok) {
-  //       console.error("Error fetching data");
-  //     };
-  //     const data = res.data;
-  //     setChartData(data);
-
-  //   } catch(err) {
-  //     console.error(err);
-  //   }
-  // }
 
   useEffect(() => {
     const screenSize = window.matchMedia("(max-width: 1300px)");

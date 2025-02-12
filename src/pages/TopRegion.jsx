@@ -17,15 +17,6 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-const chartData = [
-  { location: "Dagon", orders: 186 },
-  { location: "Pazundaung", orders: 305 },
-  { location: "Tamwe", orders: 237 },
-  { location: "Thingangyun", orders: 73 },
-  { location: "Yankin ", orders: 209 },
-  { location: "Seikkan", orders: 214 },
-];
-
 const chartConfig = {
   orders: {
     label: "Orders",
@@ -33,7 +24,7 @@ const chartConfig = {
   },
 };
 
-export function TopRegion() {
+export function TopRegion({ chartData }) {
   const currentMonth = chartData[chartData.length - 1];
   const previousMonth = chartData[chartData.length - 2];
   const percentageChange =

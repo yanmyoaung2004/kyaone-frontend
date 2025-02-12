@@ -17,15 +17,6 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-const chartData = [
-  { month: "January", orders: 1250 },
-  { month: "February", orders: 1420 },
-  { month: "March", orders: 1350 },
-  { month: "April", orders: 1610 },
-  { month: "May", orders: 1520 },
-  { month: "June", orders: 1000 },
-];
-
 const chartConfig = {
   orders: {
     label: "Orders",
@@ -33,31 +24,11 @@ const chartConfig = {
   },
 };
 
-export function SalePerformance() {
-  // const [chartData, setChartData] = useState([]);
+export function SalePerformance({ chartData }) {
   const currentMonth = chartData[chartData.length - 1];
   const previousMonth = chartData[chartData.length - 2];
   const percentageChange =
     ((currentMonth.orders - previousMonth.orders) / previousMonth.orders) * 100;
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-        // const res =  await axios.get("url");
-
-  //       if (!res.ok) {
-  //         console.error("Error fetching data...");
-  //       }
-  //       const data = res.data();
-
-  //       setChartData(data);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-
-  //     fetchData();
-  //   };
-  // }, []);
 
   return (
     <Card className="max-w-3xl w-full mx-auto flex flex-col justify-between">

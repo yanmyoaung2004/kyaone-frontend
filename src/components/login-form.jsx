@@ -37,6 +37,16 @@ export function LoginForm({ className, ...props }) {
       if (res.status === 200) {
         dispatch(signInSuccess(res.data.user));
         localStorage.setItem("token", JSON.stringify(res.data.token));
+
+        const roles = res.data.user.roles || [];
+
+        if (roles.some((role) => role.name === "warehouse")) {
+          navigate("/warehouse-dashboard");
+        }
+        if (roles.some((role) => role.name === "warehouse")) {
+          navigate("/sale-dashboard");
+        }
+
         navigate("/");
       }
     } catch (e) {

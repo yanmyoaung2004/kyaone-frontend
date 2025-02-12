@@ -12,25 +12,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import axios from "axios";
+import { formatToSpecificDateTime } from "../../helpers/services";
 
 export default function EscalationDetails({ selectedIssues }) {
   const [status, setStatus] = useState(selectedIssues.status);
-
-  console.log(selectedIssues);
-
-  function formatToSpecificDateTime(timestamp) {
-    const specificDate = new Date(timestamp);
-    const options = {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    };
-    return specificDate.toLocaleString("en-US", options);
-  }
 
   const changeStatus = async (status) => {
     try {
