@@ -24,7 +24,6 @@ import { Truck } from "lucide-react";
 import { Pencil } from "lucide-react";
 import { Trash2Icon } from "lucide-react";
 import axios from "axios";
-import { set } from "date-fns";
 
 // Mock data for demonstration
 const mockTrucks = [
@@ -77,8 +76,8 @@ export function TruckDashboard({
     axios
       .get("/api/trucks")
       .then((res) => {
-        setTrucks(res.data);
-        setFilterTrucks(res.data);
+        setTrucks(res.data.trucks);
+        setFilterTrucks(res.data.trucks);
         console.log(res.data);
       })
       .catch((error) => {

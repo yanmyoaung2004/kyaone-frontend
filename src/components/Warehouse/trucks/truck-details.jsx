@@ -79,13 +79,8 @@ export function TruckDetails({ truck, onClose }) {
           <TruckInfo truck={truck} />
           <AssignedDriver driver={driver} />
           <CurrentOrders orders={orders} />
-          <MaintenanceStatus />
+          {/* <MaintenanceStatus /> */}
         </div>
-        {/* <div className="flex justify-end space-x-2 mt-4">
-          <Button variant="outline">Assign Driver</Button>
-          <Button variant="outline">Mark as Available</Button>
-          <Button>View Full History</Button>
-        </div> */}
       </DialogContent>
     </Dialog>
   );
