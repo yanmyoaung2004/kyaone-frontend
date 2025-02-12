@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Hero from "../components/Hero";
 import axios from "axios";
 
 const ProductList = () => {
@@ -39,10 +38,12 @@ const ProductList = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/categories`);
-      setCategories(await res.json());
+      const { data } = await axios(`/api/categories`);
+      console.log(data);
+      setCategories(data);
     } catch (error) {
       setError("Failed to load products. Please try again.");
+      console.log(error);
     } finally {
       setLoading(false);
     }

@@ -3,13 +3,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Pages
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import { ItemDetails } from "./pages/index";
 import ProductDetail from "./pages/ProductDetail";
 import CheckoutPage from "./pages/CheckoutPage";
-import ProductList from "./pages/ProductList";
-import Register from "./pages/Register";
 import SaleHistory from "./pages/SaleHistory";
-import CustomerComplaint from "./pages/CustomerComplaint";
 import SaleRecord from "./pages/SaleRecord";
 import Sale from "./pages/Sale";
 
@@ -24,7 +22,6 @@ import Page from "./pages/Warehouse/Page";
 import Orders from "./pages/Warehouse/orders/page";
 import Complaints from "./pages/Warehouse/complaints/page";
 import StockManagement from "./pages/Warehouse/stock/page";
-import Products from "./components/Warehouse/products/Products";
 import Returns from "./pages/Warehouse/returns/page";
 import TruckManagement from "./pages/Warehouse/trucks/page";
 import Settings from "./pages/Warehouse/settings/page";
@@ -40,8 +37,27 @@ import { ThemeProvider } from "./components/theme-provider";
 // Sales Pages
 import SaleLayout from "./pages/layout";
 import DeliveryDetail from "./pages/deliveries/deliveryDetail";
+import Products from "./components/Warehouse/products/Products";
 import { Toaster } from "@/components/ui/toaster";
+import ProductList from "./pages/ProductList";
+import CustomerComplaint from "./pages/CustomerComplaint";
 
+// Protected Route Component
+const ProtectedRoute = ({ element, allowedRoles = [] }) => {
+  const currentUser = useSelector((state) => state.user.currentUser);
+  console.log(currentUser);
+
+  if (!currentUser) return <Navigate to="/login" />;
+  if (
+    !allowedRoles.some((role) =>
+      currentUser.roles.map((role) => role.name).includes(role)
+    )
+  )
+    return <Navigate to="/" />;
+  return element;
+};
+
+// App Component
 const App = () => {
   const router = createBrowserRouter([
     // Public Routes

@@ -28,7 +28,7 @@ export function RegisterForm({ className, ...props }) {
     }
     try {
       e.preventDefault();
-      const res = await axios.post("/api/register", {
+      const res = await axios.post("api/register", {
         name: name,
         email: email,
         password: password,

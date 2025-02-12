@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import {Dialog,DialogTrigger,DialogContent,DialogHeader,DialogFooter,DialogTitle,DialogDescription} from '@/components/ui/dialog';
 import {
   Table,
   TableBody,
@@ -20,8 +21,32 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import jsPDF from "jspdf";
+import { ComplaintForm } from "../ComplaintForm";
 
 const HistoryDetailCard = ({ invoice, isSmallScreen }) => {
+
+  const downloadInvoice = () => {
+    const doc = new jsPDF();
+    doc.text(`Invoice #${invoice.invoiceId}`, 10, 10);
+    doc.text(`Purchase Date: ${formatDate(invoice.buyDate)}`, 10, 20);
+    doc.text(`Status: ${invoice.status}`, 10, 30);
+    doc.text("Products:", 10, 40);
+
+    invoice.product.forEach((prod, index) => {
+      doc.text(
+        `${prod.productName} - Quantity: ${prod.quantity} - Price: $${parseFloat(prod.price).toFixed(2)}`,
+        10,
+        50 + index * 10
+      );
+    });
+
+    doc.text(`Shipping Fee: $10`, 10, 50 + invoice.product.length * 10);
+    doc.text(`Total Amount: $${invoice.totalAmount}`, 10, 60 + invoice.product.length * 10);
+
+    doc.save(`Invoice_${invoice.invoiceId}.pdf`);
+  }
+  
   function formatDate(dateString) {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -72,11 +97,16 @@ const HistoryDetailCard = ({ invoice, isSmallScreen }) => {
                       <TableCell>{prod.productName}</TableCell>
                       <TableCell>{prod.quantity}</TableCell>
                       <TableCell className="text-right">
-                        ${parseFloat(prod.totalAmount).toFixed(2)}
+                        $ {parseFloat(prod.price).toFixed(2)}
                       </TableCell>
                     </TableRow>
                   );
                 })}
+                <TableRow>
+                <TableCell></TableCell>
+                <TableCell></TableCell>
+                <TableCell className="text-end">Shipping Fee : $10</TableCell>
+                    </TableRow>
               </TableBody>
             </Table>
             <ScrollBar orientation="horizontal" />
@@ -86,9 +116,9 @@ const HistoryDetailCard = ({ invoice, isSmallScreen }) => {
         <div>
           <h3 className="font-semibold mb-2">Additional Information</h3>
           <ul className="list-disc list-inside text-sm text-muted-foreground">
-            <li>Warranty: 1 year limited warranty on all products</li>
-            <li>Return Policy: 30-day money-back guarantee</li>
-            <li>Support: 24/7 customer support available</li>
+            <li>Ordered Address: {invoice.location.state}, {invoice.location.city}, {invoice.location.address}</li>
+            {/* <li>Return Policy: 30-day money-back guarantee</li>
+            <li>Support: 24/7 customer support available</li> */}
           </ul>
         </div>
         <Separator />
@@ -106,8 +136,15 @@ const HistoryDetailCard = ({ invoice, isSmallScreen }) => {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
-        <Button variant="outline">Download Invoice</Button>
-        <Button>Contact Support</Button>
+        <Button variant="outline" onClick={downloadInvoice}>Download Invoice</Button> 
+        <Dialog>
+      <DialogTrigger asChild>
+        <Button>Complatin</Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px] p-0">
+        <ComplaintForm invoiceId={invoice.invoiceId}/>
+      </DialogContent>
+    </Dialog>
       </CardFooter>
     </Card>
   );

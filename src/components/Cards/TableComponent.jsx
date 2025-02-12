@@ -42,53 +42,6 @@ import CustomerLayout from "../../layout/CustomerLayout";
 import { PaginationForItems } from "../PaginationForItems";
 import { useSelector } from "react-redux";
 
-// const invoices = [
-//   {
-//     invoiceId: "INV001",
-//     product: [
-//       {
-//         productName: "Wireless Mouse",
-//         quantity: 2,
-//         totalAmount: 1299.99,
-//       },
-//       {
-//         productName: "Laptop",
-//         quantity: 1,
-//         totalAmount: 1000,
-//       },
-//     ],
-//     totalAmount: 2299.99,
-//     buyDate: new Date("2023-05-15"),
-//     status: "Paid",
-//   },
-//   {
-//     invoiceId: "INV002",
-//     product: [
-//       {
-//         productName: "Wireless Mouse",
-//         quantity: 3,
-//         totalAmount: 1299.99,
-//       },
-//     ],
-//     totalAmount: 49.99,
-//     buyDate: new Date("2023-05-18"),
-//     status: "Processing",
-//   },
-//   {
-//     invoiceId: "INV003",
-//     product: [
-//       {
-//         productName: "Laptop Pro X",
-//         quantity: 2,
-//         totalAmount: 399.99,
-//       },
-//     ],
-//     totalAmount: 399.99,
-//     buyDate: new Date("2023-05-20"),
-//     status: "Shipped",
-//   },
-// ];
-
 const TableComponent = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("");
@@ -124,7 +77,6 @@ const TableComponent = () => {
       setLoading(false);
     }
   };
-
   useEffect(() => {
     let filtered = invoices;
     if (searchTerm) {
@@ -140,7 +92,6 @@ const TableComponent = () => {
 
     setFilterInvoices(filtered);
   }, [searchTerm, category, invoices]);
-
   useEffect(() => {
     fetchData();
     const mediaQuery = window.matchMedia("(max-width: 500px)");
@@ -310,7 +261,7 @@ const TableComponent = () => {
             </ScrollArea>
           </div>
           <div className="flex justify-between items-center mt-4">
-            <PaginationForItems />
+            {/* <PaginationForItems /> */}
           </div>
         </CardContent>
       </Card>

@@ -13,31 +13,81 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import TruckForm from "../../../components/Warehouse/trucks/TruckForm";
 import DeleteConfirmation from "../../../components/Warehouse/trucks/DeleteConfirmation";
+import axios from "axios";
+import { useToast } from "@/hooks/use-toast";
+import { CheckCircleIcon } from "lucide-react";
 
 export default function TruckManagement() {
   const [selectedTruck, setSelectedTruck] = useState(null);
-  const [trucks, setTrucks] = useState([
-    { id: 1, licensePlate: "ABC-123", allowance: "free" },
-    { id: 2, licensePlate: "XYZ-789", allowance: "busy" },
-  ]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteTruck, setIsDeleteTruck] = useState(false);
+  const [deleteTruck, setDeleteTruck] = useState(null);
   const [isEditTruck, setIsEditTruck] = useState(false);
+  const [formData, setFormdata] = useState(null);
+  const { toast } = useToast();
+  const [refresh, setRefresh] = useState(false);
 
-  console.log(isDeleteTruck);
+  // console.log(isDeleteTruck);
+  const handleSuccessToast = (message) => {
+    toast({
+      title: (
+        <span>
+          <CheckCircleIcon className="h-6 w-6 mr-2 text-green-500 inline" />
+          {message}
+        </span>
+      ),
+      variant: "success",
+    });
+  };
 
-  const handleSubmit = async (truck) => {
-    try {
-      // const res = await axios.post("url", truck);
+  const handleSubmit = async (updateTruck) => {
+    // console.log(updateTruck);
 
-      // if (!res.ok) {
-      //   console.error("Error");
-      // }
-
-      console.log(truck);
-    } catch (err) {
-      console.error(err);
+    if (!isEditTruck) {
+      console.log("Adding new truck", updateTruck);
+      axios
+        .post("/api/trucks", {
+          status: updateTruck.allowance,
+          license_plate: updateTruck.licensePlate,
+        })
+        .then((response) => {
+          // setFormdata(response.data.truck);
+          handleSuccessToast("Truck added successfully");
+          setRefresh(!refresh);
+          // console.log(response.data);
+        })
+        .catch((error) => console.error(error));
+      return;
     }
+
+    axios
+      .put(`/api/trucks/${updateTruck.id}`, {
+        status: updateTruck.allowance,
+        license_plate: updateTruck.licensePlate,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          // setStatus(newStatus);
+          setFormdata(response.data.truck);
+          handleSuccessToast("Success");
+          setRefresh(!refresh);
+          // console.log(response.data);
+        }
+      })
+      .catch((error) => console.error(error));
+  };
+
+  const onSubmitDelete = async (truck) => {
+    let truckId = truck.id;
+    axios
+      .delete(`/api/trucks/${truckId}`)
+      .then((response) => {
+        if (response.status === 200) {
+          handleSuccessToast("Truck deleted successfully");
+          setRefresh(!refresh);
+        }
+      })
+      .catch((error) => console.error(error));
   };
 
   return (
@@ -49,14 +99,14 @@ export default function TruckManagement() {
             Truck and Driver Management Dashboard
           </CardTitle>
           <Button
-        onClick={() => {
-          setIsFormOpen(!isFormOpen);
-          setIsEditTruck(false);
-        }}
-        className="mb-4"
-      >
-        <PlusCircle className="mr-2 h-4 w-4" /> Add Truck
-      </Button>
+            onClick={() => {
+              setIsFormOpen(!isFormOpen);
+              setIsEditTruck(false);
+            }}
+            className="mb-4"
+          >
+            <PlusCircle className="mr-2 h-4 w-4" /> Add Truck
+          </Button>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="dashboard" className="space-y-4">
@@ -64,7 +114,7 @@ export default function TruckManagement() {
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="drivers">Drivers</TabsTrigger>
               <TabsTrigger value="tracking">Live Tracking</TabsTrigger>
-              <TabsTrigger value="orders">Order Assignment</TabsTrigger>
+              {/* <TabsTrigger value="orders">Order Assignment</TabsTrigger> */}
             </TabsList>
             <TabsContent value="dashboard" className="space-y-4">
               <TruckDashboard
@@ -72,7 +122,10 @@ export default function TruckManagement() {
                 setIsFormOpen={setIsFormOpen}
                 setIsEditTruck={setIsEditTruck}
                 isFormOpen={isFormOpen}
+                setFormdata={setFormdata}
                 setIsDeleteTruck={setIsDeleteTruck}
+                refresh={refresh}
+                setDeleteTruck={setDeleteTruck}
               />
               {selectedTruck && (
                 <TruckDetails
@@ -97,6 +150,7 @@ export default function TruckManagement() {
         <TruckForm
           isEditTruck={isEditTruck}
           onSubmit={handleSubmit}
+          formData={formData}
           onCancel={() => {
             setIsFormOpen(false);
             setIsEditTruck(false);
@@ -105,7 +159,7 @@ export default function TruckManagement() {
       )}
       {isDeleteTruck && (
         <DeleteConfirmation
-          onConfirm={() => console.log("Truck deleted...")}
+          onConfirm={(data) => onSubmitDelete(deleteTruck)}
           onCancel={() => setIsDeleteTruck(false)}
         />
       )}
