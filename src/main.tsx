@@ -4,11 +4,14 @@ import { PersistGate } from "redux-persist/integration/react";
 import "./index.css";
 import { store, persistor } from "./redux/store";
 import App from "./App";
+import axios from "axios";
+
+axios.defaults.baseURL = "http://kyone-backend.test";
 
 createRoot(document.getElementById("root")!).render(
-    <PersistGate persistor={persistor}>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </PersistGate>
+  <PersistGate persistor={persistor}>
+    <Provider store={store}>
+      <App />
+    </Provider>
+  </PersistGate>
 );

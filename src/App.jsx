@@ -1,5 +1,9 @@
 import React from "react";
-import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
 import { useSelector } from "react-redux";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -26,13 +30,20 @@ import Returns from "./pages/Warehouse/returns/page";
 import TruckManagement from "./pages/Warehouse/trucks/page";
 import Settings from "./pages/Warehouse/settings/page";
 import Products from "./components/Warehouse/products/Products";
+import { Toaster } from "@/components/ui/toaster";
 
 // Protected Route Component
 const ProtectedRoute = ({ element, allowedRoles = [] }) => {
   const currentUser = useSelector((state) => state.user.currentUser);
+  console.log(currentUser);
 
   if (!currentUser) return <Navigate to="/login" />;
-  if (!allowedRoles.some(role=>currentUser.roles.includes(role))) return <Navigate to="/" />;
+  if (
+    !allowedRoles.some((role) =>
+      currentUser.roles.map((role) => role.name).includes(role)
+    )
+  )
+    return <Navigate to="/" />;
   return element;
 };
 
@@ -60,82 +71,218 @@ const router = createBrowserRouter([
   },
   {
     path: "/checkout",
-    element: <ProtectedRoute element={<CheckoutPage />} allowedRoles={["customer"]} />,
+    element: (
+      <ProtectedRoute element={<CheckoutPage />} allowedRoles={["customer"]} />
+    ),
   },
   {
     path: "/history",
-    element: <ProtectedRoute element={<SaleHistory />} allowedRoles={["customer", "admin"]} />,
+    element: (
+      <ProtectedRoute
+        element={<SaleHistory />}
+        allowedRoles={["customer", "admin"]}
+      />
+    ),
   },
   {
     path: "/sales-record",
-    element: <ProtectedRoute element={<SaleRecord />} allowedRoles={["admin"]} />,
+    element: (
+      <ProtectedRoute element={<SaleRecord />} allowedRoles={["admin"]} />
+    ),
   },
   {
     path: "/sales-dashboard",
-    element: <ProtectedRoute element={<SaleLayout><Sale /></SaleLayout>} allowedRoles={["admin", "sales"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <SaleLayout>
+            <Sale />
+          </SaleLayout>
+        }
+        allowedRoles={["admin", "sales"]}
+      />
+    ),
   },
   {
     path: "/sales-orders",
-    element: <ProtectedRoute element={<SaleLayout><Order /></SaleLayout>} allowedRoles={["admin", "sales"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <SaleLayout>
+            <Order />
+          </SaleLayout>
+        }
+        allowedRoles={["admin", "sales"]}
+      />
+    ),
   },
   {
     path: "/sales-deliveries",
-    element: <ProtectedRoute element={<SaleLayout><Delivery /></SaleLayout>} allowedRoles={["admin", "delivery"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <SaleLayout>
+            <Delivery />
+          </SaleLayout>
+        }
+        allowedRoles={["admin", "delivery"]}
+      />
+    ),
   },
   {
     path: "/sales-customers",
-    element: <ProtectedRoute element={<SaleLayout><Customer /></SaleLayout>} allowedRoles={["admin", "support"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <SaleLayout>
+            <Customer />
+          </SaleLayout>
+        }
+        allowedRoles={["admin", "support"]}
+      />
+    ),
   },
   {
     path: "/sales-escalations",
-    element: <ProtectedRoute element={<SaleLayout><Escalations /></SaleLayout>} allowedRoles={["admin", "support"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <SaleLayout>
+            <Escalations />
+          </SaleLayout>
+        }
+        allowedRoles={["admin", "support"]}
+      />
+    ),
   },
   {
     path: "/sales-complaints",
-    element: <ProtectedRoute element={<SaleLayout><ComplaintsPage /></SaleLayout>} allowedRoles={["admin", "support"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <SaleLayout>
+            <ComplaintsPage />
+          </SaleLayout>
+        }
+        allowedRoles={["admin", "support"]}
+      />
+    ),
   },
   {
     path: "/warehouse-dashboard",
-    element: <ProtectedRoute element={<WarehouseLayout><Page /></WarehouseLayout>} allowedRoles={["admin", "warehouse"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <WarehouseLayout>
+            <Page />
+          </WarehouseLayout>
+        }
+        allowedRoles={["admin", "warehouse"]}
+      />
+    ),
   },
   {
     path: "/warehouse-orders",
-    element: <ProtectedRoute element={<WarehouseLayout><Orders /></WarehouseLayout>} allowedRoles={["admin", "warehouse"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <WarehouseLayout>
+            <Orders />
+          </WarehouseLayout>
+        }
+        allowedRoles={["admin", "warehouse"]}
+      />
+    ),
   },
   {
     path: "/warehouse-complaints",
-    element: <ProtectedRoute element={<WarehouseLayout><Complaints /></WarehouseLayout>} allowedRoles={["admin", "warehouse", "support"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <WarehouseLayout>
+            <Complaints />
+          </WarehouseLayout>
+        }
+        allowedRoles={["admin", "warehouse", "support"]}
+      />
+    ),
   },
   {
     path: "/warehouse-stock",
-    element: <ProtectedRoute element={<WarehouseLayout><StockManagement /></WarehouseLayout>} allowedRoles={["admin", "warehouse"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <WarehouseLayout>
+            <StockManagement />
+          </WarehouseLayout>
+        }
+        allowedRoles={["admin", "warehouse"]}
+      />
+    ),
   },
   {
     path: "/product-management",
-    element: <ProtectedRoute element={<WarehouseLayout><Products /></WarehouseLayout>} allowedRoles={["admin", "warehouse"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <WarehouseLayout>
+            <Products />
+          </WarehouseLayout>
+        }
+        allowedRoles={["admin", "warehouse"]}
+      />
+    ),
   },
   {
     path: "/warehouse-returns",
-    element: <ProtectedRoute element={<WarehouseLayout><Returns /></WarehouseLayout>} allowedRoles={["admin", "warehouse"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <WarehouseLayout>
+            <Returns />
+          </WarehouseLayout>
+        }
+        allowedRoles={["admin", "warehouse"]}
+      />
+    ),
   },
   {
     path: "/warehouse-trucks",
-    element: <ProtectedRoute element={<WarehouseLayout><TruckManagement /></WarehouseLayout>} allowedRoles={["admin", "warehouse", "driver"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <WarehouseLayout>
+            <TruckManagement />
+          </WarehouseLayout>
+        }
+        allowedRoles={["admin", "warehouse", "driver"]}
+      />
+    ),
   },
   {
     path: "/warehouse-setting",
-    element: <ProtectedRoute element={<WarehouseLayout><Settings /></WarehouseLayout>} allowedRoles={["admin"]} />,
+    element: (
+      <ProtectedRoute
+        element={
+          <WarehouseLayout>
+            <Settings />
+          </WarehouseLayout>
+        }
+        allowedRoles={["admin"]}
+      />
+    ),
   },
 ]);
 
 // App Component
 const App = () => {
   console.log(useSelector((state) => state.user.currentUser));
-  
+
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <DataProvider>
         <RouterProvider router={router} />
+        <Toaster />
       </DataProvider>
     </ThemeProvider>
   );

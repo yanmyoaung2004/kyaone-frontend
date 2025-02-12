@@ -23,6 +23,7 @@ import { Truck } from "lucide-react";
 import { Pencil } from "lucide-react";
 import { Trash2Icon } from "lucide-react";
 import axios from "axios";
+import { set } from "date-fns";
 
 // Mock data for demonstration
 const mockTrucks = [
@@ -60,6 +61,8 @@ export function TruckDashboard({
   isFormOpen,
   setIsDeleteTruck,
   setFormdata,
+  setDeleteTruck,
+  refresh,
 }) {
   const [trucks, setTrucks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -91,17 +94,23 @@ export function TruckDashboard({
     if (searchTerm) {
       filtered = filtered.filter(
         (truck) =>
-          (truck.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (truck.license_plate
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
             (truck.driver &&
               truck.driver.toLowerCase().includes(searchTerm.toLowerCase()))) &&
           (statusFilter === "All" || truck.status === statusFilter)
       );
+      // console.log(filtered);
+      setFilterTrucks(filtered);
+    } else {
+      setFilterTrucks(trucks);
     }
   }, [searchTerm, trucks]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [refresh]);
 
   const totalTrucks = trucks.length;
   const freeTrucks = trucks.filter((truck) => truck.status === "free").length;
@@ -164,9 +173,8 @@ export function TruckDashboard({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="All">All Statuses</SelectItem>
-            <SelectItem value="Free">Free</SelectItem>
-            <SelectItem value="Busy">Busy</SelectItem>
-            <SelectItem value="Maintenance">Maintenance</SelectItem>
+            <SelectItem value="free">Free</SelectItem>
+            <SelectItem value="busy">Busy</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -208,7 +216,7 @@ export function TruckDashboard({
                 </TableCell>
                 <TableCell>{truck.driver || "N/A"}</TableCell>
                 <TableCell>
-                  {truck.assigned_orders.length > 0
+                  {truck.assigned_orders?.length > 0
                     ? truck.assigned_orders
                         .map((order) => `ORD-${order.order_id}`)
                         .join(", ")
@@ -233,6 +241,7 @@ export function TruckDashboard({
                       onClick={(e) => {
                         e.stopPropagation();
                         setIsDeleteTruck(true);
+                        setDeleteTruck(truck);
                       }}
                     />
                   </div>
@@ -241,6 +250,19 @@ export function TruckDashboard({
             ))}
           </TableBody>
         </Table>
+        <div className="flex items-center justify-end space-x-2 p-4">
+          {/* <div className="flex-1 text-sm text-muted-foreground">
+          {0} of {5} row(s) selected.
+        </div> */}
+          <div className="space-x-2">
+            <Button variant="outline" size="sm">
+              Previous
+            </Button>
+            <Button variant="outline" size="sm">
+              Next
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

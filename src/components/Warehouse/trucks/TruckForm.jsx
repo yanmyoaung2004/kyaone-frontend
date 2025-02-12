@@ -13,14 +13,23 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import axios from "axios";
 
-export default function TruckForm({ onSubmit, onCancel, isEditTruck,formData }) {
-  const [licensePlate, setLicensePlate] = useState(formData.license_plate ?? "");
+export default function TruckForm({
+  onSubmit,
+  onCancel,
+  isEditTruck,
+  formData,
+}) {
+  const [licensePlate, setLicensePlate] = useState(formData.license_plate);
   const [allowance, setAllowance] = useState(formData.status ?? "free");
-  console.log("form data",formData);
+
+  useEffect(() => {
+    setLicensePlate(formData.license_plate);
+    setAllowance(formData.status ?? "free");
+  }, [formData]);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ id: formData.id,licensePlate, allowance });
+    onSubmit({ id: formData.id, licensePlate, allowance });
     setAllowance("free");
     setLicensePlate("");
   };
@@ -28,7 +37,9 @@ export default function TruckForm({ onSubmit, onCancel, isEditTruck,formData }) 
     <Dialog open={true} onOpenChange={onCancel}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{isEditTruck ? "Edit Truck" : "Add New Truck"}</DialogTitle>
+          <DialogTitle>
+            {isEditTruck ? "Edit Truck" : "Add New Truck"}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleFormSubmit} className="space-y-4">
           <div className="space-y-2">

@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Hero from "../components/Hero";
+import axios from "axios";
 
 const ProductList = () => {
   const { cartItems, addToCart } = useContext(DataContext);
@@ -38,13 +39,12 @@ const ProductList = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/categories`);
-      
-      setCategories(await res.json());
+      const { data } = await axios(`/api/categories`);
+
+      setCategories(data);
     } catch (error) {
       setError("Failed to load products. Please try again.");
       console.log(error);
-      
     } finally {
       setLoading(false);
     }
@@ -54,22 +54,19 @@ const ProductList = () => {
     fetchCategory();
   }, []);
 
-  const fetchProducts = useCallback(
-    async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await fetch(`/api/stocks`);
-      
-        setItemList(await res.json());
-      } catch (error) {
-        setError("Failed to load products. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [searchQuery, category]
-  );
+  const fetchProducts = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios(`/api/stocks`);
+
+      setItemList(await res.json());
+    } catch (error) {
+      setError("Failed to load products. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [searchQuery, category]);
 
   useEffect(() => {
     const delaySearch = setTimeout(() => {
