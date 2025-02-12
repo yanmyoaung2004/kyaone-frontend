@@ -4,6 +4,8 @@ import { useState } from "react";
 import { ComplaintList } from "../../../components/Warehouse/complaints/complaint-list";
 import { ComplaintDetails } from "../../../components/Warehouse/complaints/complaint-details";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+
 import {
   Select,
   SelectContent,
@@ -15,12 +17,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { useEffect } from "react";
 import axios from "../../../api";
+import { CheckCircleIcon } from "lucide-react";
 
 export default function Complaints() {
   const [complaints, setComplaints] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const { toast } = useToast();
+
   // console.log(statusFilter, com);
 
   useEffect(() => {
@@ -34,7 +40,7 @@ export default function Complaints() {
     };
 
     fetchComplaints();
-  }, []);
+  }, [refresh]);
 
   const filteredComplaints = complaints.filter(
     (complaint) =>
@@ -46,12 +52,30 @@ export default function Complaints() {
       (statusFilter === "All" || complaint.status === statusFilter)
   );
 
-  const handleComplaintClick = (complaint) => {
+  const handleComplaintClick = async (complaint) => {
     setSelectedComplaint(complaint);
   };
 
-  const handleStatusUpdate = (complaintId, newStatus) => {
+  const handleStatusUpdate = async (complaintId, newStatus) => {
     console.log(complaintId, newStatus);
+
+    try {
+      await axios.patch("/complaints/" + complaintId, {
+        status: newStatus,
+      });
+      setRefresh(!refresh);
+      toast({
+        title: (
+          <span>
+            <CheckCircleIcon className="h-6 w-6 mr-2 text-green-500 inline" />
+            "Complaint status updated"
+          </span>
+        ),
+        variant: "success",
+      });
+    } catch (error) {
+      console.error("Error updating complaint status:", error);
+    }
     setComplaints(
       complaints.map((complaint) =>
         complaint.id === complaintId

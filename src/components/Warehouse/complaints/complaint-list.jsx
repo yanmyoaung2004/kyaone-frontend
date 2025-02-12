@@ -30,7 +30,23 @@ export function ComplaintList({ complaints, onComplaintClick }) {
               <TableCell>{complaint.id}</TableCell>
               <TableCell>{complaint.order_id}</TableCell>
               <TableCell>{complaint.customer_name}</TableCell>
-              <TableCell>{complaint.type}</TableCell>
+              <TableCell>
+                <span
+                  className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                    complaint.type === "delayed"
+                      ? "bg-blue-100 text-blue-800"
+                      : complaint.type === "faulty"
+                      ? "bg-purple-100 text-purple-800"
+                      : complaint.type === "wrong"
+                      ? "bg-orange-100 text-orange-800"
+                      : complaint.type === "missing"
+                      ? "bg-pink-100 text-pink-800"
+                      : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {complaint.type}
+                </span>
+              </TableCell>
               <TableCell>
                 <span
                   className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
@@ -58,9 +74,9 @@ export function ComplaintList({ complaints, onComplaintClick }) {
       </Table>
 
       <div className="flex items-center justify-end space-x-2 p-4">
-        <div className="flex-1 text-sm text-muted-foreground">
+        {/* <div className="flex-1 text-sm text-muted-foreground">
           {0} of {5} row(s) selected.
-        </div>
+        </div> */}
         <div className="space-x-2">
           <Button variant="outline" size="sm">
             Previous

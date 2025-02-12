@@ -28,6 +28,7 @@ import Returns from "./pages/Warehouse/returns/page";
 import TruckManagement from "./pages/Warehouse/trucks/page";
 import Settings from "./pages/Warehouse/settings/page";
 import Products from "./components/Warehouse/products/Products";
+import { Toaster } from "@/components/ui/toaster";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -181,6 +182,7 @@ const App = () => {
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <DataProvider>
         <RouterProvider router={router} />;
+        <Toaster />
       </DataProvider>
     </ThemeProvider>
   );
