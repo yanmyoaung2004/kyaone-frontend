@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function OrderDetails({ order }) {
   return (
@@ -22,10 +22,12 @@ export function OrderDetails({ order }) {
             <strong>Delivery Address:</strong> {order.address}
           </p>
           <p>
-            <strong>Assigned Truck:</strong> {order.assignedTruck || "Not Assigned"}
+            <strong>Assigned Truck:</strong>{" "}
+            {order.assignedTruck || "Not Assigned"}
           </p>
           <p>
-            <strong>Estimated Delivery:</strong> {order.estimatedDelivery || "Not Scheduled"}
+            <strong>Estimated Delivery:</strong>{" "}
+            {order.estimatedDelivery || "Not Scheduled"}
           </p>
         </div>
         <div className="mt-4 space-x-2">
@@ -35,6 +37,5 @@ export function OrderDetails({ order }) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-

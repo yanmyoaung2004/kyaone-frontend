@@ -44,6 +44,8 @@ import { ThemeProvider } from "./components/theme-provider";
 // Sales Pages
 import SaleLayout from "./pages/layout";
 import DeliveryDetail from "./pages/deliveries/deliveryDetail";
+import Products from "./components/Warehouse/products/Products";
+import { Toaster } from "@/components/ui/toaster";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -250,6 +252,7 @@ const App = () => {
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <DataProvider>
         <RouterProvider router={router} />
+        <Toaster />
       </DataProvider>
     </ThemeProvider>
   );
