@@ -1,31 +1,58 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import axios from "axios"
-import toast from "react-hot-toast"
-import { handleSuccessToast } from "../../../helpers/ToastService"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { handleSuccessToast } from "../../../helpers/ToastService";
+import { useEffect } from "react";
 
 export function TruckDetails({ truck, onClose }) {
-  const [status, setStatus] = useState(truck.status)
+  const [status, setStatus] = useState(truck.status);
+  const [orders, setOrders] = useState([]);
+  const [driver, setDriver] = useState([]);
+
+  useEffect(() => {
+    axios.get(`/api/truck/${truck.id}/orders`).then((response) => {
+      if (response.status === 200) {
+        // setStatus(response.data.status);
+        setOrders(response.data.orders);
+        setDriver(response.data.driver);
+        console.log(response.data);
+      }
+    });
+  }, []);
 
   const handleStatusChange = (newStatus) => {
-    setStatus(newStatus)
-    axios.put(`/api/trucks/${truck.id}`, {
-      status: newStatus
-  })
-  .then(response =>{
-    if(response.status === 200){
-    setStatus(newStatus)
-    handleSuccessToast("Success");
-    console.log("Success");
-    
-  } })
-  .catch(error => console.error(error.response.data));  
-  }
+    setStatus(newStatus);
+    axios
+      .put(`/api/trucks/${truck.id}`, {
+        status: newStatus,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          setStatus(newStatus);
+          handleSuccessToast("Success");
+          console.log("Success");
+        }
+      })
+      .catch((error) => console.error(error.response.data));
+  };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -36,36 +63,38 @@ export function TruckDetails({ truck, onClose }) {
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="status" className="text-right">
-              Status
+              Status :
             </Label>
-            <Select value={status} onValueChange={handleStatusChange}>
-              <SelectTrigger id="status" className="col-span-3">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="free">Free</SelectItem>
-                <SelectItem value="busy">Busy</SelectItem>
-                <SelectItem value="maintenance">Maintenance</SelectItem>
-              </SelectContent>
-            </Select>
+            <div>
+              <span
+                className={`flex justify-center items-center rounded-full py-1 text-xs font-medium ${
+                  truck.status === "free"
+                    ? "bg-green-100 text-green-800"
+                    : truck.status === "busy"
+                    ? "bg-yellow-100 text-yellow-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {truck.status}
+              </span>
+            </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Driver</Label>
-            <div className="col-span-3">{truck.driver || "N/A"}</div>
+            <Label className="text-right">Driver : </Label>
+            <div className="col-span-3">{driver.nrc_number || "N/A"}</div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Current Orders</Label>
-            <div className="col-span-3">                {truck.assigned_orders.length > 0
-  ? truck.assigned_orders.map(order => `ORD-${order.order_id}`).join(", ")
-  : "None"}</div>
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Last Used</Label>
-            <div className="col-span-3">{truck.lastUsed}</div>
+            <Label className="text-right">Current Orders : </Label>
+            <div className="col-span-3">
+              {" "}
+              {orders?.length > 0
+                ? orders.map((order) => `ORD-${order.id}`).join(", ")
+                : "None"}
+            </div>
           </div>
         </div>
-        <div className="flex justify-between">
-          <Button onClick={onClose}>Close</Button>
+        <div className="flex justify-end">
+          {/* <Button onClick={onClose}>Close</Button> */}
           <Dialog>
             <DialogTrigger asChild>
               <Button>View History</Button>
@@ -83,6 +112,5 @@ export function TruckDetails({ truck, onClose }) {
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-

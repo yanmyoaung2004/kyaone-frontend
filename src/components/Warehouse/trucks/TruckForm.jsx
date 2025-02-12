@@ -19,17 +19,17 @@ export default function TruckForm({
   isEditTruck,
   formData,
 }) {
-  const [licensePlate, setLicensePlate] = useState(formData.license_plate);
-  const [allowance, setAllowance] = useState(formData.status ?? "free");
+  const [licensePlate, setLicensePlate] = useState(formData?.license_plate);
+  const [allowance, setAllowance] = useState(formData?.status ?? "free");
 
   useEffect(() => {
-    setLicensePlate(formData.license_plate);
-    setAllowance(formData.status ?? "free");
+    setLicensePlate(formData?.license_plate ?? "");
+    setAllowance(formData?.status ?? "free");
   }, [formData]);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ id: formData.id, licensePlate, allowance });
+    onSubmit({ id: formData?.id, licensePlate, allowance });
     setAllowance("free");
     setLicensePlate("");
   };

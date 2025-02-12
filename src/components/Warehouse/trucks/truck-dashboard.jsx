@@ -185,9 +185,8 @@ export function TruckDashboard({
             <TableRow>
               <TableHead>Truck Number</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Assigned Driver</TableHead>
-              <TableHead>Current Orders</TableHead>
-              <TableHead>Last Used Date</TableHead>
+              {/* <TableHead>Assigned Driver</TableHead> */}
+              {/* <TableHead>Current Orders</TableHead> */}
               <TableHead className="text-center">Edit</TableHead>
             </TableRow>
           </TableHeader>
@@ -214,20 +213,19 @@ export function TruckDashboard({
                     {truck.status}
                   </span>
                 </TableCell>
-                <TableCell>{truck.driver || "N/A"}</TableCell>
-                <TableCell>
+                {/* <TableCell>{truck.driver || "N/A"}</TableCell> */}
+                {/* <TableCell>
                   {truck.assigned_orders?.length > 0
                     ? truck.assigned_orders
                         .map((order) => `ORD-${order.order_id}`)
                         .join(", ")
                     : "None"}
-                </TableCell>
-                <TableCell>{truck.lastUsed}</TableCell>
+                </TableCell> */}
                 <TableCell>
-                  <div className="flex items-center justify-evenly gap-1">
+                  <div className="flex items-center justify-center gap-1">
                     <Pencil
                       size={24}
-                      className="hover:bg-gray-300 rounded-md p-1"
+                      className="hover:bg-gray-300 text-gray-500 rounded-md p-1"
                       onClick={(e) => {
                         e.stopPropagation();
                         setIsFormOpen(!isFormOpen);

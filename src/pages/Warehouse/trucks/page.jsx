@@ -43,6 +43,23 @@ export default function TruckManagement() {
   const handleSubmit = async (updateTruck) => {
     // console.log(updateTruck);
 
+    if (!isEditTruck) {
+      console.log("Adding new truck", updateTruck);
+      axios
+        .post("/api/trucks", {
+          status: updateTruck.allowance,
+          license_plate: updateTruck.licensePlate,
+        })
+        .then((response) => {
+          // setFormdata(response.data.truck);
+          handleSuccessToast("Truck added successfully");
+          setRefresh(!refresh);
+          // console.log(response.data);
+        })
+        .catch((error) => console.error(error));
+      return;
+    }
+
     axios
       .put(`/api/trucks/${updateTruck.id}`, {
         status: updateTruck.allowance,
