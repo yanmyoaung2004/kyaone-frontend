@@ -22,13 +22,15 @@ export function RegisterForm({ className, ...props }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  axios.post("api/register", {});
+
   let register = async (e) => {
     if (name === "" || email === "" || password === "") {
       handleWarningToast("Please fill all the fields!");
     }
     try {
       e.preventDefault();
-      const res = await axios.post("/api/register", {
+      const res = await axios.post("api/register", {
         name: name,
         email: email,
         password: password,
