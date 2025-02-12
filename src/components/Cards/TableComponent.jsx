@@ -232,78 +232,80 @@ const TableComponent = () => {
                 isSmallScreen ? "w-full" : "max-w-6xl"
               } whitespace-nowrap rounded-md border`}
             >
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">Invoice ID</TableHead>
-                    <TableHead>Product Name</TableHead>
-                    <TableHead>Buy Date</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Total Amount</TableHead>
-                    <TableHead className="w-[100px] text-center">
-                      Details
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filterInvoices.length > 0 &&
-                    filterInvoices.map((invoice) => (
-                      <TableRow key={invoice.invoiceId}>
-                        <TableCell className="font-medium">
-                          {invoice.invoiceId}
-                        </TableCell>
-                        <TableCell>
-                          {invoice.product.map((prod) => (
-                            <div key={prod.productName}>
-                              {prod.productName},
-                            </div>
-                          ))}
-                        </TableCell>
-                        <TableCell>
-                          {format(new Date(invoice.buyDate), "MMM d, yyyy")}
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant={
-                              invoice.status === "Paid"
-                                ? "success"
-                                : invoice.status === "Processing"
-                                ? "warning"
-                                : "default"
-                            }
-                          >
-                            {invoice.status}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          ${invoice.totalAmount}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setSelectedInvoice(invoice)}
-                              >
-                                <FileText className="w-4 h-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-4xl">
-                              <DialogHeader>
-                                <DialogTitle>Invoice Details</DialogTitle>
-                              </DialogHeader>
-                              <TableDetailComponent
-                                isSmallScreen={isSmallScreen}
-                                invoice={selectedInvoice}
-                              />
-                            </DialogContent>
-                          </Dialog>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
+              <div className="rounded-md border flex-grow overflow-x-auto bg-white">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[100px]">Invoice ID</TableHead>
+                      <TableHead>Product Name</TableHead>
+                      <TableHead>Buy Date</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Total Amount</TableHead>
+                      <TableHead className="w-[100px] text-center">
+                        Details
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filterInvoices.length > 0 &&
+                      filterInvoices.map((invoice) => (
+                        <TableRow key={invoice.invoiceId}>
+                          <TableCell className="font-medium">
+                            {invoice.invoiceId}
+                          </TableCell>
+                          <TableCell>
+                            {invoice.product.map((prod) => (
+                              <div key={prod.productName}>
+                                {prod.productName},
+                              </div>
+                            ))}
+                          </TableCell>
+                          <TableCell>
+                            {format(new Date(invoice.buyDate), "MMM d, yyyy")}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                invoice.status === "Paid"
+                                  ? "success"
+                                  : invoice.status === "Processing"
+                                  ? "warning"
+                                  : "default"
+                              }
+                            >
+                              {invoice.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            ${invoice.totalAmount}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setSelectedInvoice(invoice)}
+                                >
+                                  <FileText className="w-4 h-4" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-4xl">
+                                <DialogHeader>
+                                  <DialogTitle>Invoice Details</DialogTitle>
+                                </DialogHeader>
+                                <TableDetailComponent
+                                  isSmallScreen={isSmallScreen}
+                                  invoice={selectedInvoice}
+                                />
+                              </DialogContent>
+                            </Dialog>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </div>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
           </div>

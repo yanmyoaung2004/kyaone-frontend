@@ -9,7 +9,6 @@ export default function SaleProtectedRoute({ children }) {
   const roles = currentUser.roles || [];
 
   if (roles.some((role) => role.name === "sale")) {
-    console.log("sale");
     return <>{children}</>;
   }
 

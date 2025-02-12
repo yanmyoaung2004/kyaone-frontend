@@ -57,6 +57,7 @@ const ProductList = () => {
     setError(null);
     try {
       const res = await axios.get(`/api/stocks`);
+      console.log(res.data);
       setItemList(res.data);
     } catch (error) {
       setError("Failed to load products. Please try again.");
@@ -79,9 +80,7 @@ const ProductList = () => {
 
   return (
     <CustomerLayout>
-      <div className="overflow-x-hidden">
-        <Hero />
-      </div>
+      <div className="overflow-x-hidden">{/* <Hero /> */}</div>
       <div className="w-5/6 mx-auto my-5">
         <div className="flex items-center space-x-2">
           <div className="relative flex-1">

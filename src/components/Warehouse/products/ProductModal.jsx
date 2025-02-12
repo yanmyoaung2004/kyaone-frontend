@@ -10,28 +10,50 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import Upload from "./Upload";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectLabel,
+} from "@/components/ui/select";
 import axios from "axios";
-// import Upload from "./Upload";
+import { useNavigate } from "react-router";
+import { DialogDescription } from "@radix-ui/react-dialog";
 
-export default function ProductModal({ isOpen, onClose, onSave, product }) {
+export default function ProductModal({
+  isOpen,
+  onClose,
+  onSave,
+  product,
+  categories,
+}) {
   const [formData, setFormData] = useState({
-    id: "",
     name: "",
     category: "",
+    description: "",
     price: 0,
     image: null,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (product) {
-      setFormData(product);
+      setFormData({
+        id: product.id || "",
+        name: product.name || "",
+        category: product.category_id || "",
+        description: product.description || "",
+        price: product.price || 0,
+        image: product.image || null,
+      });
     } else {
       setFormData({
-        id: "",
         name: "",
         category: "",
-        quantity: 0,
+        description: "",
         price: 0,
         image: null,
       });
@@ -43,117 +65,149 @@ export default function ProductModal({ isOpen, onClose, onSave, product }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageUpload = (imageUrl) => {
-    setFormData((prev) => ({ ...prev, image: imageUrl }));
+  const handleCategoryChange = (value) => {
+    setFormData((prev) => ({ ...prev, category: value }));
   };
 
-  const updateProduct = async () => {
-    try {
-      const res = await axios.put("/api/products", formData);
-      console.log(res);
-    } catch (error) {}
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, image: file }));
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const data = new FormData();
+    data.append("name", formData.name);
+    data.append("category_id", formData.category);
+    data.append("price", formData.price);
+    data.append("description", formData.description);
+    if (formData.image instanceof File) {
+      data.append("image", formData.image);
+    }
 
-    onSave(formData);
-    onClose();
+    try {
+      const res = await axios.post("/api/products", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      if (res.status === 200) {
+        onSave({
+          id: res.data.product.id,
+          name: res.data.product.name,
+          category: "testing",
+          description: res.data.product.description,
+          price: res.data.product.unitprice.price,
+        });
+      }
+    } catch (error) {
+      console.error("Error creating product:", error);
+    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl">
         <DialogHeader>
-          <DialogTitle className="text-center font-bold text-3xl mb-4">
+          <DialogTitle className="text-center font-semibold text-2xl mb-4">
             {product ? "Edit Product" : "Add New Product"}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-lg font-semibold">
-                  Name
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="category" className="text-lg font-semibold">
-                  Category
-                </Label>
-                <Input
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  required
-                  className="w-full"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-lg font-semibold">
-                  Description
-                </Label>
-                <Input
-                  id="description"
-                  name="description"
-                  type="text"
-                  value={formData.quantity}
-                  onChange={handleChange}
-                  required
-                  className="w-full"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="price" className="text-lg font-semibold">
-                  Price
-                </Label>
-                <Input
-                  id="price"
-                  name="price"
-                  type="number"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={handleChange}
-                  required
-                  className="w-full"
-                />
-              </div>
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                name="name"
+                placeholder="Enter Product Name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+              <Label htmlFor="category">Category</Label>
+              <Select
+                value={formData.category.toString()}
+                onValueChange={(value) =>
+                  handleCategoryChange(Number.parseInt(value, 10))
+                }
+              >
+                <SelectTrigger id="category">
+                  <SelectValue placeholder="Select Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectLabel>Category</SelectLabel>
+                    {categories.map((c) => (
+                      <SelectItem key={c.value} value={c.value.toString()}>
+                        {c.label}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+
+              <Label htmlFor="description">Description</Label>
+              <Input
+                id="description"
+                name="description"
+                placeholder="Enter Description"
+                value={formData.description}
+                onChange={handleChange}
+                required
+              />
+              <Label htmlFor="price">Price</Label>
+              <Input
+                id="price"
+                name="price"
+                type="number"
+                step="0.01"
+                value={formData.price}
+                onChange={handleChange}
+                required
+              />
             </div>
             <div className="space-y-4">
-              <Label className="text-lg font-semibold">Product Image</Label>
+              <Label htmlFor="image">Product Image</Label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
                 {formData.image ? (
-                  <div className="relative w-full h-48">
-                    <Image
-                      src={formData.image || "/placeholder.svg"}
-                      alt="Product"
-                      layout="fill"
-                      objectFit="contain"
-                      className="rounded-lg"
+                  <label htmlFor="image" className="cursor-pointer">
+                    <img
+                      src={
+                        formData.image instanceof File
+                          ? URL.createObjectURL(formData.image)
+                          : formData.image
+                      }
+                      alt="Product Preview"
+                      className="rounded-lg object-contain w-full h-48"
                     />
-                  </div>
+                  </label>
                 ) : (
-                  <div className="text-center text-gray-500">
+                  <label
+                    htmlFor="image"
+                    className="text-center text-gray-500 cursor-pointer"
+                  >
                     No image uploaded
-                  </div>
+                  </label>
                 )}
               </div>
-              <Upload onImageUpload={handleImageUpload} />
+
+              <input
+                id="image"
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden w-full text-sm"
+              />
             </div>
           </div>
-          <Button type="submit" className="w-full text-lg py-6">
-            {product ? "Update Product" : "Add Product"}
-          </Button>
+          <div className="flex justify-start">
+            <Button type="submit" className="py-6">
+              {product ? "Update Product" : "Add Product"}
+            </Button>
+          </div>
         </form>
+        <DialogDescription />
       </DialogContent>
     </Dialog>
   );

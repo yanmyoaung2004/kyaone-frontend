@@ -128,13 +128,10 @@ export default function CheckoutPage() {
   };
 
   const handleFormChange = (field, value) => {
-    console.log(field, value);
     setShipmentInfo((prev) => ({ ...prev, [field]: value }));
-    console.log(shipmentInfo);
   };
 
   const submit = async (e) => {
-    console.log("submit", e);
     e.preventDefault();
     if (currentUser === null) {
       handleWarningToast("You have to login first!");

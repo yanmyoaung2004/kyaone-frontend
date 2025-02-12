@@ -11,41 +11,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import { PlusCircle, Search } from "lucide-react";
 import ProductModal from "./ProductModal";
 import { PackageSearch } from "lucide-react";
 import { X } from "lucide-react";
 import axios from "axios";
 
-const initialProducts = [
-  {
-    id: "1",
-    name: "Laptop",
-    category: "Electronics",
-    quantity: 50,
-    price: 999.99,
-  },
-  {
-    id: "2",
-    name: "Desk Chair",
-    category: "Furniture",
-    quantity: 30,
-    price: 199.99,
-  },
-  {
-    id: "3",
-    name: "Wireless Mouse",
-    category: "Electronics",
-    quantity: 100,
-    price: 29.99,
-  },
-];
-
 export default function Products() {
   const [products, setProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [categories, setCategories] = useState([]);
 
   const fetchProducts = async () => {
     try {
@@ -61,7 +39,7 @@ export default function Products() {
   }, []);
 
   const handleAddProduct = (newProduct) => {
-    setProducts([...products, { ...newProduct, id: Date.now().toString() }]);
+    setProducts([...products, { ...newProduct }]);
   };
 
   const handleEditProduct = (updatedProduct) => {
@@ -96,6 +74,19 @@ export default function Products() {
   const handleClear = () => {
     setSearchTerm("");
   };
+
+  const fetchCategory = async () => {
+    try {
+      const res = await axios.get("/api/categories");
+      setCategories(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategory();
+  }, []);
 
   return (
     <div className="p-8">
@@ -177,6 +168,7 @@ export default function Products() {
       </div>
       {isModalOpen && (
         <ProductModal
+          categories={categories}
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);

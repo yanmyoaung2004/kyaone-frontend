@@ -9,16 +9,16 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
 import axios from "axios";
 import { useEffect, useState } from "react";
-import OrderDetailsModal from "../../components/OrderDetailModel";
+import OrderDetails from "./OrderDetials";
 
 export default function OrdersPage() {
   const [allOrders, setAllOrders] = useState([]);
   const [orders, setOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [currentOrder, setCurrentOrder] = useState(null);
 
   const fetchOrder = async () => {
     try {
@@ -35,9 +35,7 @@ export default function OrdersPage() {
 
   const fuzzySearch = (query) => {
     if (!query.trim()) return allOrders;
-
     const lowerQuery = query.toLowerCase();
-
     return allOrders.filter((item) =>
       Object.values(item).some(
         (value) =>
@@ -66,59 +64,67 @@ export default function OrdersPage() {
               />
             </div>
           </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Order ID</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Delivery Address</TableHead>
-                <TableHead>ETA</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {orders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-medium">{order.id}</TableCell>
-                  <TableCell>{order.customer}</TableCell>
-                  <TableCell>{order.address}</TableCell>
-                  <TableCell>{order.eta}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        order.status === "In Progress"
-                          ? "bg-blue-100 text-blue-800"
-                          : order.status === "Delayed"
-                          ? "bg-red-100 text-red-800"
-                          : order.status === "On Time"
-                          ? "bg-green-100 text-green-800"
-                          : order.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsModalOpen(true)}
-                    >
-                      View Details
-                    </Button>
-                  </TableCell>
-                  <OrderDetailsModal
-                    order={order}
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
-                  />
+          <div className="rounded-md border flex-grow overflow-x-auto bg-white">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">Order ID</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Delivery Address</TableHead>
+                  <TableHead>ETA</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {orders.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-medium">{order.id}</TableCell>
+                    <TableCell>{order.customer}</TableCell>
+                    <TableCell>{order.address}</TableCell>
+                    <TableCell>{order.eta}</TableCell>
+                    <TableCell>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          order.status === "In Progress"
+                            ? "bg-blue-100 text-blue-800"
+                            : order.status === "Delayed"
+                            ? "bg-red-100 text-red-800"
+                            : order.status === "On Time"
+                            ? "bg-green-100 text-green-800"
+                            : order.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {order.status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setCurrentOrder(order);
+                          setIsModalOpen(true);
+                        }}
+                      >
+                        View Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <OrderDetails
+              orderId={currentOrder?.id}
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              callBackOnSuccess={(id) => {
+                setOrders(allOrders.filter((order) => order.id !== id));
+              }}
+            />
+          </div>
         </CardContent>
       </Card>
     </div>

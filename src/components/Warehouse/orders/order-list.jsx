@@ -71,9 +71,7 @@ export function OrderList({
               <TableCell className="font-medium text-center">
                 {order.id}
               </TableCell>
-              <TableCell className="text-center">
-                {order.customerName}
-              </TableCell>
+              <TableCell className="text-center">{order.customer}</TableCell>
               <TableCell className="text-center">
                 <span
                   className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(

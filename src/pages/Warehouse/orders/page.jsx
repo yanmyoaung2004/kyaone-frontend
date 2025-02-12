@@ -17,6 +17,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Package, Truck, Building } from "lucide-react";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
+import axios from "axios";
 
 // Mock data for demonstration
 const mockOrders = [
@@ -53,53 +55,26 @@ const mockOrders = [
 ];
 
 export default function Orders() {
-  const [orders, setOrders] = useState(mockOrders);
+  const [orders, setOrders] = useState([]);
+  const [drivers, setDrivers] = useState([]);
+  const [trucks, setTrucks] = useState([]);
+
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [selectedOrders, setSelectedOrders] = useState([]);
   const [isAssigningTruck, setIsAssigningTruck] = useState(false);
-  const [isAssigningServiceCenter, setIsAssigningServiceCenter] =
-    useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [selectedComplaintId, setSelectedComplaintId] = useState(null);
   const [selectedServiceCenter, setSelectedServiceCenter] = useState(null);
 
-  const filteredOrders = orders.filter(
-    (order) =>
-      (order.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.id.includes(searchTerm)) &&
-      (statusFilter === "All" || order.status === statusFilter)
-  );
-
   const handleOrderClick = (order) => {
     setSelectedOrder(order);
   };
 
-  const handleAssignTruck = (orderIds, truckId) => {
-    console.log(truckId);
-    setOrders(
-      orders.map((order) =>
-        orderIds.includes(order.id)
-          ? { ...order, assignedTruck: truckId }
-          : order
-      )
-    );
+  const handleAssignTruck = () => {
+    setOrders(orders.filter((o) => !selectedOrders.includes(o.id)));
     setSelectedOrders([]);
     setIsAssigningTruck(false);
-    toast.success(`Selected orders have been assigned to truck ${truckId}`);
-  };
-
-  const handleAssignServiceCenter = (orderIds, serviceCenter) => {
-    setOrders(
-      orders.map((order) =>
-        orderIds.includes(order.id)
-          ? { ...order, serviceCenter: serviceCenter }
-          : order
-      )
-    );
-    setSelectedOrders([]);
-    setIsAssigningServiceCenter(false);
-    toast.success(`Selected orders have been assigned to ${serviceCenter}`);
   };
 
   const handleSelectOrder = (orderId) => {
@@ -127,9 +102,30 @@ export default function Orders() {
     setIsAssigningTruck(true);
   };
 
-  const assignOrders = orders.filter((order) =>
-    selectedOrders.includes(order.id)
-  );
+  const fetchData = async () => {
+    try {
+      const res = await axios.get("/api/orders");
+      if (res.status === 200) {
+        setOrders(res.data);
+      }
+
+      const resDriver = await axios.get("/api/drivers/getfree");
+      if (resDriver.status === 200) {
+        setDrivers(resDriver.data);
+      }
+
+      const resTruck = await axios.get("api/trucks?filter[status]=free");
+      if (resTruck.status === 200) {
+        setTrucks(resTruck.data.trucks);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -149,13 +145,6 @@ export default function Orders() {
               >
                 <Truck className="mr-2 h-4 w-4" />
                 Assign Trucks
-              </Button>
-              <Button
-                onClick={() => setIsAssigningServiceCenter(true)}
-                className="flex items-center"
-              >
-                <Building className="mr-2 h-4 w-4" />
-                Assign Service Centers
               </Button>
             </div>
           )}
@@ -184,15 +173,17 @@ export default function Orders() {
           </div>
 
           <div className="flex flex-col lg:flex-row gap-6">
-            <OrderList
-              orders={filteredOrders}
-              onOrderClick={handleOrderClick}
-              onComplaintClick={setSelectedComplaintId}
-              onServiceCenterClick={setSelectedServiceCenter}
-              selectedOrders={selectedOrders}
-              onSelectOrder={handleSelectOrder}
-              handleAssignTruckClick={handleAssignTruckClick}
-            />
+            {orders.length > 0 && (
+              <OrderList
+                orders={orders}
+                onOrderClick={handleOrderClick}
+                onComplaintClick={setSelectedComplaintId}
+                onServiceCenterClick={setSelectedServiceCenter}
+                selectedOrders={selectedOrders}
+                onSelectOrder={handleSelectOrder}
+                handleAssignTruckClick={handleAssignTruckClick}
+              />
+            )}
             {selectedOrder && (
               <OrderDetails
                 order={selectedOrders}
@@ -202,23 +193,18 @@ export default function Orders() {
           </div>
         </CardContent>
       </Card>
-      {isAssigningTruck && selectedOrders.length > 0 && (
-        <TruckAssignmentModal
-          orders={assignOrders}
-          onAssign={(truckId) => handleAssignTruck(selectedOrders, truckId)}
-          onClose={() => setIsAssigningTruck(false)}
-        />
-      )}
-
-      {isAssigningServiceCenter && (
-        <ServiceCenterAssignmentModal
-          orders={orders.filter((order) => selectedOrders.includes(order.id))}
-          onAssign={(serviceCenter) =>
-            handleAssignServiceCenter(selectedOrders, serviceCenter)
-          }
-          onClose={() => setIsAssigningServiceCenter(false)}
-        />
-      )}
+      {drivers.length > 0 &&
+        trucks.length > 0 &&
+        isAssigningTruck &&
+        selectedOrders.length > 0 && (
+          <TruckAssignmentModal
+            drivers={drivers}
+            trucks={trucks}
+            selectedOrders={selectedOrders}
+            onAssign={handleAssignTruck}
+            onClose={() => setIsAssigningTruck(false)}
+          />
+        )}
 
       {selectedComplaintId && (
         <ComplaintDetailsModal

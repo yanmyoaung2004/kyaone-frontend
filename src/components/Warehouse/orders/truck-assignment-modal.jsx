@@ -16,22 +16,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DialogDescription } from "@radix-ui/react-dialog";
+import axios from "axios";
 
-// Mock data for available trucks
-const availableTrucks = [
-  { id: "TRUCK-001", capacity: "5 tons", location: "Warehouse A" },
-  { id: "TRUCK-002", capacity: "3 tons", location: "Warehouse B" },
-  { id: "TRUCK-003", capacity: "7 tons", location: "Warehouse C" },
-];
-
-export function TruckAssignmentModal({ order, onAssign, onClose }) {
+export function TruckAssignmentModal({
+  selectedOrders,
+  onAssign,
+  onClose,
+  drivers,
+  trucks,
+}) {
   const [selectedTruck, setSelectedTruck] = useState("");
+  const [selectedDriver, setSelectedDriver] = useState("");
 
-  console.log(order);
-
-  const handleAssign = () => {
-    if (selectedTruck) {
-      onAssign(order, selectedTruck);
+  const handleAssign = async () => {
+    try {
+      if (selectedDriver === "" && selectedTruck === "") {
+        return;
+      }
+      const res = await axios.post("/api/orderAssignTrucks", {
+        orders: selectedOrders,
+        driver_id: selectedDriver,
+        truck_id: selectedTruck,
+      });
+      if (res.status === 201) {
+        onAssign();
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -39,22 +51,41 @@ export function TruckAssignmentModal({ order, onAssign, onClose }) {
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Assign Truck to Order {order}</DialogTitle>
+          <DialogTitle>
+            Assign Truck to Order{" "}
+            {selectedOrders.map((o) => {
+              return o + ", ";
+            })}
+          </DialogTitle>
+          <DialogDescription />
         </DialogHeader>
-        <div className="py-4">
-          <Select value={selectedTruck} onValueChange={setSelectedTruck}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select a truck" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableTrucks.map((truck) => (
-                <SelectItem key={truck.id} value={truck.id}>
-                  {truck.id} - Capacity: {truck.capacity}, Location:{" "}
-                  {truck.location}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="py-10">
+          <div className="flex gap-10 flex-col">
+            <Select value={selectedTruck} onValueChange={setSelectedTruck}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a truck" />
+              </SelectTrigger>
+              <SelectContent>
+                {trucks.map((truck) => (
+                  <SelectItem key={truck.id} value={truck.id}>
+                    {truck.license_plate}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={selectedDriver} onValueChange={setSelectedDriver}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a driver" />
+              </SelectTrigger>
+              <SelectContent>
+                {drivers.map((driver) => (
+                  <SelectItem key={driver.id} value={driver.id}>
+                    {driver.user.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <DialogFooter>
           <Button onClick={onClose} variant="outline">
