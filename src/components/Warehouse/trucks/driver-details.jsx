@@ -17,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 export function DriverDetails({ driver, onClose, onStatusUpdate }) {
   const [status, setStatus] = useState(driver.status);
@@ -43,16 +44,12 @@ export function DriverDetails({ driver, onClose, onStatusUpdate }) {
             <Label htmlFor="status" className="text-right">
               Status :
             </Label>
-            <span
-              className={`flex justify-center items-center rounded-full px-2 py-1 text-xs font-medium ${
-                driver.status === "free"
-                  ? "bg-green-100 text-green-800"
-                  : driver.status === "busy"
-                  ? "bg-yellow-100 text-yellow-800"
-                  : "bg-red-100 text-red-800"
-              }`}
-            >
-              {driver.status}
+            <span>
+              {driver?.status == "free" ? (
+                <Badge variant="success">Free</Badge>
+              ) : (
+                <Badge variant="destructive">Busy</Badge>
+              )}
             </span>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

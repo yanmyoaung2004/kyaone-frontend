@@ -28,6 +28,7 @@ import DriverCreateModal from "./DriverForm";
 import DriverCreateDialog from "./DriverForm";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircleIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 // Mock data for demonstration
 const mockDrivers = [
@@ -190,17 +191,11 @@ export function DriverManagement() {
                     <TableCell className="font-medium">{driver.id}</TableCell>
                     <TableCell>{driver.driver_license}</TableCell>
                     <TableCell>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                          driver.status === "free"
-                            ? "bg-green-100 text-green-800"
-                            : driver.status === "busy"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {driver.status}
-                      </span>
+                      {driver?.status == "free" ? (
+                        <Badge variant="success">Free</Badge>
+                      ) : (
+                        <Badge variant="destructive">Busy</Badge>
+                      )}
                     </TableCell>
                     <TableCell>{driver.phone}</TableCell>
                   </TableRow>
