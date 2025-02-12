@@ -1,8 +1,18 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState } from "react";
 
 export function ComplaintDetails({ complaint, onStatusUpdate }) {
+  // console.log(complaint);
+  const [status, setStatus] = useState(complaint.status);
   return (
     <Card className="w-full lg:w-1/3">
       <CardHeader>
@@ -26,21 +36,25 @@ export function ComplaintDetails({ complaint, onStatusUpdate }) {
             <strong>Status:</strong> {complaint.status}
           </p>
         </div>
-        <div className="mt-4">
-          <Textarea placeholder="Add investigation notes here..." className="mb-2" />
-        </div>
-        <div className="mt-4 space-x-2">
-          <Button onClick={() => onStatusUpdate(complaint.id, "Investigating")}>Mark as Investigating</Button>
-          <Button onClick={() => onStatusUpdate(complaint.id, "Resolved")}>Mark as Resolved</Button>
-          <Button onClick={() => onStatusUpdate(complaint.id, "Escalated")}>Escalate</Button>
-        </div>
-        <div className="mt-4">
-          <Button variant="outline" className="w-full">
-            Send Back to Sales
+        <div className="mt-4 space-x-2 flex ">
+          <Select value={status} onValueChange={setStatus}>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Filter by Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="open">Open</SelectItem>
+              <SelectItem value="closed">Closed</SelectItem>
+              <SelectItem value="in_progress">In Progress</SelectItem>
+              <SelectItem value="resolved">Resolved</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button onClick={() => onStatusUpdate(complaint.id, status)}>
+            Submit
           </Button>
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
-

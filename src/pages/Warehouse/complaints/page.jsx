@@ -1,46 +1,71 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ComplaintList } from "../../../components/Warehouse/complaints/complaint-list"
-import { ComplaintDetails } from "../../../components/Warehouse/complaints/complaint-details"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { AlertCircle } from "lucide-react"
-
-// Mock data for demonstration
-const mockComplaints = [
-  { id: "C001", orderId: "O123", customerName: "John Doe", issueType: "Wrong Product", status: "Pending" },
-  { id: "C002", orderId: "O456", customerName: "Jane Smith", issueType: "Damaged Item", status: "Investigating" },
-  { id: "C003", orderId: "O789", customerName: "Bob Johnson", issueType: "Late Delivery", status: "Resolved" },
-]
+import { useState } from "react";
+import { ComplaintList } from "../../../components/Warehouse/complaints/complaint-list";
+import { ComplaintDetails } from "../../../components/Warehouse/complaints/complaint-details";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
+import { useEffect } from "react";
 
 export default function Complaints() {
-  const [complaints, setComplaints] = useState(mockComplaints)
-  const [selectedComplaint, setSelectedComplaint] = useState(null)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("All")
+  const [complaints, setComplaints] = useState([]);
+  const [selectedComplaint, setSelectedComplaint] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  // console.log(statusFilter, com);
+
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      try {
+        const response = await fetch(
+          "http://kyone-backend.test/api/complaints"
+        );
+        const data = await response.json();
+        console.log(data);
+        setComplaints(data.complaints);
+      } catch (error) {
+        console.error("Error fetching complaints:", error);
+      }
+    };
+
+    fetchComplaints();
+  }, []);
 
   const filteredComplaints = complaints.filter(
     (complaint) =>
-      (complaint.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        complaint.id.includes(searchTerm) ||
-        complaint.orderId.includes(searchTerm)) &&
-      (statusFilter === "All" || complaint.status === statusFilter),
-  )
+      (complaint.customer_name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+        complaint.id.toString().includes(searchTerm) ||
+        complaint.order_id.toString().includes(searchTerm)) &&
+      (statusFilter === "All" || complaint.status === statusFilter)
+  );
 
   const handleComplaintClick = (complaint) => {
-    setSelectedComplaint(complaint)
-  }
+    setSelectedComplaint(complaint);
+  };
 
   const handleStatusUpdate = (complaintId, newStatus) => {
+    console.log(complaintId, newStatus);
     setComplaints(
-      complaints.map((complaint) => (complaint.id === complaintId ? { ...complaint, status: newStatus } : complaint)),
-    )
+      complaints.map((complaint) =>
+        complaint.id === complaintId
+          ? { ...complaint, status: newStatus }
+          : complaint
+      )
+    );
     if (selectedComplaint && selectedComplaint.id === complaintId) {
-      setSelectedComplaint({ ...selectedComplaint, status: newStatus })
+      setSelectedComplaint({ ...selectedComplaint, status: newStatus });
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -65,23 +90,28 @@ export default function Complaints() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All Statuses</SelectItem>
-                <SelectItem value="Pending">Pending</SelectItem>
-                <SelectItem value="Investigating">Investigating</SelectItem>
-                <SelectItem value="Resolved">Resolved</SelectItem>
-                <SelectItem value="Escalated">Escalated</SelectItem>
+                <SelectItem value="open">Open</SelectItem>
+                <SelectItem value="in_progress">In Progress</SelectItem>
+                <SelectItem value="resolved">Resolved</SelectItem>
+                <SelectItem value="closed">Closed</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-6">
-            <ComplaintList complaints={filteredComplaints} onComplaintClick={handleComplaintClick} />
+            <ComplaintList
+              complaints={filteredComplaints}
+              onComplaintClick={handleComplaintClick}
+            />
             {selectedComplaint && (
-              <ComplaintDetails complaint={selectedComplaint} onStatusUpdate={handleStatusUpdate} />
+              <ComplaintDetails
+                complaint={selectedComplaint}
+                onStatusUpdate={handleStatusUpdate}
+              />
             )}
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-
