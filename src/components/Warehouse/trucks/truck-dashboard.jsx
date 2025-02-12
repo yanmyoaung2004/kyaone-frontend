@@ -25,35 +25,6 @@ import { Pencil } from "lucide-react";
 import { Trash2Icon } from "lucide-react";
 import axios from "axios";
 
-// Mock data for demonstration
-const mockTrucks = [
-  {
-    id: "T001",
-    number: "TRK-001",
-    status: "Free",
-    driver: "John Doe",
-    currentOrders: [],
-    lastUsed: "2023-06-10",
-  },
-  {
-    id: "T002",
-    number: "TRK-002",
-    status: "Busy",
-    driver: "Jane Smith",
-    currentOrders: ["ORD-123", "ORD-124"],
-    lastUsed: "2023-06-12",
-  },
-  {
-    id: "T003",
-    number: "TRK-003",
-    status: "Maintenance",
-    driver: null,
-    currentOrders: [],
-    lastUsed: "2023-06-08",
-  },
-  // Add more mock trucks as needed
-];
-
 export function TruckDashboard({
   onTruckSelect,
   setIsEditTruck,
@@ -77,7 +48,7 @@ export function TruckDashboard({
       .get("/api/trucks")
       .then((res) => {
         setTrucks(res.data.trucks);
-        setFilterTrucks(res.data.trucks);
+        s(res.data.trucks);
         console.log(res.data);
       })
       .catch((error) => {

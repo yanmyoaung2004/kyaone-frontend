@@ -52,6 +52,7 @@ export function TruckDetails({ truck, onClose }) {
   }, []);
 
   const handleStatusChange = (newStatus) => {
+    console.log(newStatus);
     setStatus(newStatus);
     axios
       .put(`/api/trucks/${truck.id}`, {
