@@ -16,7 +16,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { useEffect } from "react";
-import axios from "../../../api";
+
 import { CheckCircleIcon } from "lucide-react";
 
 export default function Complaints() {
