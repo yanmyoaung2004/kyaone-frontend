@@ -1,13 +1,13 @@
 import React from "react";
-import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Login from "./pages/Login";
-import { ItemDetails } from "./pages/index";
-import DataProvider from "./context/DataContext";
-import { ThemeProvider } from "./components/theme-provider";
+import Register from "./pages/Register";
 import ProductDetail from "./pages/ProductDetail";
 import CheckoutPage from "./pages/CheckoutPage";
-import ProductList from "./pages/ProductList";
-import Register from "./pages/Register";
+import { ItemDetails } from "./pages/index";
+import { ThemeProvider } from "./components/theme-provider";
+import DataProvider from "./context/DataContext";
 import SaleHistory from "./pages/SaleHistory";
 import SaleRecord from "./pages/SaleRecord";
 import Sale from "./pages/Sale";
@@ -17,10 +17,6 @@ import Order from "./pages/orders/page";
 import Delivery from "./pages/deliveries/page";
 import Escalations from "./pages/escalations/page";
 import Customer from "./pages/customers/page";
-import { Truck } from "./pages/Truck";
-import DeliveryDetail from "./pages/deliveries/deliveryDetail";
-import { element } from "prop-types";
-import { useSelector } from "react-redux";
 import ComplaintsPage from "./pages/complaints/Page";
 import Page from "./pages/Warehouse/Page";
 import Orders from "./pages/Warehouse/orders/page";
@@ -31,110 +27,115 @@ import TruckManagement from "./pages/Warehouse/trucks/page";
 import Settings from "./pages/Warehouse/settings/page";
 import Products from "./components/Warehouse/products/Products";
 
+// Protected Route Component
+const ProtectedRoute = ({ element, allowedRoles = [] }) => {
+  const currentUser = useSelector((state) => state.user.currentUser);
+
+  if (!currentUser) return <Navigate to="/login" />;
+  if (!allowedRoles.some(role=>currentUser.roles.includes(role))) return <Navigate to="/" />;
+  return element;
+};
+
+// Define Router
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <ItemDetails />,
+  },
+  {
+    path: "/products",
+    element: <ItemDetails />,
+  },
+  {
+    path: "/:name/:id",
+    element: <ProductDetail />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/checkout",
+    element: <ProtectedRoute element={<CheckoutPage />} allowedRoles={["customer"]} />,
+  },
+  {
+    path: "/history",
+    element: <ProtectedRoute element={<SaleHistory />} allowedRoles={["customer", "admin"]} />,
+  },
+  {
+    path: "/sales-record",
+    element: <ProtectedRoute element={<SaleRecord />} allowedRoles={["admin"]} />,
+  },
+  {
+    path: "/sales-dashboard",
+    element: <ProtectedRoute element={<SaleLayout><Sale /></SaleLayout>} allowedRoles={["admin", "sales"]} />,
+  },
+  {
+    path: "/sales-orders",
+    element: <ProtectedRoute element={<SaleLayout><Order /></SaleLayout>} allowedRoles={["admin", "sales"]} />,
+  },
+  {
+    path: "/sales-deliveries",
+    element: <ProtectedRoute element={<SaleLayout><Delivery /></SaleLayout>} allowedRoles={["admin", "delivery"]} />,
+  },
+  {
+    path: "/sales-customers",
+    element: <ProtectedRoute element={<SaleLayout><Customer /></SaleLayout>} allowedRoles={["admin", "support"]} />,
+  },
+  {
+    path: "/sales-escalations",
+    element: <ProtectedRoute element={<SaleLayout><Escalations /></SaleLayout>} allowedRoles={["admin", "support"]} />,
+  },
+  {
+    path: "/sales-complaints",
+    element: <ProtectedRoute element={<SaleLayout><ComplaintsPage /></SaleLayout>} allowedRoles={["admin", "support"]} />,
+  },
+  {
+    path: "/warehouse-dashboard",
+    element: <ProtectedRoute element={<WarehouseLayout><Page /></WarehouseLayout>} allowedRoles={["admin", "warehouse"]} />,
+  },
+  {
+    path: "/warehouse-orders",
+    element: <ProtectedRoute element={<WarehouseLayout><Orders /></WarehouseLayout>} allowedRoles={["admin", "warehouse"]} />,
+  },
+  {
+    path: "/warehouse-complaints",
+    element: <ProtectedRoute element={<WarehouseLayout><Complaints /></WarehouseLayout>} allowedRoles={["admin", "warehouse", "support"]} />,
+  },
+  {
+    path: "/warehouse-stock",
+    element: <ProtectedRoute element={<WarehouseLayout><StockManagement /></WarehouseLayout>} allowedRoles={["admin", "warehouse"]} />,
+  },
+  {
+    path: "/product-management",
+    element: <ProtectedRoute element={<WarehouseLayout><Products /></WarehouseLayout>} allowedRoles={["admin", "warehouse"]} />,
+  },
+  {
+    path: "/warehouse-returns",
+    element: <ProtectedRoute element={<WarehouseLayout><Returns /></WarehouseLayout>} allowedRoles={["admin", "warehouse"]} />,
+  },
+  {
+    path: "/warehouse-trucks",
+    element: <ProtectedRoute element={<WarehouseLayout><TruckManagement /></WarehouseLayout>} allowedRoles={["admin", "warehouse", "driver"]} />,
+  },
+  {
+    path: "/warehouse-setting",
+    element: <ProtectedRoute element={<WarehouseLayout><Settings /></WarehouseLayout>} allowedRoles={["admin"]} />,
+  },
+]);
+
+// App Component
 const App = () => {
-  console.log(useSelector((state)=>state.user.currentUser));
+  console.log(useSelector((state) => state.user.currentUser));
   
-  const PrivateRoute = ({element,allowedRoles = []}) => {
-    const currentUser = useSelector((state)=>state.user.currentUser);
-    if(!currentUser) return  <Navigate to="/login" />;
-    if(!allowedRoles.includes(currentUser.role)) return <Navigate to="/" />
-    return element;
-  }
-
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <ItemDetails />,
-    },
-    {
-      path: "/products",
-      element: <ProductList />,
-    },
-    {
-      path: "/:name/:id",
-      element: <ProductDetail />,
-    },
-    {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/register",
-      element: <Register />,
-    },
-    {
-      path: "/checkout",
-      element: <PrivateRoute element={<CheckoutPage />}/>,
-    },
-    {
-      path: "/history",
-      element: <PrivateRoute element={<SaleHistory />}/>,
-    },
-   
-    {
-      path: "/sales-record",
-      element: <PrivateRoute element={<SaleRecord />}/>,
-    },
-    {
-      path: "/sales-dashboard",
-      element: <PrivateRoute element={
-        <Layout>
-          <Sale />
-        </Layout>
-      }/>,
-    },
-    {
-      path: "/orders",
-      element: <PrivateRoute element={
-        <Layout>
-          <Order />
-        </Layout>
-      }/>,
-    },
-    {
-      path: "/deliveries",
-      element: <PrivateRoute element={
-        <Layout>
-          <Delivery />
-        </Layout>
-      }/>,
-    },
-    {
-      path: "/deliveries/detail/:truckId",
-      element: <PrivateRoute element={<Layout>
-        <DeliveryDetail />
-      </Layout>}/>,
-    },
-    {
-      path: "/customers",
-      element: <PrivateRoute element={<Layout>
-        <Customer />
-      </Layout>}/>,
-    },
-    {
-      path: "/escalations",
-      element: <PrivateRoute element={<Layout>
-        <Escalations />
-      </Layout>}/>,
-    },
-    {
-      path: "/reports",
-      element: <PrivateRoute element={<Layout></Layout>}/>,
-    },
-    {
-      path: "/settings",
-      element: <PrivateRoute element={<Layout></Layout>}/>,
-    },
-    {
-      path: "/test",
-      element: <PrivateRoute element={<Layout></Layout>}/>,
-    },
-  ]);
-
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <DataProvider>
-        <RouterProvider router={router} />;
+        <RouterProvider router={router} />
       </DataProvider>
     </ThemeProvider>
   );

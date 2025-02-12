@@ -5,13 +5,26 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import axios from "axios"
+import toast from "react-hot-toast"
+import { handleSuccessToast } from "../../../helpers/ToastService"
 
 export function TruckDetails({ truck, onClose }) {
   const [status, setStatus] = useState(truck.status)
 
   const handleStatusChange = (newStatus) => {
     setStatus(newStatus)
-    // Here you would typically update the truck status in your backend
+    axios.put(`/api/trucks/${truck.id}`, {
+      status: newStatus
+  })
+  .then(response =>{
+    if(response.status === 200){
+    setStatus(newStatus)
+    handleSuccessToast("Success");
+    console.log("Success");
+    
+  } })
+  .catch(error => console.error(error.response.data));  
   }
 
   return (
@@ -30,9 +43,9 @@ export function TruckDetails({ truck, onClose }) {
                 <SelectValue placeholder="Select status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Free">Free</SelectItem>
-                <SelectItem value="Busy">Busy</SelectItem>
-                <SelectItem value="Maintenance">Maintenance</SelectItem>
+                <SelectItem value="free">Free</SelectItem>
+                <SelectItem value="busy">Busy</SelectItem>
+                <SelectItem value="maintenance">Maintenance</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -42,7 +55,9 @@ export function TruckDetails({ truck, onClose }) {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">Current Orders</Label>
-            <div className="col-span-3">{truck.currentOrders.length > 0 ? truck.currentOrders.join(", ") : "None"}</div>
+            <div className="col-span-3">                {truck.assigned_orders.length > 0
+  ? truck.assigned_orders.map(order => `ORD-${order.order_id}`).join(", ")
+  : "None"}</div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">Last Used</Label>

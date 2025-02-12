@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { Truck } from "lucide-react";
 import { Pencil } from "lucide-react";
 import { Trash2Icon } from "lucide-react";
+import axios from "axios";
 
 // Mock data for demonstration
 const mockTrucks = [
@@ -57,25 +58,56 @@ export function TruckDashboard({
   setIsEditTruck,
   setIsFormOpen,
   isFormOpen,
-  setIsDeleteTruck
+  setIsDeleteTruck,
+  setFormdata,
 }) {
-  const [trucks] = useState(mockTrucks);
+  const [trucks, setTrucks] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filterTrucks, setFilterTrucks] = useState([]);
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    axios
+      .get("/api/trucks")
+      .then((res) => {
+        setTrucks(res.data);
+        setFilterTrucks(res.data);
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.error(error);
+        setError("Failed to fetch trucks. Please try again later");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
-  const filteredTrucks = trucks.filter(
-    (truck) =>
-      (truck.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (truck.driver &&
-          truck.driver.toLowerCase().includes(searchTerm.toLowerCase()))) &&
-      (statusFilter === "All" || truck.status === statusFilter)
-  );
+  useEffect(() => {
+    let filtered = trucks;
+    if (searchTerm) {
+      filtered = filtered.filter(
+        (truck) =>
+          (truck.number.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (truck.driver &&
+              truck.driver.toLowerCase().includes(searchTerm.toLowerCase()))) &&
+          (statusFilter === "All" || truck.status === statusFilter)
+      );
+    }
+  }, [searchTerm, trucks]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const totalTrucks = trucks.length;
-  const freeTrucks = trucks.filter((truck) => truck.status === "Free").length;
-  const busyTrucks = trucks.filter((truck) => truck.status === "Busy").length;
+  const freeTrucks = trucks.filter((truck) => truck.status === "free").length;
+  const busyTrucks = trucks.filter((truck) => truck.status === "busy").length;
   const maintenanceTrucks = trucks.filter(
-    (truck) => truck.status === "Maintenance"
+    (truck) => truck.status === "maintenance"
   ).length;
 
   return (
@@ -152,19 +184,21 @@ export function TruckDashboard({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredTrucks.map((truck) => (
+            {filterTrucks.map((truck) => (
               <TableRow
                 key={truck.id}
                 className="cursor-pointer hover:bg-muted/50"
                 onClick={() => onTruckSelect(truck)}
               >
-                <TableCell className="font-medium">{truck.number}</TableCell>
+                <TableCell className="font-medium">
+                  {truck.license_plate}
+                </TableCell>
                 <TableCell>
                   <span
                     className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                      truck.status === "Free"
+                      truck.status === "free"
                         ? "bg-green-100 text-green-800"
-                        : truck.status === "Busy"
+                        : truck.status === "busy"
                         ? "bg-yellow-100 text-yellow-800"
                         : "bg-red-100 text-red-800"
                     }`}
@@ -174,30 +208,33 @@ export function TruckDashboard({
                 </TableCell>
                 <TableCell>{truck.driver || "N/A"}</TableCell>
                 <TableCell>
-                  {truck.currentOrders.length > 0
-                    ? truck.currentOrders.join(", ")
+                  {truck.assigned_orders.length > 0
+                    ? truck.assigned_orders
+                        .map((order) => `ORD-${order.order_id}`)
+                        .join(", ")
                     : "None"}
                 </TableCell>
                 <TableCell>{truck.lastUsed}</TableCell>
                 <TableCell>
                   <div className="flex items-center justify-evenly gap-1">
-                  <Pencil
-                    size={24}
-                    className="hover:bg-gray-300 rounded-md p-1"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsFormOpen(!isFormOpen);
-                      setIsEditTruck(true);
-                    }}
-                  />
-                  <Trash2Icon
-                    size={24}
-                    className="hover:bg-gray-300 rounded-md p-1 text-red-500"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsDeleteTruck(true);
-                    }}
-                  />
+                    <Pencil
+                      size={24}
+                      className="hover:bg-gray-300 rounded-md p-1"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFormOpen(!isFormOpen);
+                        setIsEditTruck(true);
+                        setFormdata(truck);
+                      }}
+                    />
+                    <Trash2Icon
+                      size={24}
+                      className="hover:bg-gray-300 rounded-md p-1 text-red-500"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsDeleteTruck(true);
+                      }}
+                    />
                   </div>
                 </TableCell>
               </TableRow>

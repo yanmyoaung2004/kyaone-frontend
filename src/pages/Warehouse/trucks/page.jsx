@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import TruckForm from "../../../components/Warehouse/trucks/TruckForm";
 import DeleteConfirmation from "../../../components/Warehouse/trucks/DeleteConfirmation";
+import axios from "axios";
 
 export default function TruckManagement() {
   const [selectedTruck, setSelectedTruck] = useState(null);
@@ -23,21 +24,26 @@ export default function TruckManagement() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteTruck, setIsDeleteTruck] = useState(false);
   const [isEditTruck, setIsEditTruck] = useState(false);
+  const [formData,setFormdata] = useState(null);
 
   console.log(isDeleteTruck);
 
-  const handleSubmit = async (truck) => {
-    try {
-      // const res = await axios.post("url", truck);
-
-      // if (!res.ok) {
-      //   console.error("Error");
-      // }
-
-      console.log(truck);
-    } catch (err) {
-      console.error(err);
-    }
+  const handleSubmit = async (updateTruck) => {
+    console.log(updateTruck);
+    
+    axios.put(`/api/trucks/${updateTruck.id}`, {
+      status: updateTruck.allowance,
+      license_plate: updateTruck.licensePlate,
+  })
+  .then(response =>{
+    if(response.status === 200){
+    setStatus(newStatus)
+    handleSuccessToast("Success");
+    console.log("Success");
+    
+  } })
+  .catch(error => console.error(error.response.data));  
+  
   };
 
   return (
@@ -72,6 +78,7 @@ export default function TruckManagement() {
                 setIsFormOpen={setIsFormOpen}
                 setIsEditTruck={setIsEditTruck}
                 isFormOpen={isFormOpen}
+                setFormdata={setFormdata}
                 setIsDeleteTruck={setIsDeleteTruck}
               />
               {selectedTruck && (
@@ -97,6 +104,7 @@ export default function TruckManagement() {
         <TruckForm
           isEditTruck={isEditTruck}
           onSubmit={handleSubmit}
+          formData={formData}
           onCancel={() => {
             setIsFormOpen(false);
             setIsEditTruck(false);

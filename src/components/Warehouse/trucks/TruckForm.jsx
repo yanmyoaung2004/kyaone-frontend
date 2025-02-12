@@ -13,28 +13,17 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import axios from "axios";
 
-export default function TruckForm({ onSubmit, onCancel, isEditTruck }) {
-  const [licensePlate, setLicensePlate] = useState("");
-  const [allowance, setAllowance] = useState("free");
-
-  useEffect(() => {
-    if (isEditTruck) {
-      const fetchData = async () => {
-        // const res = await axios.get("api");
-
-        setAllowance("free");
-        setLicensePlate("ABC-123");
-      };
-    }
-  }, [isEditTruck]);
+export default function TruckForm({ onSubmit, onCancel, isEditTruck,formData }) {
+  const [licensePlate, setLicensePlate] = useState(formData.license_plate ?? "");
+  const [allowance, setAllowance] = useState(formData.status ?? "free");
+  console.log("form data",formData);
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ licensePlate, allowance });
+    onSubmit({ id: formData.id,licensePlate, allowance });
     setAllowance("free");
     setLicensePlate("");
   };
-  console.log()
   return (
     <Dialog open={true} onOpenChange={onCancel}>
       <DialogContent className="sm:max-w-[425px]">

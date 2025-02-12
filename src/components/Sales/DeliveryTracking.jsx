@@ -13,9 +13,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
-import axios from "axios";
-import { Button } from "@/components/ui/button"
 import { MapPin, Package, Truck, Eye } from "lucide-react"
 
 const deliveries = [
