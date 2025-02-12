@@ -114,7 +114,7 @@ export default function TruckManagement() {
               <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
               <TabsTrigger value="drivers">Drivers</TabsTrigger>
               <TabsTrigger value="tracking">Live Tracking</TabsTrigger>
-              <TabsTrigger value="orders">Order Assignment</TabsTrigger>
+              {/* <TabsTrigger value="orders">Order Assignment</TabsTrigger> */}
             </TabsList>
             <TabsContent value="dashboard" className="space-y-4">
               <TruckDashboard
