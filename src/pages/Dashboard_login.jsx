@@ -1,4 +1,4 @@
-import { DashboardLoginForm } from "../../components/dashboard-login"
+import { DashboardLoginForm } from "../components/dashboard-login"
 
 export default function Dashboard_login() {
   return (

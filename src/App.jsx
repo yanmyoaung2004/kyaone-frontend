@@ -27,7 +27,8 @@ import Returns from "./pages/Warehouse/returns/page";
 import TruckManagement from "./pages/Warehouse/trucks/page";
 import Settings from "./pages/Warehouse/settings/page"; 
 import LoginPage from "./pages/Login";
-import Dashboard_login from "./pages/warehouse/Dashboard_login";
+import Dashboard_login from "./pages/Dashboard_login";
+import { DriverLoginForm } from "./components/driverLogin";
 // import Products from "./components/warehouse/products/Products";
 
 const App = () => {
@@ -71,6 +72,10 @@ const App = () => {
     {
       path : "/Dashboard_login",
       element : <Dashboard_login />
+    },
+    {
+      path : "/Driver_login",
+      element : <DriverLoginForm />
     },
     {
       path : "/LowStock",

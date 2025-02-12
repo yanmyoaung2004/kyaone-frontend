@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 
-export function DashboardLoginForm({ className, ...props }) {
+export function DriverLoginForm({ className, ...props }) {
 
   let [email, setEmail] = useState('');
   let [password, setPassword] = useState('');
@@ -36,9 +36,9 @@ export function DashboardLoginForm({ className, ...props }) {
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
+      <Card className="mx-auto">
         <CardHeader>
-          <CardTitle className="text-2xl">Dashboard Login</CardTitle>
+          <CardTitle className="text-2xl">Driver Login</CardTitle>
           <CardDescription>Enter your email below to login to your account</CardDescription>
         </CardHeader>
         <CardContent>
