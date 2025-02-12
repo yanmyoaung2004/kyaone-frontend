@@ -67,9 +67,7 @@ export default function Navbar({ setIsCartOpen }) {
             <li className="relative w-14 flex items-center">
               <div className="relative inline-block hover:cursor-pointer">
                 <PopoverDemo size={22} />
-                <div className="absolute -top-2 -right-3.5 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full dark:border-gray-900">
-                  2
-                </div>
+                
               </div>
             </li>
 

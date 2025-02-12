@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import Login from "./pages/Login";
@@ -26,6 +26,9 @@ import Returns from "./pages/Warehouse/returns/page";
 import TruckManagement from "./pages/Warehouse/trucks/page";
 import Settings from "./pages/Warehouse/settings/page";
 import Products from "./components/Warehouse/products/Products";
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
+
 
 // Protected Route Component
 const ProtectedRoute = ({ element, allowedRoles = [] }) => {
@@ -130,8 +133,44 @@ const router = createBrowserRouter([
 
 // App Component
 const App = () => {
-  console.log(useSelector((state) => state.user.currentUser));
+
+  let token = localStorage.getItem("token")
+  console.log(token);
   
+  // const currentUser = useSelector((state) => state.user.currentUser);
+  // console.log(currentUser);
+  
+  useEffect(()=>{
+       if(!window.Echo){
+        window.pusher = Pusher;
+        window.Echo = new Echo({
+          broadcaster: 'reverb',
+          key: 'h2wzlqilxoubiqls3oem',
+          wsHost: 'localhost',
+          wsPort: 8080,
+          forceTLS : false,
+          encrypted: false,
+          enabledTransports: ['ws','wss'],
+          authEndpoint: 'http://127.0.0.1:8000/broadcasting/auth',
+          auth: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            }
+          }
+        
+        })
+        console.log(window.Echo);
+
+
+        window.Echo.private(`notification.customer`)
+  .listen("NewNotification", (e) => {
+    console.log("Notification received:", e); // Check if the event is received
+  });
+
+
+    }
+  })
+
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <DataProvider>

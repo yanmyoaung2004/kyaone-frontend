@@ -13,7 +13,8 @@ const mockNotifications = [
 
 export function Notifications() {
   const [notifications, setNotifications] = useState(mockNotifications)
-
+  console.log("noti");
+  
   // Simulating real-time updates
   useEffect(() => {
     const interval = setInterval(() => {

@@ -1,5 +1,5 @@
 import { toast } from "@/hooks/use-toast";
-import { CheckCheck, CircleX, TriangleAlert } from "lucide-react";
+import { Bell, CheckCheck, CircleX, TriangleAlert } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const handleSuccessToast = (message) => {
@@ -13,6 +13,21 @@ export const handleSuccessToast = (message) => {
     duration: 2500,
     style: {
       backgroundColor: "#b6f8c4",
+    },
+  });
+};
+
+export const handleNotiToast = (message) => {
+  toast({
+    description: (
+      <div className="flex items-center gap-2 text-slate-800 text-sm">
+        <Bell className="w-5 h-5 "/>
+        <span>{message}</span>
+      </div>
+    ),
+    duration: 2500,
+    style: {
+      backgroundColor: "#fff",
     },
   });
 };
