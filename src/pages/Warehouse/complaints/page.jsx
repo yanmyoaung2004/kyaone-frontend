@@ -14,6 +14,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 import { useEffect } from "react";
+import axios from "../../../api";
 
 export default function Complaints() {
   const [complaints, setComplaints] = useState([]);
@@ -25,11 +26,7 @@ export default function Complaints() {
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
-        const response = await fetch(
-          "http://kyone-backend.test/api/complaints"
-        );
-        const data = await response.json();
-        console.log(data);
+        const { data } = await axios("/complaints");
         setComplaints(data.complaints);
       } catch (error) {
         console.error("Error fetching complaints:", error);
