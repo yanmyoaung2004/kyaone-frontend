@@ -1,41 +1,108 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
 
-export function OrderDetails({ order }) {
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Package, Truck, Calendar, MapPin } from "lucide-react";
+
+export function OrderDetails({ order, onStatusUpdate }) {
+  const [status, setStatus] = useState(order.status);
+
+  const handleStatusChange = () => {
+    if (status !== order.status) {
+      onStatusUpdate(order.id, status);
+    }
+  };
+
   return (
     <Card className="w-full lg:w-1/3">
       <CardHeader>
-        <CardTitle>Order Details</CardTitle>
+        <CardTitle className="text-2xl font-bold">Order Details</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-2">
-          <p>
-            <strong>Order ID:</strong> {order.id}
-          </p>
-          <p>
-            <strong>Customer Name:</strong> {order.customerName}
-          </p>
-          <p>
-            <strong>Status:</strong> {order.status}
-          </p>
-          <p>
-            <strong>Delivery Address:</strong> {order.address}
-          </p>
-          <p>
-            <strong>Assigned Truck:</strong>{" "}
-            {order.assignedTruck || "Not Assigned"}
-          </p>
-          <p>
-            <strong>Estimated Delivery:</strong>{" "}
-            {order.estimatedDelivery || "Not Scheduled"}
-          </p>
+      <CardContent className="space-y-4">
+        <div className="flex justify-between items-center">
+          <span className="text-sm font-medium">Order ID</span>
+          <Badge variant="secondary">{order.id}</Badge>
         </div>
-        <div className="mt-4 space-x-2">
-          <Button>Mark as Picked</Button>
-          <Button>Mark as Packed</Button>
-          <Button>Mark as Shipped</Button>
+        <Separator />
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2">
+            <Package className="h-5 w-5 text-muted-foreground" />
+            <span className="font-medium">{order.customerName}</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <MapPin className="h-5 w-5 text-muted-foreground" />
+            <span className="text-sm">{order.address}</span>
+          </div>
+        </div>
+        <Separator />
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <span className="text-sm">Status</span>
+            <Badge
+              variant={
+                order.status === "Delivered"
+                  ? "success"
+                  : order.status === "Cancelled"
+                  ? "destructive"
+                  : "default"
+              }
+            >
+              {order.status}
+            </Badge>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-sm">Assigned Truck</span>
+            <div className="flex items-center space-x-1">
+              <Truck className="h-4 w-4 text-muted-foreground" />
+              <span>{order.assignedTruck || "Not Assigned"}</span>
+            </div>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-sm">Estimated Delivery</span>
+            <div className="flex items-center space-x-1">
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <span>{order.estimatedDelivery || "Not Scheduled"}</span>
+            </div>
+          </div>
         </div>
       </CardContent>
+      <CardFooter className="flex flex-col space-y-2">
+        <Select value={status} onValueChange={setStatus}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Change Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Pending">Pending</SelectItem>
+            <SelectItem value="Processing">Processing</SelectItem>
+            <SelectItem value="Shipped">Shipped</SelectItem>
+            <SelectItem value="Delivered">Delivered</SelectItem>
+            <SelectItem value="Cancelled">Cancelled</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button
+          className="w-full"
+          onClick={handleStatusChange}
+          disabled={status === order.status}
+        >
+          Update Status
+        </Button>
+      </CardFooter>
     </Card>
   );
 }
