@@ -1,13 +1,33 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { User } from "lucide-react"
-import { DriverDetails } from "./driver-details"
-import { Notifications } from "./notifications"
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { User } from "lucide-react";
+import { DriverDetails } from "./driver-details";
+import { Notifications } from "./notifications";
+import { useEffect } from "react";
+import axios from "axios";
+import { Button } from "@/components/ui/button";
+import DriverCreateModal from "./DriverForm";
+import DriverCreateDialog from "./DriverForm";
+import { useToast } from "@/hooks/use-toast";
+import { CheckCircleIcon } from "lucide-react";
 
 // Mock data for demonstration
 const mockDrivers = [
@@ -36,31 +56,87 @@ const mockDrivers = [
     lastDelivery: "2023-06-08",
   },
   // Add more mock drivers as needed
-]
-
+];
 export function DriverManagement() {
-  const [drivers, setDrivers] = useState(mockDrivers)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("All")
-  const [selectedDriver, setSelectedDriver] = useState(null)
+  const [drivers, setDrivers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [refresh, setRefresh] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [selectedDriver, setSelectedDriver] = useState(null);
+  const { toast } = useToast();
 
-  const filteredDrivers = drivers.filter(
-    (driver) =>
-      (driver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (driver.assignedTruck && driver.assignedTruck.toLowerCase().includes(searchTerm.toLowerCase()))) &&
-      (statusFilter === "All" || driver.status === statusFilter),
-  )
+  useEffect(() => {
+    axios.get("/api/drivers").then((res) => {
+      console.log(res.data);
+      setDrivers(res.data);
+    });
+  }, [refresh]);
+
+  const filteredDrivers = drivers;
+
+  // const filteredDrivers = drivers.filter(
+  //   (driver) =>
+  //     (driver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //       (driver.assignedTruck &&
+  //         driver.assignedTruck
+  //           .toLowerCase()
+  //           .includes(searchTerm.toLowerCase()))) &&
+  //     (statusFilter === "All" || driver.status === statusFilter)
+  // );
 
   const handleDriverClick = (driver) => {
-    setSelectedDriver(driver)
-  }
+    setSelectedDriver(driver);
+  };
 
   const handleStatusUpdate = (driverId, newStatus) => {
-    setDrivers(drivers.map((driver) => (driver.id === driverId ? { ...driver, status: newStatus } : driver)))
+    setDrivers(
+      drivers.map((driver) =>
+        driver.id === driverId ? { ...driver, status: newStatus } : driver
+      )
+    );
     if (selectedDriver && selectedDriver.id === driverId) {
-      setSelectedDriver({ ...selectedDriver, status: newStatus })
+      setSelectedDriver({ ...selectedDriver, status: newStatus });
     }
-  }
+  };
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAddDriverClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+  const handleSuccessToast = (message) => {
+    toast({
+      title: (
+        <span>
+          <CheckCircleIcon className="h-6 w-6 mr-2 text-green-500 inline" />
+          {message}
+        </span>
+      ),
+      variant: "success",
+    });
+  };
+
+  const createDriver = (driver) => {
+    axios
+      .post("/api/drivers", driver)
+      .then((res) => {
+        console.log(res.data);
+        setRefresh(!refresh);
+        handleSuccessToast("Driver added successfully");
+        handleCloseModal();
+      })
+      .catch((error) => {
+        console.error(error);
+        toast({
+          variant: "destructive",
+          title: <span>{"Driver creation failed"}</span>,
+        });
+      });
+  };
 
   return (
     <div className="space-y-4">
@@ -69,6 +145,8 @@ export function DriverManagement() {
           <CardTitle className="text-2xl font-bold flex items-center">
             <User className="mr-2 h-6 w-6" />
             Driver Management
+            <div className="flex-1"></div>
+            <Button onClick={handleAddDriverClick}>Add Driver</Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -96,11 +174,10 @@ export function DriverManagement() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Driver Name</TableHead>
-                  <TableHead>Assigned Truck</TableHead>
+                  <TableHead>Driver ID</TableHead>
+                  <TableHead>License</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Contact</TableHead>
-                  <TableHead>Last Delivery</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -110,24 +187,22 @@ export function DriverManagement() {
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() => handleDriverClick(driver)}
                   >
-                    <TableCell className="font-medium">{driver.name}</TableCell>
-                    <TableCell>{driver.assignedTruck || "N/A"}</TableCell>
+                    <TableCell className="font-medium">{driver.id}</TableCell>
+                    <TableCell>{driver.driver_license}</TableCell>
                     <TableCell>
                       <span
                         className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                          driver.status === "Available"
+                          driver.status === "free"
                             ? "bg-green-100 text-green-800"
-                            : driver.status === "On Delivery"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : "bg-red-100 text-red-800"
+                            : driver.status === "busy"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {driver.status === "Available" ? "🟢" : driver.status === "On Delivery" ? "🟡" : "🔴"}{" "}
                         {driver.status}
                       </span>
                     </TableCell>
                     <TableCell>{driver.phone}</TableCell>
-                    <TableCell>{driver.lastDelivery}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -144,8 +219,11 @@ export function DriverManagement() {
         />
       )}
 
+      {isModalOpen && (
+        <DriverCreateDialog onClose={handleCloseModal} onSave={createDriver} />
+      )}
+
       <Notifications />
     </div>
-  )
+  );
 }
-

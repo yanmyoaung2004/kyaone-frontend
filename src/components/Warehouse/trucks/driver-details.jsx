@@ -1,18 +1,31 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function DriverDetails({ driver, onClose, onStatusUpdate }) {
-  const [status, setStatus] = useState(driver.status)
+  const [status, setStatus] = useState(driver.status);
+  console.log(driver);
 
   const handleStatusChange = (newStatus) => {
-    setStatus(newStatus)
-    onStatusUpdate(driver.id, newStatus)
-  }
+    setStatus(newStatus);
+    onStatusUpdate(driver.id, newStatus);
+  };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
@@ -22,35 +35,40 @@ export function DriverDetails({ driver, onClose, onStatusUpdate }) {
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
+            <Label className="text-right">License : </Label>
+            <div className="col-span-3">{driver.driver_license}</div>
+          </div>
+
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="status" className="text-right">
-              Status
+              Status :
             </Label>
-            <Select value={status} onValueChange={handleStatusChange}>
-              <SelectTrigger id="status" className="col-span-3">
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Available">Available</SelectItem>
-                <SelectItem value="On Delivery">On Delivery</SelectItem>
-                <SelectItem value="Inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
+            <span
+              className={`flex justify-center items-center rounded-full px-2 py-1 text-xs font-medium ${
+                driver.status === "free"
+                  ? "bg-green-100 text-green-800"
+                  : driver.status === "busy"
+                  ? "bg-yellow-100 text-yellow-800"
+                  : "bg-red-100 text-red-800"
+              }`}
+            >
+              {driver.status}
+            </span>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Assigned Truck</Label>
+            <Label className="text-right">Assigned Truck : </Label>
             <div className="col-span-3">{driver.assignedTruck || "N/A"}</div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Phone</Label>
+            <Label className="text-right">Phone : </Label>
             <div className="col-span-3">{driver.phone}</div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label className="text-right">Last Delivery</Label>
-            <div className="col-span-3">{driver.lastDelivery}</div>
+            <Label className="text-right">NRC : </Label>
+            <div className="col-span-3">{driver.nrc_number}</div>
           </div>
         </div>
-        <div className="flex justify-between">
-          <Button onClick={onClose}>Close</Button>
+        <div className="flex justify-end">
           <Dialog>
             <DialogTrigger asChild>
               <Button>View History</Button>
@@ -61,13 +79,15 @@ export function DriverDetails({ driver, onClose, onStatusUpdate }) {
               </DialogHeader>
               <div className="py-4">
                 {/* Add driver history content here */}
-                <p>Driver delivery history and performance stats will be displayed here.</p>
+                <p>
+                  Driver delivery history and performance stats will be
+                  displayed here.
+                </p>
               </div>
             </DialogContent>
           </Dialog>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-

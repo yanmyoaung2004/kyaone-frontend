@@ -85,10 +85,13 @@ export function TruckDetails({ truck, onClose }) {
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label className="text-right">Current Orders : </Label>
-            <div className="col-span-3">
-              {" "}
+            <div className="col-span-3 flex flex-col justify-start  space-y-2">
               {orders?.length > 0
-                ? orders.map((order) => `ORD-${order.id}`).join(", ")
+                ? orders.map((order) => (
+                    <div>
+                      <span className=" rounded-full text-xs bg-blue-200 px-2 py-1 text-gray-600">{`ORD-${order.id}`}</span>
+                    </div>
+                  ))
                 : "None"}
             </div>
           </div>
