@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -201,17 +202,11 @@ export function TruckDashboard({
                   {truck.license_plate}
                 </TableCell>
                 <TableCell>
-                  <span
-                    className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                      truck.status === "free"
-                        ? "bg-green-100 text-green-800"
-                        : truck.status === "busy"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {truck.status}
-                  </span>
+                  {truck.status == "free" ? (
+                    <Badge variant="success">Free</Badge>
+                  ) : (
+                    <Badge variant="destructive">Busy</Badge>
+                  )}
                 </TableCell>
                 {/* <TableCell>{truck.driver || "N/A"}</TableCell> */}
                 {/* <TableCell>
