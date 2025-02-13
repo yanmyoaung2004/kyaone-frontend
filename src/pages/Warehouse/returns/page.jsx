@@ -50,13 +50,18 @@ export default function Returns() {
   const [selectedReturn, setSelectedReturn] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [refresh, setRefresh] = useState(false);
+
+  function refreshReturns() {
+    setRefresh(!refresh);
+  }
 
   useEffect(() => {
     axios.get("/api/orders").then((response) => {
       console.log(response.data);
       setReturns(response.data);
     });
-  }, []);
+  }, [refresh]);
 
   const filteredReturns = returns.filter(
     (returnItem) =>
@@ -64,7 +69,7 @@ export default function Returns() {
       (statusFilter === "All" || returnItem.status === statusFilter)
   );
 
-  console.log(filteredReturns);
+  // console.log(filteredReturns);
 
   const handleReturnClick = (returnItem) => {
     setSelectedReturn(returnItem);
@@ -118,6 +123,7 @@ export default function Returns() {
             <ReturnList
               orders={filteredReturns}
               onReturnClick={handleReturnClick}
+              refreshList={refreshReturns}
             />
             {selectedReturn && (
               <ReturnDetails

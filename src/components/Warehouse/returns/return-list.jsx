@@ -33,7 +33,7 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
 
-export function ReturnList({ orders }) {
+export function ReturnList({ orders, refreshList }) {
   const [open, setOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [productId, setProductId] = useState(null);
@@ -76,6 +76,8 @@ export function ReturnList({ orders }) {
       .post("/api/orders", data)
       .then((rep) => {
         console.log(rep.data);
+        setOpen(false);
+        refreshList();
       })
       .catch((error) => console.log(error));
   }
