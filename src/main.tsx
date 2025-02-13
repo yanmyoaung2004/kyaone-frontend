@@ -7,7 +7,7 @@ import App from "./App";
 import axios from "axios";
 import "./echo";
 
-axios.defaults.baseURL = "http://127.0.0.1:8000";
+axios.defaults.baseURL = "http://kyone-backend.test";
 
 createRoot(document.getElementById("root")!).render(
   <PersistGate persistor={persistor}>
