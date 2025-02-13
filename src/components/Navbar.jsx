@@ -61,11 +61,12 @@ export default function Navbar({ setIsCartOpen }) {
                 </div>
               </div>
             </li>
-            {currentUser && (
-              <li className="relative w-14 flex items-center">
-                <NotificationDropdown />
-              </li>
-            )}
+            <li className="relative w-14 flex items-center">
+              <div className="relative inline-block hover:cursor-pointer">
+                <PopoverDemo size={22} />
+              </div>
+            </li>
+
             <li className="w-14">
               <Button
                 variant="ghost"
