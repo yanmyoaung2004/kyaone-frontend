@@ -6,9 +6,10 @@ import { CheckCircle } from "lucide-react";
 import { Truck } from "lucide-react";
 import { Package } from "lucide-react";
 
-const DeliveryTrackigng = ({ isOpen, onClose, delivery }) => {
+const DeliveryTracking = ({ isOpen, onClose, delivery }) => {
   if (!isOpen) return null;
 
+  console.log(delivery);
   return (
     <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg w-[500px] max-h-[90vh] flex flex-col">
@@ -88,7 +89,7 @@ const DeliveryTrackigng = ({ isOpen, onClose, delivery }) => {
   );
 };
 
-export default DeliveryTrackigng;
+export default DeliveryTracking;
 
 const ProductList = () => (
   <div className="text-center">

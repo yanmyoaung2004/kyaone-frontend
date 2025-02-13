@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import RecentActivity from "../components/Sales/RecentActivity";
-import DeliveryTracking from "../components/Sales/DeliveryTracking";
+
 import { TopSellingProduct } from "./TopSellingProduct";
 import { SalePerformance } from "./SalePerformance";
 import { TopRegion } from "./TopRegion";
@@ -45,7 +44,7 @@ const Sale = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* <RecentActivity />
         <DeliveryTracking /> */}
-        {monthlyData.length > 0 && <SalePerformance chartData={monthlyData} />}
+        {monthlyData.length > 0 && <SalePerformance ordersData={monthlyData} />}
         {topSellingLocations.length > 0 && (
           <TopRegion chartData={topSellingLocations} />
         )}

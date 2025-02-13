@@ -24,11 +24,28 @@ const chartConfig = {
   },
 };
 
-export function SalePerformance({ chartData }) {
+const reorderMonths = (ordersArray) => {
+  const currentMonthIndex = new Date().getMonth();
+
+  return [
+    ...ordersArray.slice(currentMonthIndex),
+    ...ordersArray.slice(0, currentMonthIndex),
+  ];
+};
+
+export function SalePerformance({ ordersData }) {
+  const chartData = reorderMonths(ordersData);
+  console.log(chartData);
   const currentMonth = chartData[chartData.length - 1];
   const previousMonth = chartData[chartData.length - 2];
+
   const percentageChange =
-    ((currentMonth.orders - previousMonth.orders) / previousMonth.orders) * 100;
+    previousMonth.orders !== 0
+      ? ((currentMonth.orders - previousMonth.orders) / previousMonth.orders) *
+        100
+      : currentMonth.orders > 0
+      ? 100
+      : 0;
 
   return (
     <Card className="max-w-3xl w-full mx-auto flex flex-col justify-between">
@@ -72,7 +89,7 @@ export function SalePerformance({ chartData }) {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          {percentageChange > 0 ? "Trending up" : "Trending down"}
+          {percentageChange > 0 ? "Trending up " : "Trending down "}
           {Math.abs(percentageChange).toFixed(1)}% this month{" "}
           <TrendingUp
             className={`h-4 w-4 ${

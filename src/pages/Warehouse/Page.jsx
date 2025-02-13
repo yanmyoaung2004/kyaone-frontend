@@ -90,15 +90,15 @@ export default function Page() {
           </Button>
         </div>
       </div>
-      <div className="space-y-6">
-        <div className="flex w-full bg-blue-200 justify-between">
-          <div className="flex-1 min-w-[300px]">
-            <LowStock />
-          </div>
-          <div className="flex-1 min-w-[300px]">
+      <div className="space-y-6 h-screen">
+        <div className="grid grid-cols-1 xl:grid-cols-2 w-full h-full gap-20  justify-between">
+          <div>
             <Stock />
           </div>
-          <div className="flex-1 min-w-[300px]">
+          <div>
+            <LowStock />
+          </div>
+          <div>
             <TruckChart />
           </div>
         </div>

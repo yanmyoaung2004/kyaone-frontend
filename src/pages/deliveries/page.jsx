@@ -20,8 +20,10 @@ import QuickStats from "../../components/Sales/QuickStats";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import DeliveryTracking from "./DeliveryTracking";
 
 export default function DeliveriesPage() {
+  const [seeOrderDetail, setSeeOrderDetail] = useState(false);
   const [status, setStatus] = useState();
   const [searchStatus, setSearchStatus] = useState();
   const [allDeliveries, setAllDeliveries] = useState([]);
@@ -30,6 +32,7 @@ export default function DeliveriesPage() {
   const [allOrderTruck, setAllOrderTruck] = useState([]);
   const [viewMode, setViewMode] = useState("byorder");
   const [search, setSearch] = useState("");
+  const [selectedDelivery, setSelectedDelivery] = useState(null);
   const fetchData = async () => {
     try {
       const res = await axios.get(`/api/deliveries`);
@@ -191,13 +194,24 @@ export default function DeliveriesPage() {
                       </TableCell>
                       <TableCell>{delivery.driver}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSeeOrderDetail(true);
+                          }}
+                        >
                           Track
                         </Button>
                       </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
+                <DeliveryTracking
+                  isOpen={seeOrderDetail}
+                  onClose={() => setSeeOrderDetail(false)}
+                  delivery={delivery}
+                />
               </Table>
             </div>
           )}
