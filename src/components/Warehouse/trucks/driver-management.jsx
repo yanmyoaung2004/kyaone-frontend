@@ -24,40 +24,11 @@ import { Notifications } from "./notifications";
 import { useEffect } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
-import DriverCreateModal from "./DriverForm";
 import DriverCreateDialog from "./DriverForm";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircleIcon } from "lucide-react";
+import { handleSuccessToast } from "../../../helpers/ToastService";
 import { Badge } from "@/components/ui/badge";
 
-// Mock data for demonstration
-const mockDrivers = [
-  {
-    id: "D001",
-    name: "John Doe",
-    assignedTruck: "TRK-001",
-    status: "Available",
-    phone: "123-456-7890",
-    lastDelivery: "2023-06-10",
-  },
-  {
-    id: "D002",
-    name: "Jane Smith",
-    assignedTruck: "TRK-002",
-    status: "On Delivery",
-    phone: "234-567-8901",
-    lastDelivery: "2023-06-12",
-  },
-  {
-    id: "D003",
-    name: "Bob Johnson",
-    assignedTruck: null,
-    status: "Inactive",
-    phone: "345-678-9012",
-    lastDelivery: "2023-06-08",
-  },
-  // Add more mock drivers as needed
-];
 export function DriverManagement() {
   const [drivers, setDrivers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -74,16 +45,6 @@ export function DriverManagement() {
   }, [refresh]);
 
   const filteredDrivers = drivers;
-
-  // const filteredDrivers = drivers.filter(
-  //   (driver) =>
-  //     (driver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //       (driver.assignedTruck &&
-  //         driver.assignedTruck
-  //           .toLowerCase()
-  //           .includes(searchTerm.toLowerCase()))) &&
-  //     (statusFilter === "All" || driver.status === statusFilter)
-  // );
 
   const handleDriverClick = (driver) => {
     setSelectedDriver(driver);
@@ -108,17 +69,6 @@ export function DriverManagement() {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-  };
-  const handleSuccessToast = (message) => {
-    toast({
-      title: (
-        <span>
-          <CheckCircleIcon className="h-6 w-6 mr-2 text-green-500 inline" />
-          {message}
-        </span>
-      ),
-      variant: "success",
-    });
   };
 
   const createDriver = (driver) => {

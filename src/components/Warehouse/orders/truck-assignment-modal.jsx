@@ -18,6 +18,10 @@ import {
 } from "@/components/ui/select";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import axios from "axios";
+import {
+  handleFailureToast,
+  handleSuccessToast,
+} from "../../../helpers/ToastService";
 
 export function TruckAssignmentModal({
   selectedOrders,
@@ -40,9 +44,11 @@ export function TruckAssignmentModal({
         truck_id: selectedTruck,
       });
       if (res.status === 201) {
+        handleSuccessToast("Successfully assigned!");
         onAssign();
       }
     } catch (error) {
+      handleFailureToast("Error occur!");
       console.log(error);
     }
   };

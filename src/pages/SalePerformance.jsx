@@ -35,7 +35,6 @@ const reorderMonths = (ordersArray) => {
 
 export function SalePerformance({ ordersData }) {
   const chartData = reorderMonths(ordersData);
-  console.log(chartData);
   const currentMonth = chartData[chartData.length - 1];
   const previousMonth = chartData[chartData.length - 2];
 

@@ -92,6 +92,7 @@ const TableComponent = () => {
 
     setFilterInvoices(filtered);
   }, [searchTerm, category, invoices]);
+
   useEffect(() => {
     fetchData();
     const mediaQuery = window.matchMedia("(max-width: 500px)");

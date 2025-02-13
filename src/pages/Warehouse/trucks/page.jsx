@@ -15,7 +15,7 @@ import TruckForm from "../../../components/Warehouse/trucks/TruckForm";
 import DeleteConfirmation from "../../../components/Warehouse/trucks/DeleteConfirmation";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
-import { CheckCircleIcon } from "lucide-react";
+import { handleSuccessToast } from "../../../helpers/ToastService";
 
 export default function TruckManagement() {
   const [selectedTruck, setSelectedTruck] = useState(null);
@@ -24,25 +24,9 @@ export default function TruckManagement() {
   const [deleteTruck, setDeleteTruck] = useState(null);
   const [isEditTruck, setIsEditTruck] = useState(false);
   const [formData, setFormdata] = useState(null);
-  const { toast } = useToast();
   const [refresh, setRefresh] = useState(false);
 
-  // console.log(isDeleteTruck);
-  const handleSuccessToast = (message) => {
-    toast({
-      title: (
-        <span>
-          <CheckCircleIcon className="h-6 w-6 mr-2 text-green-500 inline" />
-          {message}
-        </span>
-      ),
-      variant: "success",
-    });
-  };
-
   const handleSubmit = async (updateTruck) => {
-    // console.log(updateTruck);
-
     if (!isEditTruck) {
       console.log("Adding new truck", updateTruck);
       axios
@@ -50,11 +34,10 @@ export default function TruckManagement() {
           status: updateTruck.allowance,
           license_plate: updateTruck.licensePlate,
         })
-        .then((response) => {
-          // setFormdata(response.data.truck);
+        .then(() => {
+          setIsFormOpen(false);
           handleSuccessToast("Truck added successfully");
           setRefresh(!refresh);
-          // console.log(response.data);
         })
         .catch((error) => console.error(error));
       return;
@@ -67,9 +50,9 @@ export default function TruckManagement() {
       })
       .then((response) => {
         if (response.status === 200) {
-          // setStatus(newStatus);
+          setIsFormOpen(false);
           setFormdata(response.data.truck);
-          handleSuccessToast("Success");
+          handleSuccessToast("Truck has been successfully updated!");
           setRefresh(!refresh);
           // console.log(response.data);
         }

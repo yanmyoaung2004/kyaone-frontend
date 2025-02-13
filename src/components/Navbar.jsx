@@ -3,11 +3,12 @@ import { Menu, X, Moon, Sun, ShoppingCart, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DataContext } from "../context/DataContext";
 import { useTheme } from "./theme-provider";
-import { Link, useLocation } from "react-router-dom";
-import { PopoverDemo } from "./Cards/NotiBar";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ProfileDropDown } from "./ProfileDropDown";
 import { useSelector } from "react-redux";
+import NotificationDropdown from "./notification-dropdown";
+import { current } from "@reduxjs/toolkit";
 
 export default function Navbar({ setIsCartOpen }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,19 +42,16 @@ export default function Navbar({ setIsCartOpen }) {
                 Products
               </Link>
             </li>
-            <li className="w-14">
-              <Link
-                to="/history"
-                className="hover:font-bold font-semibold text-sm"
-              >
-                History
-              </Link>
-            </li>
-            <li className="w-14">
-              <Link href="#" className="hover:font-bold font-semibold text-sm">
-                Setting
-              </Link>
-            </li>
+            {currentUser && (
+              <li className="w-14">
+                <Link
+                  to={"/history"}
+                  className="hover:font-bold font-semibold text-sm"
+                >
+                  History
+                </Link>
+              </li>
+            )}
 
             <li className="relative w-14 flex items-center">
               <div className="relative inline-block hover:cursor-pointer">
@@ -63,15 +61,11 @@ export default function Navbar({ setIsCartOpen }) {
                 </div>
               </div>
             </li>
-            <li className="relative w-14 flex items-center">
-              <div className="relative inline-block hover:cursor-pointer">
-                <PopoverDemo size={22} />
-                <div className="absolute -top-2 -right-3.5 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full dark:border-gray-900">
-                  2
-                </div>
-              </div>
-            </li>
-
+            {currentUser && (
+              <li className="relative w-14 flex items-center">
+                <NotificationDropdown />
+              </li>
+            )}
             <li className="w-14">
               <Button
                 variant="ghost"
@@ -112,16 +106,17 @@ export default function Navbar({ setIsCartOpen }) {
                 Products
               </Link>
             </li>
-            <li className="w-14">
-              <Link href="#" className="hover:font-bold font-semibold text-sm">
-                History
-              </Link>
-            </li>
-            <li className="w-14">
-              <Link href="#" className="hover:font-bold font-semibold text-sm">
-                Setting
-              </Link>
-            </li>
+            {currentUser && (
+              <li className="w-14">
+                <Link
+                  to={"/history"}
+                  className="hover:font-bold font-semibold text-sm"
+                >
+                  History
+                </Link>
+              </li>
+            )}
+
             <li className="relative w-14">
               <div className="relative inline-block hover:cursor-pointer">
                 <ShoppingCart size={22} onClick={() => setIsCartOpen(true)} />
@@ -130,14 +125,11 @@ export default function Navbar({ setIsCartOpen }) {
                 </div>
               </div>
             </li>
-            <li className="relative w-14 flex items-center">
-              <div className="relative inline-block hover:cursor-pointer">
-                <Bell size={22} />
-                <div className="absolute -top-2 -right-3.5 flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full dark:border-gray-900">
-                  2
-                </div>
-              </div>
-            </li>
+            {currentUser && (
+              <li className="relative w-14 flex items-center">
+                <NotificationDropdown />
+              </li>
+            )}
 
             <li className="w-14">
               <Button

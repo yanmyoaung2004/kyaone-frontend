@@ -14,6 +14,7 @@ export function StockList({ stock, onProductSelect }) {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>ID</TableHead>
             <TableHead>Product Name</TableHead>
             <TableHead>Current Stock</TableHead>
             <TableHead>Reorder Level</TableHead>
@@ -29,6 +30,7 @@ export function StockList({ stock, onProductSelect }) {
                 item.currentStock < item.reorderLevel ? "bg-red-100" : ""
               }`}
             >
+              <TableCell>PD-{item.id}</TableCell>
               <TableCell>{item.name}</TableCell>
               <TableCell>{item.currentStock}</TableCell>
               <TableCell>{item.reorderLevel}</TableCell>

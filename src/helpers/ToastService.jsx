@@ -1,5 +1,5 @@
 import { toast } from "@/hooks/use-toast";
-import { CheckCheck, CircleX, TriangleAlert } from "lucide-react";
+import { Bell, CheckCheck, CircleX, TriangleAlert } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const handleSuccessToast = (message) => {

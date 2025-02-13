@@ -22,6 +22,10 @@ import {
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { DialogDescription } from "@radix-ui/react-dialog";
+import {
+  handleFailureToast,
+  handleSuccessToast,
+} from "../../../helpers/ToastService";
 
 export default function ProductModal({
   isOpen,
@@ -37,7 +41,8 @@ export default function ProductModal({
     price: 0,
     image: null,
   });
-  const navigate = useNavigate();
+
+  console.log(product);
 
   useEffect(() => {
     if (product) {
@@ -88,11 +93,19 @@ export default function ProductModal({
     }
 
     try {
-      const res = await axios.post("/api/products", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      let res;
+      if (product) {
+        res = await axios.post(`api/products/${product.id}`, data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      } else {
+        res = await axios.post("/api/products", data, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
       console.log(res);
       if (res.status === 200) {
+        handleSuccessToast("Product created successfully!");
         onSave({
           id: res.data.product.id,
           name: res.data.product.name,
@@ -102,6 +115,7 @@ export default function ProductModal({
         });
       }
     } catch (error) {
+      handleFailureToast("Error occur!");
       console.error("Error creating product:", error);
     }
   };

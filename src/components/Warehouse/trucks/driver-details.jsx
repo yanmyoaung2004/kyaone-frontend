@@ -7,16 +7,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 
 export function DriverDetails({ driver, onClose, onStatusUpdate }) {
@@ -64,25 +56,6 @@ export function DriverDetails({ driver, onClose, onStatusUpdate }) {
             <Label className="text-right">NRC : </Label>
             <div className="col-span-3">{driver.nrc_number}</div>
           </div>
-        </div>
-        <div className="flex justify-end">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button>View History</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Driver History: {driver.name}</DialogTitle>
-              </DialogHeader>
-              <div className="py-4">
-                {/* Add driver history content here */}
-                <p>
-                  Driver delivery history and performance stats will be
-                  displayed here.
-                </p>
-              </div>
-            </DialogContent>
-          </Dialog>
         </div>
       </DialogContent>
     </Dialog>

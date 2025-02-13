@@ -21,19 +21,20 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
+import { Navigate, useNavigate } from "react-router";
 
 const complaintSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
-  complaintType: z.enum(["delayed","faulty","wrong","missing"]),
+  complaintType: z.enum(["delayed", "faulty", "wrong", "missing"]),
   description: z.string().min(10, "Description must be at least 10 characters"),
 });
 
 export function ComplaintForm({ department, onSubmit, invoiceId }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const currentUser = useSelector((state)=>state.user.currentUser);
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const navigate = useNavigate();
 
-  
   const form = useForm({
     resolver: zodResolver(complaintSchema),
     defaultValues: {
@@ -49,16 +50,21 @@ export function ComplaintForm({ department, onSubmit, invoiceId }) {
     try {
       // await onSubmit(data);
       form.reset();
-    
-      await axios.post("/api/complaints", {
-        customer_id: currentUser.id,
-        order_id: invoiceId,
-        description: data.description,
-        type: data.complaintType,
-        status: 'open',
-      }).then(res=>console.log(res))
-      .catch(e=>console.log(e)
-      );
+
+      await axios
+        .post("/api/complaints", {
+          customer_id: currentUser.id,
+          order_id: invoiceId,
+          description: data.description,
+          type: data.complaintType,
+          status: "open",
+        })
+        .then((res) => {
+          if (res.status === 201) {
+            navigate("/");
+          }
+        })
+        .catch((e) => console.log(e));
     } catch (error) {
       console.error(error);
     } finally {
@@ -67,85 +73,80 @@ export function ComplaintForm({ department, onSubmit, invoiceId }) {
   };
 
   return (
-<Card className="w-full max-w-lg mx-auto bg-white text-black mt-10 shadow-none border-none">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            Submit a Complaint
-          </CardTitle>
-          <CardDescription>
-            {department === "sales"
-              ? "Sales Department"
-              : department === "warehouse"
-              ? "Warehouse Department"
-              : "Customer"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-4"
-          >
-            <div>
-              <Input
-                name="name"
-                label="Name"
-                placeholder="Your full name"
-                {...form.register("name")}
-              />
-              {form.formState.errors.name && (
-                <p className="text-red-500 text-sm">
-                  {form.formState.errors.name.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <Input
-                name="email"
-                label="Email"
-                placeholder="your.email@example.com"
-                {...form.register("email")}
-              />
-              {form.formState.errors.name && (
-                <p className="text-red-500 text-sm">
-                  {form.formState.errors.email?.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <Select {...form.register("complaintType")}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Complaint type..." />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="delayed">Delivery delay</SelectItem>
-                  <SelectItem value="wrong">Wrong Order</SelectItem>
-                  <SelectItem value="faulty">Faulty Order</SelectItem>
-                  <SelectItem value="missing">Order miss</SelectItem>
-                </SelectContent>
-              </Select>
-              {form.formState.errors.complaintType && (
-                <p className="text-red-500 text-sm">
-                  {form.formState.errors.complaintType.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <Textarea
-                name="description"
-                placeholder="Please provide details about your complaint"
-                {...form.register("description")}
-              />
-              {form.formState.errors.description && (
-                <p className="text-red-500 text-sm">
-                  {form.formState.errors.description.message}
-                </p>
-              )}
-            </div>
-            <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Submit Complaint"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
+    <Card className="w-full max-w-lg mx-auto bg-white text-black mt-10 shadow-none border-none">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold">Submit a Complaint</CardTitle>
+        <CardDescription>
+          {department === "sales"
+            ? "Sales Department"
+            : department === "warehouse"
+            ? "Warehouse Department"
+            : "Customer"}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <div>
+            <Input
+              name="name"
+              label="Name"
+              placeholder="Your full name"
+              {...form.register("name")}
+            />
+            {form.formState.errors.name && (
+              <p className="text-red-500 text-sm">
+                {form.formState.errors.name.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <Input
+              name="email"
+              label="Email"
+              placeholder="your.email@example.com"
+              {...form.register("email")}
+            />
+            {form.formState.errors.name && (
+              <p className="text-red-500 text-sm">
+                {form.formState.errors.email?.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <Select {...form.register("complaintType")}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Complaint type..." />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="delayed">Delivery delay</SelectItem>
+                <SelectItem value="wrong">Wrong Order</SelectItem>
+                <SelectItem value="faulty">Faulty Order</SelectItem>
+                <SelectItem value="missing">Order miss</SelectItem>
+              </SelectContent>
+            </Select>
+            {form.formState.errors.complaintType && (
+              <p className="text-red-500 text-sm">
+                {form.formState.errors.complaintType.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <Textarea
+              name="description"
+              placeholder="Please provide details about your complaint"
+              {...form.register("description")}
+            />
+            {form.formState.errors.description && (
+              <p className="text-red-500 text-sm">
+                {form.formState.errors.description.message}
+              </p>
+            )}
+          </div>
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit Complaint"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

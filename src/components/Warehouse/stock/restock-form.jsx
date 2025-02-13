@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "axios";
+import {
+  handleFailureToast,
+  handleSuccessToast,
+} from "../../../helpers/ToastService";
 
 export function RestockForm({ product, onRestock }) {
   const [quantity, setQuantity] = useState(0);
@@ -15,8 +19,13 @@ export function RestockForm({ product, onRestock }) {
         productId: product.id,
         quantity: quantity,
       });
+
+      if (res.status === 200) {
+        handleSuccessToast("Successfully updated!");
+      }
     } catch (error) {
       console.log(error);
+      handleFailureToast("Error occur!");
     }
   };
 

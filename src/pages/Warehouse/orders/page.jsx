@@ -21,38 +21,6 @@ import { useEffect } from "react";
 import axios from "axios";
 
 // Mock data for demonstration
-const mockOrders = [
-  {
-    id: "001",
-    customerName: "John Doe",
-    status: "Pending",
-    address: "123 Main St",
-    assignedTruck: null,
-    estimatedDelivery: null,
-    hasComplaint: false,
-    serviceCenter: null,
-  },
-  {
-    id: "002",
-    customerName: "Jane Smith",
-    status: "Processing",
-    address: "456 Elm St",
-    assignedTruck: "TRUCK-001",
-    estimatedDelivery: "2023-06-15",
-    hasComplaint: true,
-    serviceCenter: "Service Center A",
-  },
-  {
-    id: "003",
-    customerName: "Bob Johnson",
-    status: "Shipped",
-    address: "789 Oak St",
-    assignedTruck: "TRUCK-002",
-    estimatedDelivery: "2023-06-14",
-    hasComplaint: false,
-    serviceCenter: null,
-  },
-];
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);

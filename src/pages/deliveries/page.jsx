@@ -33,6 +33,7 @@ export default function DeliveriesPage() {
   const [viewMode, setViewMode] = useState("byorder");
   const [search, setSearch] = useState("");
   const [selectedDelivery, setSelectedDelivery] = useState(null);
+
   const fetchData = async () => {
     try {
       const res = await axios.get(`/api/deliveries`);
@@ -198,6 +199,7 @@ export default function DeliveriesPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => {
+                            setSelectedDelivery(delivery);
                             setSeeOrderDetail(true);
                           }}
                         >
@@ -207,12 +209,12 @@ export default function DeliveriesPage() {
                     </TableRow>
                   ))}
                 </TableBody>
-                <DeliveryTracking
-                  isOpen={seeOrderDetail}
-                  onClose={() => setSeeOrderDetail(false)}
-                  delivery={delivery}
-                />
               </Table>
+              <DeliveryTracking
+                isOpen={seeOrderDetail}
+                onClose={() => setSeeOrderDetail(false)}
+                delivery={selectedDelivery}
+              />
             </div>
           )}
 

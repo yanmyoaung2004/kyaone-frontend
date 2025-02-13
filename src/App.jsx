@@ -44,6 +44,10 @@ import CustomerComplaint from "./pages/CustomerComplaint";
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 
+// Driver
+import DriversLayout from "./pages/DriversApp/layout";
+import DriverPage from "./pages/DriversApp/page";
+
 // Protected Route Component
 const ProtectedRoute = ({ element, allowedRoles = [] }) => {
   const currentUser = useSelector((state) => state.user.currentUser);
@@ -61,34 +65,6 @@ const ProtectedRoute = ({ element, allowedRoles = [] }) => {
 
 // App Component
 const App = () => {
-  useEffect(() => {
-    if (!window.Echo) {
-      window.pusher = Pusher;
-      window.Echo = new Echo({
-        broadcaster: "reverb",
-        key: "h2wzlqilxoubiqls3oem",
-        wsHost: "localhost",
-        wsPort: 8080,
-        forceTLS: false,
-        encrypted: false,
-        enabledTransports: ["ws", "wss"],
-        authEndpoint: "http://127.0.0.1:8000/broadcasting/auth",
-        auth: {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      });
-      console.log(window.Echo);
-      window.Echo.private(`.notification.customer`).listen(
-        "NewNotification",
-        (e) => {
-          console.log("Notification received:", e);
-        }
-      );
-    }
-  });
-
   const router = createBrowserRouter([
     // Public Routes
     {
@@ -285,6 +261,16 @@ const App = () => {
             <Settings />
           </WarehouseLayout>
         </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/driver-dashboard",
+      element: (
+        // <WarehouseProtectedRoute>
+        <DriversLayout>
+          <DriverPage />
+        </DriversLayout>
+        // </WarehouseProtectedRoute>
       ),
     },
   ]);

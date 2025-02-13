@@ -48,8 +48,6 @@ export function TruckDashboard({
       .get("/api/trucks")
       .then((res) => {
         setTrucks(res.data.trucks);
-        res.data.trucks;
-        console.log(res.data);
       })
       .catch((error) => {
         console.error(error);

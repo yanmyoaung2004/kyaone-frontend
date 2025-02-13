@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/popover";
 import { Bell } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
 import axios from "axios";
 import { useSelector } from "react-redux";
 
@@ -18,7 +17,6 @@ export function PopoverDemo() {
   const userRole =
     useSelector((state) => state.user.currentUser.role) ?? "customer";
 
-  let [orderCreated, setOrderCreated] = useState(true);
   window.Echo.channel("public-updates").listen(
     ".public.notification",
     (response) => {
@@ -43,8 +41,6 @@ export function PopoverDemo() {
     .listen(".message.sent", (event) => {
       console.log("New message:", event.message);
     });
-
-  let [status, setStatus] = useState("pending");
 
   useEffect(() => {
     fetchNoti();
