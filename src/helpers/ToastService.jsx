@@ -17,6 +17,21 @@ export const handleSuccessToast = (message) => {
   });
 };
 
+export const handleNotiToast = (message) => {
+  toast({
+    description: (
+      <div className="flex items-center gap-2 text-slate-800 text-sm">
+        <Bell className="w-5 h-5 " />
+        <span>{message}</span>
+      </div>
+    ),
+    duration: 2500,
+    style: {
+      backgroundColor: "#fff",
+    },
+  });
+};
+
 export const handleSuccessToastWithLink = (message, link) => {
   toast({
     description: (

@@ -18,6 +18,7 @@ import { AlertCircle } from "lucide-react";
 import { useEffect } from "react";
 
 import { CheckCircleIcon } from "lucide-react";
+import axios from "axios";
 
 export default function Complaints() {
   const [complaints, setComplaints] = useState([]);
@@ -32,7 +33,7 @@ export default function Complaints() {
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
-        const { data } = await axios("/complaints");
+        const { data } = await axios("complaints");
         setComplaints(data.complaints);
       } catch (error) {
         console.error("Error fetching complaints:", error);

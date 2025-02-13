@@ -91,6 +91,7 @@ export default function ProductModal({
       const res = await axios.post("/api/products", data, {
         headers: { "Content-Type": "multipart/form-data" },
       });
+      console.log(res);
       if (res.status === 200) {
         onSave({
           id: res.data.product.id,

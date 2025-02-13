@@ -36,7 +36,7 @@ const OrderDetails = ({ isOpen, onClose, orderId, callBackOnSuccess }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-20 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-lg w-[500px] max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-lg shadow-lg w-[600px] max-h-[90vh] flex flex-col">
         <div className="p-4 flex justify-between items-center border-b">
           <h2 className="text-2xl font-bold text-center flex-grow">
             Order Details
@@ -46,7 +46,7 @@ const OrderDetails = ({ isOpen, onClose, orderId, callBackOnSuccess }) => {
           </Button>
         </div>
 
-        <ScrollArea className="flex-grow overflow-scroll">
+        <ScrollArea className="flex-grow overflow-scroll overflow-x-hidden">
           <div className="p-6 space-y-6">
             {order && (
               <>

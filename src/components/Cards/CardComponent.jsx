@@ -8,6 +8,7 @@ import { useTheme } from "../theme-provider";
 const CardComponent = ({ item, addToCart, isAdded }) => {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  // console.log(item);
   return (
     <Card
       className={`w-full max-w-md mx-auto shadow-md ${
@@ -40,6 +41,7 @@ const CardComponent = ({ item, addToCart, isAdded }) => {
         <div className="flex justify-between items-center">
           <p className="text-xl font-semibold">${item.price.toFixed(2)}</p>
           <div className="flex gap-3">
+            <p>{item.quantity}</p>
             <Button
               variant="outline"
               className="rounded-lg"

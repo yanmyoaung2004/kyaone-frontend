@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Pages
@@ -41,6 +41,8 @@ import Products from "./components/Warehouse/products/Products";
 import { Toaster } from "@/components/ui/toaster";
 import ProductList from "./pages/ProductList";
 import CustomerComplaint from "./pages/CustomerComplaint";
+import Echo from "laravel-echo";
+import Pusher from "pusher-js";
 
 // Protected Route Component
 const ProtectedRoute = ({ element, allowedRoles = [] }) => {
@@ -59,6 +61,34 @@ const ProtectedRoute = ({ element, allowedRoles = [] }) => {
 
 // App Component
 const App = () => {
+  useEffect(() => {
+    if (!window.Echo) {
+      window.pusher = Pusher;
+      window.Echo = new Echo({
+        broadcaster: "reverb",
+        key: "h2wzlqilxoubiqls3oem",
+        wsHost: "localhost",
+        wsPort: 8080,
+        forceTLS: false,
+        encrypted: false,
+        enabledTransports: ["ws", "wss"],
+        authEndpoint: "http://127.0.0.1:8000/broadcasting/auth",
+        auth: {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      });
+      console.log(window.Echo);
+      window.Echo.private(`.notification.customer`).listen(
+        "NewNotification",
+        (e) => {
+          console.log("Notification received:", e);
+        }
+      );
+    }
+  });
+
   const router = createBrowserRouter([
     // Public Routes
     {

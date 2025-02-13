@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 // Mock function to fetch order details
 const fetchOrderDetails = (orderId) => {
-  // This would typically be an API call
+  // This would typically be an API   call
   return {
     id: orderId,
     customerName: "John Doe",

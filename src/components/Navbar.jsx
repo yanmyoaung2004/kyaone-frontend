@@ -13,8 +13,7 @@ export default function Navbar({ setIsCartOpen }) {
   const [isOpen, setIsOpen] = useState(false);
   const { cartItems } = useContext(DataContext);
   const { theme, setTheme } = useTheme();
-  const currentUser = useSelector((state=>state.user.currentUser));
-  
+  const currentUser = useSelector((state) => state.user.currentUser);
 
   return (
     <nav className="bg-black opacity-95 p-4 px-8">
@@ -86,16 +85,19 @@ export default function Navbar({ setIsCartOpen }) {
                 <Sun className="h-5 w-5 transition-all -rotate-90 scale-0 dark:rotate-0 dark:scale-100 dark:block hidden" />
                 <span className="sr-only">Toggle theme</span>
               </Button>
-              
             </li>
             <li>
-            {
-              currentUser ? 
-              <ProfileDropDown/> :
-              <>
-              <Link to={"/login"}>
-              <Button variant="ghost" className="">Login</Button></Link></>
-            }
+              {currentUser ? (
+                <ProfileDropDown />
+              ) : (
+                <>
+                  <Link to={"/login"}>
+                    <Button variant="ghost" className="">
+                      Login
+                    </Button>
+                  </Link>
+                </>
+              )}
             </li>
           </ul>
         </div>

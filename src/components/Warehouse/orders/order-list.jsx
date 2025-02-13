@@ -15,6 +15,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useState } from "react";
+import { PaginationForItems } from "../../PaginationForItems";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const getStatusColor = (status) => {
   switch (status) {
@@ -42,6 +52,15 @@ export function OrderList({
   onSelectOrder,
   handleAssignTruckClick,
 }) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
+
+  const totalPages = Math.ceil(orders.length / ordersPerPage);
+  const paginatedOrders = orders.slice(
+    (currentPage - 1) * ordersPerPage,
+    currentPage * ordersPerPage
+  );
+
   return (
     <div className="rounded-md border flex-grow overflow-x-auto">
       <Table>
@@ -58,7 +77,7 @@ export function OrderList({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {orders.map((order) => (
+          {paginatedOrders.map((order) => (
             <TableRow key={order.id}>
               <TableCell className="text-center">
                 <Checkbox
@@ -134,6 +153,31 @@ export function OrderList({
           ))}
         </TableBody>
       </Table>
+
+      <Pagination className="py-5">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="cursor-pointer hover:bg-transparent"
+            />
+          </PaginationItem>
+          <span className="font-semibold text-sm">
+            Page {currentPage} of {totalPages}
+          </span>
+
+          <PaginationItem>
+            <PaginationNext
+              className="cursor-pointer hover:bg-transparent"
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 }

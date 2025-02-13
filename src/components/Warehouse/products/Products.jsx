@@ -50,7 +50,7 @@ export default function Products() {
 
   const handleDeleteProduct = async (id) => {
     try {
-      const res = await axios.delete(`/api/products/${id} `);
+      const res = await axios.delete(`/api/products/${id}`);
       if (res.status === 200) {
         setProducts(products.filter((p) => p.id !== id));
       }
@@ -60,11 +60,7 @@ export default function Products() {
   };
 
   const filterProducts = products.filter((product) => {
-    const productNameMatch = product.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
-    return productNameMatch;
+    return product.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   const handleInputChange = (e) => {
@@ -133,36 +129,35 @@ export default function Products() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filterProducts.length > 0 &&
-              filterProducts.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell>PD-{product.id}</TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.category}</TableCell>
-                  <TableCell>{product.description}</TableCell>
-                  <TableCell>${product.price}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mr-2"
-                      onClick={() => {
-                        setEditingProduct(product);
-                        setIsModalOpen(true);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => handleDeleteProduct(product.id)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
+            {filterProducts.map((product) => (
+              <TableRow key={product.id}>
+                <TableCell>PD-{product.id}</TableCell>
+                <TableCell>{product.name}</TableCell>
+                <TableCell>{product.category}</TableCell>
+                <TableCell>{product.description}</TableCell>
+                <TableCell>${product.price}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mr-2"
+                    onClick={() => {
+                      setEditingProduct(product);
+                      setIsModalOpen(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDeleteProduct(product.id)}
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>

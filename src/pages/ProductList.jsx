@@ -57,7 +57,6 @@ const ProductList = () => {
     setError(null);
     try {
       const res = await axios.get(`/api/stocks`);
-      console.log(res.data);
       setItemList(res.data);
     } catch (error) {
       setError("Failed to load products. Please try again.");

@@ -8,36 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart2 } from "lucide-react";
 import axios from "axios";
 
-// Mock data for demonstration
-const mockStock = [
-  {
-    id: "P001",
-    name: "Widget A",
-    sku: "WA-001",
-    currentStock: 50,
-    reorderLevel: 20,
-    lastRestockDate: "2023-05-15",
-  },
-  {
-    id: "P002",
-    name: "Gadget B",
-    currentStock: 15,
-    reorderLevel: 30,
-    lastRestockDate: "2023-05-20",
-  },
-  {
-    id: "P003",
-    name: "Doohickey C",
-    currentStock: 75,
-    reorderLevel: 50,
-    lastRestockDate: "2023-05-10",
-  },
-];
-
 export default function StockManagement() {
   const [stock, setStock] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const fetchData = async () => {
     try {
@@ -71,6 +47,11 @@ export default function StockManagement() {
     setSelectedProduct(null);
   };
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentStock = filteredStock.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredStock.length / itemsPerPage);
+
   return (
     <div className="space-y-6">
       <Card className="bg-white shadow-lg">
@@ -89,7 +70,7 @@ export default function StockManagement() {
           />
           <div className="flex flex-col lg:flex-row gap-6">
             <StockList
-              stock={filteredStock}
+              stock={currentStock}
               onProductSelect={setSelectedProduct}
             />
             {selectedProduct && (
@@ -98,6 +79,27 @@ export default function StockManagement() {
                 onRestock={handleRestock}
               />
             )}
+          </div>
+          <div className="flex justify-between items-center mt-4">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
+            >
+              Next
+            </button>
           </div>
         </CardContent>
       </Card>
