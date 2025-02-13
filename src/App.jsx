@@ -142,6 +142,16 @@ const App = () => {
       ),
     },
     {
+      path: "/sales-returns",
+      element: (
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <Returns />
+          </SaleLayout>
+        </SaleProtectedRoute>
+      ),
+    },
+    {
       path: "/sales-deliveries/detail/:truckId",
       element: (
         <SaleProtectedRoute>
@@ -229,16 +239,6 @@ const App = () => {
         <WarehouseProtectedRoute>
           <WarehouseLayout>
             <Products />
-          </WarehouseLayout>
-        </WarehouseProtectedRoute>
-      ),
-    },
-    {
-      path: "/warehouse-returns",
-      element: (
-        <WarehouseProtectedRoute>
-          <WarehouseLayout>
-            <Returns />
           </WarehouseLayout>
         </WarehouseProtectedRoute>
       ),

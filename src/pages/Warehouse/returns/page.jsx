@@ -1,12 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { ReturnList } from "../../../components/Warehouse/returns/return-list"
-import { ReturnDetails } from "../../../components/Warehouse/returns/return-details"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { RotateCcw } from "lucide-react"
+import { useState } from "react";
+import { ReturnList } from "../../../components/Warehouse/returns/return-list";
+import { ReturnDetails } from "../../../components/Warehouse/returns/return-details";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { RotateCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import axios from "axios";
 
 // Mock data for demonstration
 const mockReturns = [
@@ -34,34 +43,50 @@ const mockReturns = [
     status: "Rejected",
     reason: "Changed Mind",
   },
-]
+];
 
 export default function Returns() {
-  const [returns, setReturns] = useState(mockReturns)
-  const [selectedReturn, setSelectedReturn] = useState(null)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [statusFilter, setStatusFilter] = useState("All")
+  const [returns, setReturns] = useState([]);
+  const [selectedReturn, setSelectedReturn] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [refresh, setRefresh] = useState(false);
+
+  function refreshReturns() {
+    setRefresh(!refresh);
+  }
+
+  useEffect(() => {
+    axios.get("/api/orders").then((response) => {
+      console.log(response.data);
+      setReturns(response.data);
+    });
+  }, [refresh]);
 
   const filteredReturns = returns.filter(
     (returnItem) =>
-      (returnItem.customerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        returnItem.id.includes(searchTerm) ||
-        returnItem.orderId.includes(searchTerm)) &&
-      (statusFilter === "All" || returnItem.status === statusFilter),
-  )
+      returnItem?.id?.toString()?.includes(searchTerm) &&
+      (statusFilter === "All" || returnItem.status === statusFilter)
+  );
+
+  // console.log(filteredReturns);
 
   const handleReturnClick = (returnItem) => {
-    setSelectedReturn(returnItem)
-  }
+    setSelectedReturn(returnItem);
+  };
 
   const handleStatusUpdate = (returnId, newStatus) => {
     setReturns(
-      returns.map((returnItem) => (returnItem.id === returnId ? { ...returnItem, status: newStatus } : returnItem)),
-    )
+      returns.map((returnItem) =>
+        returnItem.id === returnId
+          ? { ...returnItem, status: newStatus }
+          : returnItem
+      )
+    );
     if (selectedReturn && selectedReturn.id === returnId) {
-      setSelectedReturn({ ...selectedReturn, status: newStatus })
+      setSelectedReturn({ ...selectedReturn, status: newStatus });
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -86,20 +111,29 @@ export default function Returns() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="All">All Statuses</SelectItem>
-                <SelectItem value="Pending">Pending</SelectItem>
-                <SelectItem value="Processed">Processed</SelectItem>
-                <SelectItem value="Rejected">Rejected</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="processing">Processing</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-6">
-            <ReturnList returns={filteredReturns} onReturnClick={handleReturnClick} />
-            {selectedReturn && <ReturnDetails returnItem={selectedReturn} onStatusUpdate={handleStatusUpdate} />}
+            <ReturnList
+              orders={filteredReturns}
+              onReturnClick={handleReturnClick}
+              refreshList={refreshReturns}
+            />
+            {selectedReturn && (
+              <ReturnDetails
+                returnItem={selectedReturn}
+                onStatusUpdate={handleStatusUpdate}
+              />
+            )}
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-
