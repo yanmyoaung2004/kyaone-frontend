@@ -16,6 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DialogTrigger } from "@radix-ui/react-dialog";
+import { Building2 } from "lucide-react";
+import { useEffect } from "react";
+import axios from "axios";
+import { handleFailureToast } from "../../../helpers/ToastService";
 
 // Mock data for available service centers
 const availableServiceCenters = [
@@ -26,6 +31,20 @@ const availableServiceCenters = [
 
 export function ServiceCenterAssignmentModal({ order, onAssign, onClose }) {
   const [selectedServiceCenter, setSelectedServiceCenter] = useState("");
+  const [serviceCenters, setServiceCenters] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("/api/service-centers")
+      .then((response) => {
+        console.log(response.data);
+        setServiceCenters(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        handleFailureToast("Faile to get service-centers ");
+      });
+  }, []);
 
   const handleAssign = () => {
     if (selectedServiceCenter) {
@@ -34,7 +53,18 @@ export function ServiceCenterAssignmentModal({ order, onAssign, onClose }) {
   };
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
+    <Dialog>
+      <DialogTrigger>
+        <Button
+          // onClick={() => {
+          //   handleAssignTruckClick();
+          // }}
+          className="flex items-center"
+        >
+          <Building2 className="mr-2 h-4 w-4" />
+          Assign To Service Center
+        </Button>
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Assign Service Center to Order {order.id}</DialogTitle>
@@ -48,11 +78,12 @@ export function ServiceCenterAssignmentModal({ order, onAssign, onClose }) {
               <SelectValue placeholder="Select a service center" />
             </SelectTrigger>
             <SelectContent>
-              {availableServiceCenters.map((center) => (
-                <SelectItem key={center.id} value={center.name}>
-                  {center.name} - {center.location}
-                </SelectItem>
-              ))}
+              {serviceCenters &&
+                serviceCenters.map((center) => (
+                  <SelectItem key={center.id} value={center.name}>
+                    {center.name} - {center.location}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         </div>

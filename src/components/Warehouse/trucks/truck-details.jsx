@@ -172,7 +172,7 @@ function CurrentOrders({ orders }) {
             {orders?.map((order) => (
               <TableRow>
                 <TableCell>ORD-{order?.id}</TableCell>
-                <TableCell>{order?.total_price} MMK</TableCell>
+                <TableCell>${order?.total_price}</TableCell>
                 <TableCell>
                   <Badge variant="secondary">{order?.status}</Badge>
                 </TableCell>

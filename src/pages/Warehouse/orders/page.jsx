@@ -116,6 +116,7 @@ export default function Orders() {
                 <Truck className="mr-2 h-4 w-4" />
                 Assign Trucks
               </Button>
+              <ServiceCenterAssignmentModal order={selectedOrders} />
             </div>
           )}
         </CardHeader>

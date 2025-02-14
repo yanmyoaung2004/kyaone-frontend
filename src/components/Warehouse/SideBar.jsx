@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { Building2 } from "lucide-react";
+import { Building } from "lucide-react";
 
 const navItems = [
   { icon: Home, label: "Dashboard", href: "/warehouse-dashboard" },
@@ -30,7 +31,12 @@ const navItems = [
     label: "Product Management",
     href: "/product-management",
   },
-  { icon: Building2, label: "City", href: "/warehouse-cities" },
+  { icon: Building, label: "City", href: "/warehouse-cities" },
+  {
+    icon: Building2,
+    label: "Service Centers",
+    href: "/warehouse-service-centers",
+  },
   { icon: Truck, label: "Truck Management", href: "/warehouse-trucks" },
   // { icon: Settings, label: "Settings", href: "/warehouse-setting" },
 ];

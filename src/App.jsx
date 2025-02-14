@@ -48,6 +48,7 @@ import DriverProtectedRoute from "./auth/DriverProtectedRoute";
 import DriversLayout from "./pages/DriversApp/layout";
 import DriverPage from "./pages/DriversApp/page";
 import EscalatedIssues from "./components/Drivers/escalated-model";
+import ServiceCenter from "./components/Warehouse/service-center/ServiceCenter";
 
 // Protected Route Component
 const ProtectedRoute = ({ element, allowedRoles = [] }) => {
@@ -158,6 +159,16 @@ const App = () => {
         <WarehouseProtectedRoute>
           <WarehouseLayout>
             <Cities />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/warehouse-service-centers",
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <ServiceCenter />
           </WarehouseLayout>
         </WarehouseProtectedRoute>
       ),

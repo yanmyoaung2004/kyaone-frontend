@@ -116,7 +116,7 @@ const ProductList = ({ products }) => {
             name={p.name}
             quantity={p.pivot.quantity}
             price={p.unitprice.price}
-            image="https://th.bing.com/th/id/OIP.wMftsrP6USIHg4aMEpwnPQHaHa?rs=1&pid=ImgDetMain"
+            image={p.media[0].original_url}
           />
         ))}
       </div>

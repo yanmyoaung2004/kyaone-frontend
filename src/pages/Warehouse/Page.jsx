@@ -69,27 +69,6 @@ export default function Page() {
         </Card>
       </div>
 
-      <div className="space-y-4">
-        <h3 className="text-xl font-semibold text-gray-800">Quick Actions</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Button className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700">
-            <Truck className="h-4 w-4" />
-            Assign Truck to Orders
-          </Button>
-          <Button className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700">
-            <FileText className="h-4 w-4" />
-            Process Complaints
-          </Button>
-          <Button className="w-full flex items-center justify-center gap-2 bg-yellow-600 hover:bg-yellow-700">
-            <BarChart2 className="h-4 w-4" />
-            Check Stock Levels
-          </Button>
-          <Button className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700">
-            <RotateCcw className="h-4 w-4" />
-            View Pending Returns
-          </Button>
-        </div>
-      </div>
       <div className="space-y-6 h-screen">
         <div className="grid grid-cols-1 xl:grid-cols-2 w-full h-full gap-20  justify-between">
           <div>
