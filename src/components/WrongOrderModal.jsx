@@ -48,7 +48,9 @@ export default function WrongOrderModal({ selectComplaint }) {
 
   const fetchProduct = async () => {
     try {
-      const res = await axios.get("/api/products");
+      const res = await axios.get(
+        `api/warehouse/getproducts/${selectComplaint.order_id}`
+      );
       setProducts(res.data);
     } catch (error) {
       console.log(error);
@@ -56,7 +58,7 @@ export default function WrongOrderModal({ selectComplaint }) {
   };
   useEffect(() => {
     fetchProduct();
-  }, []);
+  }, [selectComplaint]);
 
   const handleQuantityClick = (productId) => {
     setEditableQuantities((prev) => ({

@@ -28,8 +28,10 @@ export function ComplaintList({ complaints, onComplaintClick }) {
               className="cursor-pointer p-10"
             >
               <TableCell>{complaint.id}</TableCell>
-              <TableCell>{complaint.order_id}</TableCell>
-              <TableCell>{complaint.customer_name}</TableCell>
+              <TableCell>
+                {complaint.order.invoice.invoice_number.slice(0, 9)}
+              </TableCell>
+              <TableCell>{complaint.customer.user.name}</TableCell>
               <TableCell>
                 <span
                   className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${

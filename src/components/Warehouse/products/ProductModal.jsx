@@ -123,7 +123,6 @@ export default function ProductModal({
           });
         }
       }
-      console.log(res);
     } catch (error) {
       handleFailureToast("Error occur!");
       console.error("Error creating product:", error);

@@ -31,7 +31,6 @@ const navItems = [
     href: "/product-management",
   },
   { icon: Building2, label: "City", href: "/warehouse-cities" },
-  { icon: RotateCcw, label: "Returns", href: "/warehouse-returns" },
   { icon: Truck, label: "Truck Management", href: "/warehouse-trucks" },
   { icon: Settings, label: "Settings", href: "/warehouse-setting" },
 ];

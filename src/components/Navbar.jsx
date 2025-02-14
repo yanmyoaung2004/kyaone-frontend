@@ -61,8 +61,18 @@ export default function Navbar({ setIsCartOpen }) {
                 </div>
               </div>
             </li>
-            <li className="w-14">{currentUser && <CustomerChat />}</li>
-            <li>{currentUser && <NotificationDropdown />}</li>
+            {currentUser && (
+              <li className="w-14">
+                <CustomerChat />
+              </li>
+            )}
+
+            {currentUser && (
+              <li>
+                <NotificationDropdown />
+              </li>
+            )}
+
             <li className="w-14">
               <Button
                 variant="ghost"

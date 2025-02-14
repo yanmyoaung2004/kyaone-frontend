@@ -33,8 +33,8 @@ export default function Complaints() {
   useEffect(() => {
     const fetchComplaints = async () => {
       try {
-        const { data } = await axios("complaints");
-        setComplaints(data.complaints);
+        const { data } = await axios("api/complaints");
+        setComplaints(data);
       } catch (error) {
         console.error("Error fetching complaints:", error);
       }
@@ -43,9 +43,9 @@ export default function Complaints() {
     fetchComplaints();
   }, [refresh]);
 
-  const filteredComplaints = complaints.filter(
+  const filteredComplaints = complaints?.filter(
     (complaint) =>
-      (complaint.customer_name
+      (complaint.customer.user.name
         .toLowerCase()
         .includes(searchTerm.toLowerCase()) ||
         complaint.id.toString().includes(searchTerm) ||
@@ -61,7 +61,7 @@ export default function Complaints() {
     console.log(complaintId, newStatus);
 
     try {
-      await axios.patch("/complaints/" + complaintId, {
+      await axios.patch("/api/complaints/" + complaintId, {
         status: newStatus,
       });
       setRefresh(!refresh);

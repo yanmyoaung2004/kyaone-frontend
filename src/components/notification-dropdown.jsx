@@ -92,8 +92,6 @@ const NotificationDropdown = () => {
     userRole = currentUser.roles;
   }
 
-  console.log(userRole);
-
   useEffect(() => {
     fetchNoti();
   }, []);

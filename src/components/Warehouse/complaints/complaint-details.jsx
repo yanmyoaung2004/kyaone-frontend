@@ -11,7 +11,6 @@ import {
 import { useState } from "react";
 
 export function ComplaintDetails({ complaint, onStatusUpdate }) {
-  // console.log(complaint);
   const [status, setStatus] = useState(complaint.status);
   return (
     <Card className="w-full lg:w-1/3">

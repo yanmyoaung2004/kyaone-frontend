@@ -115,7 +115,7 @@ export default function Cities() {
           <TableBody>
             {filterProducts.map((product) => (
               <TableRow key={product.id}>
-                <TableCell>PD-{product.id}</TableCell>
+                <TableCell>CT-{product.id}</TableCell>
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{product.eta}</TableCell>
                 <TableCell>

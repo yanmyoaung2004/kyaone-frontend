@@ -246,6 +246,7 @@ export default function CheckoutPage() {
                     <div className="mb-3">
                       <div>
                         <Label htmlFor="city">City</Label>
+
                         <Select
                           onValueChange={(value) =>
                             handleFormChange("city", value)
