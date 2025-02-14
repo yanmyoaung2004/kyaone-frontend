@@ -49,6 +49,7 @@ import axios from "axios";
 import OrderDetailsModal from "../../components/Drivers/order-details-modal";
 import moment from "moment/moment";
 import { useToast } from "@/hooks/use-toast";
+import { useSelector } from "react-redux";
 
 function MetricCard({ icon: Icon, title, value }) {
   return (
@@ -79,6 +80,7 @@ export default function DriverDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(null);
   const [refresh, setRefresh] = useState(false);
   const { toast } = useToast();
+  const { currentUser } = useSelector((state) => state.user);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -90,17 +92,15 @@ export default function DriverDashboard() {
 
   useEffect(() => {
     axios
-      .get("/api/dirvers/1")
+      .get(`api/dirvers/${currentUser.id}`)
       .then((response) => {
         setDriver(response.data);
         let trucks = response.data?.order_assing_truck;
         if (trucks?.length > 0) {
           setTruckId(trucks[0].truck_id);
-
           axios
             .get("/api/truck/" + trucks[0].truck_id + "/orders")
             .then((response) => {
-              console.log(response.data);
               setOrders(response.data.orders);
               setOrderCount(response.data.order_count);
             })
@@ -108,7 +108,6 @@ export default function DriverDashboard() {
               console.error(error);
             });
         }
-        console.log(response.data);
       })
       .catch((error) => {
         console.error(error);
@@ -140,17 +139,6 @@ export default function DriverDashboard() {
                 <LayoutDashboard className="mr-2 h-5 w-5" />
                 Dashboard
               </Button>
-              {/* <Button
-                variant="ghost"
-                className={`w-full justify-start px-4 py-2 text-left ${
-                  currentView === "complaints" &&
-                  "bg-muted font-semibold text-primary"
-                }`}
-                onClick={() => setCurrentView("complaints")}
-              >
-                <FileWarning className="mr-2 h-5 w-5" />
-                Complaints
-              </Button> */}
             </ul>
           </nav>
         </SidebarContent>
@@ -255,7 +243,7 @@ export default function DriverDashboard() {
                       />
                     </CardContent>
                   </Card>
-                  <TruckStatus truckId={truckId}></TruckStatus>
+                  {truckId && <TruckStatus truckId={truckId} />}
                 </div>
                 <div className="container mx-auto ">
                   <header className="flex justify-between items-center mb-6">

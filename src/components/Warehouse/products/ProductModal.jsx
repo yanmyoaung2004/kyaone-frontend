@@ -98,22 +98,32 @@ export default function ProductModal({
         res = await axios.post(`api/products/${product.id}`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
+        if (res.status === 200) {
+          handleSuccessToast("Product updated successfully!");
+          onSave({
+            id: res.data.product.id,
+            name: res.data.product.name,
+            category: "testing",
+            description: res.data.product.description,
+            price: res.data.product.unitprice.price,
+          });
+        }
       } else {
         res = await axios.post("/api/products", data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
+        if (res.status === 200) {
+          handleSuccessToast("Product created successfully!");
+          onSave({
+            id: res.data.product.id,
+            name: res.data.product.name,
+            category: "testing",
+            description: res.data.product.description,
+            price: res.data.product.unitprice.price,
+          });
+        }
       }
       console.log(res);
-      if (res.status === 200) {
-        handleSuccessToast("Product created successfully!");
-        onSave({
-          id: res.data.product.id,
-          name: res.data.product.name,
-          category: "testing",
-          description: res.data.product.description,
-          price: res.data.product.unitprice.price,
-        });
-      }
     } catch (error) {
       handleFailureToast("Error occur!");
       console.error("Error creating product:", error);

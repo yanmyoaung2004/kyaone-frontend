@@ -72,7 +72,7 @@ export default function Orders() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get("/api/orders");
+      const res = await axios.get("/api/warehouse/orders/data");
       if (res.status === 200) {
         setOrders(res.data);
       }
@@ -82,7 +82,7 @@ export default function Orders() {
         setDrivers(resDriver.data);
       }
 
-      const resTruck = await axios.get("api/trucks?filter[status]=free");
+      const resTruck = await axios.get("/api/trucks?filter[status]=free");
       if (resTruck.status === 200) {
         setTrucks(resTruck.data.trucks);
       }
@@ -161,18 +161,19 @@ export default function Orders() {
           </div>
         </CardContent>
       </Card>
-      {drivers.length > 0 &&
+      {/* {drivers.length > 0 &&
         trucks.length > 0 &&
-        isAssigningTruck &&
-        selectedOrders.length > 0 && (
-          <TruckAssignmentModal
-            drivers={drivers}
-            trucks={trucks}
-            selectedOrders={selectedOrders}
-            onAssign={handleAssignTruck}
-            onClose={() => setIsAssigningTruck(false)}
-          />
-        )}
+        
+        selectedOrders.length > 0 && ( */}
+      {isAssigningTruck && (
+        <TruckAssignmentModal
+          drivers={drivers}
+          trucks={trucks}
+          selectedOrders={selectedOrders}
+          onAssign={handleAssignTruck}
+          onClose={() => setIsAssigningTruck(false)}
+        />
+      )}
 
       {selectedComplaintId && (
         <ComplaintDetailsModal

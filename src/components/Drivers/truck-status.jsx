@@ -10,7 +10,6 @@ export function TruckStatus({ truckId }) {
     axios
       .get("/api/trucks/" + truckId)
       .then((response) => {
-        console.log(response.data);
         setTruck(response.data);
       })
       .catch((error) => {

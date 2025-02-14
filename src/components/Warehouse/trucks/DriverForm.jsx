@@ -15,7 +15,8 @@ import { Button } from "@/components/ui/button";
 
 const DriverCreateDialog = ({ open, onClose, onSave }) => {
   const [driver, setDriver] = useState({
-    user_id: "",
+    name: "",
+    email: "",
     driver_license: "",
     nrc_number: "",
     phone: "",
@@ -42,14 +43,34 @@ const DriverCreateDialog = ({ open, onClose, onSave }) => {
         <DialogHeader>
           <DialogTitle>Add New Driver</DialogTitle>
         </DialogHeader>
-        <Label>User ID</Label>
+        <Label>Name</Label>
         <Input
           autoFocus
-          name="user_id"
+          name="name"
           label="User ID"
           type="text"
           fullWidth
-          placeholder="User ID"
+          placeholder="Name"
+          onChange={handleChange}
+        />
+        <Label>Email</Label>
+        <Input
+          autoFocus
+          name="email"
+          label="User ID"
+          type="email"
+          fullWidth
+          placeholder="Email"
+          onChange={handleChange}
+        />
+        <Label>Password</Label>
+        <Input
+          autoFocus
+          name="password"
+          label="Password"
+          type="password"
+          fullWidth
+          placeholder="password"
           onChange={handleChange}
         />
         <Label>License Number</Label>

@@ -92,6 +92,8 @@ const NotificationDropdown = () => {
     userRole = currentUser.roles;
   }
 
+  console.log(userRole);
+
   useEffect(() => {
     fetchNoti();
   }, []);
@@ -100,7 +102,10 @@ const NotificationDropdown = () => {
     window.Echo.channel("public-updates").listen(
       ".public.notification",
       (response) => {
-        if (response.message.role !== userRole) return;
+        console.log(response);
+
+        if (!userRole.some((role) => role.name === response.message.role))
+          return;
         handleNotiToast(response.message.message);
         setNoti((prev) => {
           if (
@@ -121,8 +126,9 @@ const NotificationDropdown = () => {
     axios
       .get("/api/notifications")
       .then((response) => {
+        console.log(response);
         const updatedNoti = response.data
-          .filter((noti) => noti.role === userRole)
+          .filter((noti) => userRole.some((role) => role.name === noti.role))
           .map((n) => ({ ...n, read: getReadStatus(n.id) }));
         setNoti(updatedNoti);
       })

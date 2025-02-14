@@ -17,11 +17,6 @@ const DataProvider = ({ children }) => {
 
       if (existingProductIndex !== -1) {
         const updatedData = [...prevData];
-        console.log(updatedData[existingProductIndex]);
-        console.log(
-          updatedData[existingProductIndex].quantity ===
-            updatedData[existingProductIndex].available
-        );
         if (
           updatedData[existingProductIndex].quantity ===
             updatedData[existingProductIndex].available ||

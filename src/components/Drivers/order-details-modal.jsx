@@ -6,11 +6,9 @@ import OrderHeader from "./order-header";
 import OrderOverview from "./order-overview";
 import ProductsTable from "./products-table";
 // import IssuesComplaints from "./issues-complaints";
-import ActionButtons from "./action-buttons";
-import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useToast } from "@/hooks/use-toast";
-import moment from "moment";
+import { handleSuccessToast } from "../../helpers/ToastService";
 
 export default function OrderDetailsModal({
   isOpen,
@@ -30,10 +28,7 @@ export default function OrderDetailsModal({
       })
       .then((response) => {
         console.log(response.data);
-        toast({
-          title: "Order marked as complete",
-          description: moment(order?.updated_at).format("hh:mm A"),
-        });
+        handleSuccessToast("Order Completed");
         onClose();
         setRefresh(true);
       })

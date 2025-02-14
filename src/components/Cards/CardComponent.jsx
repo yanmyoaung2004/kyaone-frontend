@@ -40,8 +40,10 @@ const CardComponent = ({ item, addToCart, isAdded }) => {
         </div>
         <div className="flex justify-between items-center">
           <p className="text-xl font-semibold">${item.price.toFixed(2)}</p>
+
+          {/* <p className="text-sm opacity-90">Available: {item.available}</p> */}
+
           <div className="flex gap-3">
-            <p>{item.quantity}</p>
             <Button
               variant="outline"
               className="rounded-lg"

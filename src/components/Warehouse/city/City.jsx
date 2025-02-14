@@ -13,53 +13,52 @@ import {
 } from "@/components/ui/table";
 
 import { PlusCircle, Search } from "lucide-react";
-import ProductModal from "./ProductModal";
+import CityModal from "./CityModal";
 import { PackageSearch } from "lucide-react";
 import { X } from "lucide-react";
 import axios from "axios";
 
-export default function Products() {
-  const [products, setProducts] = useState([]);
+export default function Cities() {
+  const [cities, setCities] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [categories, setCategories] = useState([]);
 
-  const fetchProducts = async () => {
+  const fetchData = async () => {
     try {
-      const res = await axios.get(`/api/products`);
-      setProducts(res.data);
+      const res = await axios.get(`/api/cities`);
+      setCities(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchData();
   }, []);
 
   const handleAddProduct = (newProduct) => {
-    setProducts([...products, { ...newProduct }]);
+    setCities([...cities, { ...newProduct }]);
   };
 
   const handleEditProduct = (updatedProduct) => {
-    setProducts(
-      products.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
+    setCities(
+      cities.map((p) => (p.id === updatedProduct.id ? updatedProduct : p))
     );
   };
 
   const handleDeleteProduct = async (id) => {
     try {
-      const res = await axios.delete(`/api/products/${id}`);
+      const res = await axios.delete(`/api/cities/${id}`);
       if (res.status === 200) {
-        setProducts(products.filter((p) => p.id !== id));
+        setCities(cities.filter((p) => p.id !== id));
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const filterProducts = products.filter((product) => {
+  const filterProducts = cities.filter((product) => {
     return product.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
@@ -71,24 +70,11 @@ export default function Products() {
     setSearchTerm("");
   };
 
-  const fetchCategory = async () => {
-    try {
-      const res = await axios.get("/api/categories");
-      setCategories(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchCategory();
-  }, []);
-
   return (
     <div>
       <div className="text-3xl font-bold mb-8 flex items-center flex-start">
         <PackageSearch size={24} />
-        Product Management
+        City Management
       </div>
       <div className="flex justify-between items-center mb-6">
         <div className="relative flex-1 mr-2">
@@ -113,7 +99,7 @@ export default function Products() {
           )}
         </div>
         <Button onClick={() => setIsModalOpen(true)}>
-          <PlusCircle className="mr-2 h-4 w-4" /> Add Product
+          <PlusCircle className="mr-2 h-4 w-4" /> Add City
         </Button>
       </div>
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -122,9 +108,7 @@ export default function Products() {
             <TableRow>
               <TableHead>ID</TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Quantity</TableHead>
-              <TableHead>Price</TableHead>
+              <TableHead>ETA</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -133,9 +117,7 @@ export default function Products() {
               <TableRow key={product.id}>
                 <TableCell>PD-{product.id}</TableCell>
                 <TableCell>{product.name}</TableCell>
-                <TableCell>{product.category}</TableCell>
-                <TableCell>{product.description}</TableCell>
-                <TableCell>${product.price}</TableCell>
+                <TableCell>{product.eta}</TableCell>
                 <TableCell>
                   <Button
                     variant="outline"
@@ -162,8 +144,7 @@ export default function Products() {
         </Table>
       </div>
       {isModalOpen && (
-        <ProductModal
-          categories={categories}
+        <CityModal
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);

@@ -41,8 +41,7 @@ import Products from "./components/Warehouse/products/Products";
 import { Toaster } from "@/components/ui/toaster";
 import ProductList from "./pages/ProductList";
 import CustomerComplaint from "./pages/CustomerComplaint";
-import Echo from "laravel-echo";
-import Pusher from "pusher-js";
+import Cities from "./components/Warehouse/city/City";
 
 // Driver
 import DriversLayout from "./pages/DriversApp/layout";
@@ -149,6 +148,16 @@ const App = () => {
             <Returns />
           </SaleLayout>
         </SaleProtectedRoute>
+      ),
+    },
+    {
+      path: "/warehouse-cities",
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <Cities />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
       ),
     },
     {

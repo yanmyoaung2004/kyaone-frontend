@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 import { ProfileDropDown } from "./ProfileDropDown";
 import { useSelector } from "react-redux";
 import NotificationDropdown from "./notification-dropdown";
-import { current } from "@reduxjs/toolkit";
+import CustomerChat from "./CustomerChat";
 
 export default function Navbar({ setIsCartOpen }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -61,12 +61,8 @@ export default function Navbar({ setIsCartOpen }) {
                 </div>
               </div>
             </li>
-            <li className="relative w-14 flex items-center">
-              <div className="relative inline-block hover:cursor-pointer">
-                <PopoverDemo size={22} />
-              </div>
-            </li>
-
+            <li className="w-14">{currentUser && <CustomerChat />}</li>
+            <li>{currentUser && <NotificationDropdown />}</li>
             <li className="w-14">
               <Button
                 variant="ghost"

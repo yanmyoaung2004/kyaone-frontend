@@ -20,7 +20,7 @@ import {
 const chartConfig = {
   orders: {
     label: "Orders",
-    color: "hsl(210, 100%, 50%)", // This is a vibrant blue color
+    color: "hsl(210, 100%, 50%)",
   },
 };
 

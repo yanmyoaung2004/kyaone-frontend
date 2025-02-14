@@ -7,6 +7,7 @@ import CustomerProfile from "../../components/Sales/CustomerProfile";
 import ChatInterface from "../../components/Sales/ChatInterface";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import WrongOrderModal from "../../components/WrongOrderModal";
 
 export default function CustomerInteractionPage() {
   const [allComplaints, setAllComplaints] = useState([]);
@@ -18,6 +19,7 @@ export default function CustomerInteractionPage() {
     try {
       const res = await axios.get("/api/complaints");
       setComplaints(res.data);
+
       setAllComplaints(res.data);
       setSelectedComplaints(res.data[0]);
     } catch (error) {
@@ -54,8 +56,7 @@ export default function CustomerInteractionPage() {
           className="w-[300px]"
           onChange={(e) => setSearch(e.target.value)}
         />
-
-        <Button>New Interaction</Button>
+        <WrongOrderModal selectComplaint={selectedComplaints} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-1">
@@ -92,7 +93,7 @@ export default function CustomerInteractionPage() {
                 )}
               </TabsContent>
               <TabsContent value="chat">
-                <ChatInterface />
+                <ChatInterface selectedComplaints={selectedComplaints} />
               </TabsContent>
             </CardContent>
           </Tabs>

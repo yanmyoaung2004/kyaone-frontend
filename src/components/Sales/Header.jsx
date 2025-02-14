@@ -13,6 +13,7 @@ import {
 import { useState, useEffect } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useSelector } from "react-redux";
+import NotificationDropdown from "../notification-dropdown";
 
 export default function Header() {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -57,9 +58,7 @@ export default function Header() {
       </div>
 
       <div className="flex items-center space-x-4">
-        <Button variant="ghost" size="icon">
-          <Bell className="h-5 w-5" />
-        </Button>
+        <NotificationDropdown />
         <span className="text-sm text-gray-600">
           {currentTime.toLocaleString("en-US", {
             weekday: "short",

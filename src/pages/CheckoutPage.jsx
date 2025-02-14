@@ -22,79 +22,20 @@ import {
   handleSuccessToast,
   handleWarningToast,
 } from "../helpers/ToastService";
-import { Navigate, useNavigate } from "react-router-dom";
-
-const initialLocation = {
-  state: "Illinois",
-  cities: [
-    { city: "Chicago" },
-    { city: "Springfield" },
-    { city: "Naperville" },
-    { city: "Peoria" },
-  ],
-};
-
-const locations = [
-  {
-    state: "Illinois",
-    cities: [
-      { city: "Chicago" },
-      { city: "Springfield" },
-      { city: "Naperville" },
-      { city: "Peoria" },
-    ],
-  },
-  {
-    state: "California",
-    cities: [
-      { city: "Los Angeles" },
-      { city: "San Francisco" },
-      { city: "San Diego" },
-      { city: "Sacramento" },
-    ],
-  },
-  {
-    state: "New York",
-    cities: [
-      { city: "New York City" },
-      { city: "Buffalo" },
-      { city: "Rochester" },
-      { city: "Albany" },
-    ],
-  },
-  {
-    state: "Texas",
-    cities: [
-      { city: "Houston" },
-      { city: "Dallas" },
-      { city: "Austin" },
-      { city: "San Antonio" },
-    ],
-  },
-  {
-    state: "Florida",
-    cities: [
-      { city: "Miami" },
-      { city: "Orlando" },
-      { city: "Tampa" },
-      { city: "Jacksonville" },
-    ],
-  },
-];
+import { useNavigate } from "react-router-dom";
 
 export default function CheckoutPage() {
   const { cartItems, setCartItems } = useContext(DataContext);
   const [shipmentCost, setShipmentCost] = useState(10.0);
   const [total, setTotal] = useState(0.0);
   const [cities, setCities] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState(initialLocation);
+
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
   const [shipmentInfo, setShipmentInfo] = useState({
     name: "",
     phone: "",
-    state: "",
     city: "",
     address: "",
     zipCode: "",
@@ -117,16 +58,6 @@ export default function CheckoutPage() {
     fetchCity();
   }, []);
 
-  const changeState = (value) => {
-    setSelectedLocation(() => {
-      const matchingLocation = locations.filter((location) => {
-        if (location.state === value) return true;
-        return location.cities.some((cityObj) => cityObj.city === value);
-      });
-      return matchingLocation.length > 0 ? matchingLocation[0] : null;
-    });
-  };
-
   const handleFormChange = (field, value) => {
     setShipmentInfo((prev) => ({ ...prev, [field]: value }));
   };
@@ -147,8 +78,7 @@ export default function CheckoutPage() {
       shipmentInfo.address === "" ||
       shipmentInfo.city === "" ||
       shipmentInfo.phone === "" ||
-      shipmentInfo.phone === "" ||
-      shipmentInfo.state === ""
+      shipmentInfo.phone === ""
     ) {
       handleWarningToast("Please fill all the required fields!");
       return;
@@ -313,30 +243,7 @@ export default function CheckoutPage() {
                         />
                       </div>
                     </div>
-                    <div className="grid gap-4 sm:grid-cols-2 mb-3">
-                      <div>
-                        <Label htmlFor="state">State</Label>
-                        <Select
-                          onValueChange={(value) => {
-                            handleFormChange("state", value);
-                            changeState(value);
-                          }}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select State" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {locations.map((location) => (
-                              <SelectItem
-                                key={location.state}
-                                value={location.state}
-                              >
-                                {location.state}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
+                    <div className="mb-3">
                       <div>
                         <Label htmlFor="city">City</Label>
                         <Select
