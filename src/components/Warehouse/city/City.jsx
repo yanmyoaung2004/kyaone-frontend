@@ -84,7 +84,7 @@ export default function Cities() {
             placeholder="Search..."
             value={searchTerm}
             onChange={handleInputChange}
-            className="pl-8 pr-10 py-5 rounded-full"
+            className="pl-8 pr-10 py-5 rounded-md"
           />
           {searchTerm && (
             <Button

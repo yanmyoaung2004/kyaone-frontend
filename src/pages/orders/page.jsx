@@ -12,6 +12,8 @@ import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import OrderDetails from "./OrderDetials";
+import { X } from "lucide-react";
+import { Search } from "lucide-react";
 
 export default function OrdersPage() {
   const [allOrders, setAllOrders] = useState([]);
@@ -58,11 +60,27 @@ export default function OrdersPage() {
         <CardContent>
           <div className="flex justify-between items-center mb-4">
             <div className="flex space-x-2">
-              <Input
-                placeholder="Search orders..."
-                className="w-[300px]"
-                onChange={(e) => setSearch(e.target.value)}
-              />
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  type="text"
+                  placeholder="Search"
+                  className="pl-8 pr-10 py-5 rounded-md"
+                />
+                {search && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full"
+                    onClick={() => setSearch("")}
+                  >
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Clear search</span>
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
           <div className="rounded-md border flex-grow overflow-x-auto bg-white">

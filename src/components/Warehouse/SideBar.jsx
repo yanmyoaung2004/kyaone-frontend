@@ -32,7 +32,7 @@ const navItems = [
   },
   { icon: Building2, label: "City", href: "/warehouse-cities" },
   { icon: Truck, label: "Truck Management", href: "/warehouse-trucks" },
-  { icon: Settings, label: "Settings", href: "/warehouse-setting" },
+  // { icon: Settings, label: "Settings", href: "/warehouse-setting" },
 ];
 
 export function WarehouseSidebar() {

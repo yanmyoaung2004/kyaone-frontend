@@ -44,8 +44,10 @@ import CustomerComplaint from "./pages/CustomerComplaint";
 import Cities from "./components/Warehouse/city/City";
 
 // Driver
+import DriverProtectedRoute from "./auth/DriverProtectedRoute";
 import DriversLayout from "./pages/DriversApp/layout";
 import DriverPage from "./pages/DriversApp/page";
+import EscalatedIssues from "./components/Drivers/escalated-model";
 
 // Protected Route Component
 const ProtectedRoute = ({ element, allowedRoles = [] }) => {
@@ -275,11 +277,21 @@ const App = () => {
     {
       path: "/driver-dashboard",
       element: (
-        // <WarehouseProtectedRoute>
-        <DriversLayout>
-          <DriverPage />
-        </DriversLayout>
-        // </WarehouseProtectedRoute>
+        <DriverProtectedRoute>
+          <DriversLayout>
+            <DriverPage />
+          </DriversLayout>
+        </DriverProtectedRoute>
+      ),
+    },
+    {
+      path: "/driver-escalated",
+      element: (
+        <DriverProtectedRoute>
+          <DriversLayout>
+            <EscalatedIssues />
+          </DriversLayout>
+        </DriverProtectedRoute>
       ),
     },
   ]);

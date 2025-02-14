@@ -8,6 +8,8 @@ import ChatInterface from "../../components/Sales/ChatInterface";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import WrongOrderModal from "../../components/WrongOrderModal";
+import { X } from "lucide-react";
+import { Search } from "lucide-react";
 
 export default function CustomerInteractionPage() {
   const [allComplaints, setAllComplaints] = useState([]);
@@ -51,11 +53,27 @@ export default function CustomerInteractionPage() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Customer Interaction</h1>
       <div className="flex justify-between items-center">
-        <Input
-          placeholder="Search customers..."
-          className="w-[300px]"
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            type="text"
+            placeholder="Search"
+            className="pl-8 pr-10 py-5 rounded-md"
+          />
+          {search && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-0 top-0 h-full"
+              onClick={() => setSearch("")}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Clear search</span>
+            </Button>
+          )}
+        </div>
         <WrongOrderModal selectComplaint={selectedComplaints} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

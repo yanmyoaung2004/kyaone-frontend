@@ -14,16 +14,26 @@ import { useState, useEffect } from "react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useSelector } from "react-redux";
 import NotificationDropdown from "../notification-dropdown";
+import { Link, useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { signoutSuccess } from "../../redux/user/userSlice";
 
 export default function Header() {
   const [currentTime, setCurrentTime] = useState(new Date());
-
   const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  const handleLogout = () => {
+    dispatch(signoutSuccess());
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
   return (
     <header className="bg-white shadow-md py-4 px-6 flex items-center justify-between relative">
@@ -51,7 +61,7 @@ export default function Header() {
               <Settings className="mr-2 h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>Log out</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         <span className="font-semibold text-lg">{currentUser?.name}</span>

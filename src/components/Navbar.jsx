@@ -152,6 +152,19 @@ export default function Navbar({ setIsCartOpen }) {
                 <span className="sr-only">Toggle theme</span>
               </Button>
             </li>
+            <li>
+              {currentUser ? (
+                <ProfileDropDown />
+              ) : (
+                <>
+                  <Link to={"/login"}>
+                    <Button variant="ghost" className="">
+                      Login
+                    </Button>
+                  </Link>
+                </>
+              )}
+            </li>
           </ul>
         )}
       </motion.div>

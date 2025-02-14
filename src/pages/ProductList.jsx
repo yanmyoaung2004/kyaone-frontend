@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import axios from "axios";
+import SkeletonCard from "../components/Cards/SkeletonCard";
 
 const ProductList = () => {
   const { cartItems, addToCart } = useContext(DataContext);
@@ -89,7 +90,8 @@ const ProductList = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               type="text"
               placeholder="Search"
-              className="pl-8 pr-10 py-5 rounded-full"
+              className="pl-8 pr-10 py-5 rounded-md"
+              disabled={loading}
             />
             {searchQuery && (
               <Button
@@ -103,7 +105,11 @@ const ProductList = () => {
               </Button>
             )}
           </div>
-          <Select value={category} onValueChange={setCategory}>
+          <Select
+            value={category}
+            onValueChange={setCategory}
+            disabled={loading}
+          >
             <SelectTrigger className="w-[140px] py-5">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
@@ -118,7 +124,14 @@ const ProductList = () => {
         </div>
       </div>
       {loading ? (
-        <div className="text-center my-5">Loading...</div>
+        <div className="flex flex-wrap items-center justify-between max-w-7xl mx-auto">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
       ) : error ? (
         <div className="text-center text-red-500 my-5">{error}</div>
       ) : (

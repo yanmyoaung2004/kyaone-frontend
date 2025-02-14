@@ -24,6 +24,8 @@ import { Truck } from "lucide-react";
 import { Pencil } from "lucide-react";
 import { Trash2Icon } from "lucide-react";
 import axios from "axios";
+import { Search } from "lucide-react";
+import { X } from "lucide-react";
 
 export function TruckDashboard({
   onTruckSelect,
@@ -130,12 +132,27 @@ export function TruckDashboard({
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
-        <Input
-          placeholder="Search by Truck Number or Driver"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="flex-grow"
-        />
+        <div className="relative flex-1 mr-2">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            type="text"
+            placeholder="Search by Truck Number or Driver"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-8 pr-10 py-4 rounded-md"
+          />
+          {searchTerm && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-0 top-0 h-full"
+              onClick={() => setSearchTerm("")}
+            >
+              <X className="h-4 w-4" />
+              <span className="sr-only">Clear search</span>
+            </Button>
+          )}
+        </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue placeholder="Filter by Status" />

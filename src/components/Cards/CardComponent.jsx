@@ -32,9 +32,14 @@ const CardComponent = ({ item, addToCart, isAdded }) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className={`relative w-full h-48 overflow-hidden rounded-lg`}>
-          <img
+          {/* <img
             src={item.image || "/placeholder.svg"}
             alt={item.name}
+            className="w-full h-full object-cover"
+          /> */}
+          <img
+            src="https://cartlow.gumlet.io/items/f7b708096234ea0f70ceeac55d056260.jpeg?width=350&height=0"
+            alt=""
             className="w-full h-full object-cover"
           />
         </div>

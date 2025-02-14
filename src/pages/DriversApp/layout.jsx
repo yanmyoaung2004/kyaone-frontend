@@ -1,4 +1,6 @@
 import "./globals.css";
+import { SidebarProvider } from "@/components/ui/sidebar";
+
 
 export const metadata = {
   title: "v0 App",
@@ -6,5 +8,5 @@ export const metadata = {
 };
 
 export default function DriversLayout({ children }) {
-  return <div>{children}</div>;
+  return <SidebarProvider>{children}</SidebarProvider>;
 }

@@ -16,6 +16,8 @@ import { RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import axios from "axios";
+import { X } from "lucide-react";
+import { Search } from "lucide-react";
 
 // Mock data for demonstration
 const mockReturns = [
@@ -99,12 +101,27 @@ export default function Returns() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <Input
-              placeholder="Search by Return ID, Order ID or Customer Name"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-grow"
-            />
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                type="text"
+                placeholder="Search"
+                className="pl-8 pr-10 py-4 rounded-md"
+              />
+              {searchTerm && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full"
+                  onClick={() => setSearchTerm("")}
+                >
+                  <X className="h-4 w-4" />
+                  <span className="sr-only">Clear search</span>
+                </Button>
+              )}
+            </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by Status" />

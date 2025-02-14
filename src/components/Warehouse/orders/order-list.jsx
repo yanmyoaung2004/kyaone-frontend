@@ -71,7 +71,7 @@ export function OrderList({
             <TableHead className="text-center">Customer Name</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Assigned Truck</TableHead>
-            <TableHead className="text-center">Has Complaint</TableHead>
+
             <TableHead className="text-center">Service Center</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
@@ -103,18 +103,7 @@ export function OrderList({
               <TableCell className="text-center">
                 {order.assignedTruck || "Not Assigned"}
               </TableCell>
-              <TableCell className="text-center">
-                {order.hasComplaint ? (
-                  <Button
-                    variant="link"
-                    onClick={() => onComplaintClick(order.id)}
-                  >
-                    View Complaint
-                  </Button>
-                ) : (
-                  "No"
-                )}
-              </TableCell>
+
               <TableCell className="text-center">
                 {order.serviceCenter ? (
                   <Button

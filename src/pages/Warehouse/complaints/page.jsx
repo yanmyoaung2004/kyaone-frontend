@@ -19,6 +19,8 @@ import { useEffect } from "react";
 
 import { CheckCircleIcon } from "lucide-react";
 import axios from "axios";
+import { Search } from "lucide-react";
+import { X } from "lucide-react";
 
 export default function Complaints() {
   const [complaints, setComplaints] = useState([]);
@@ -100,12 +102,27 @@ export default function Complaints() {
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <Input
-              placeholder="Search by Complaint ID, Order ID or Customer Name"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-grow"
-            />
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                type="text"
+                placeholder="Search by Complaint ID, Order ID or Customer Name"
+                className="pl-8 pr-10 py-5 rounded-md flex-grow"
+              />
+              {searchTerm && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full"
+                  onClick={() => setSearchTerm("")}
+                >
+                  <X className="h-4 w-4" />
+                  <span className="sr-only">Clear search</span>
+                </Button>
+              )}
+            </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by Status" />

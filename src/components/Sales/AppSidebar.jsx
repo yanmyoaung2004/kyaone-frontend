@@ -36,8 +36,8 @@ const navItems = [
   },
   { icon: AlertTriangle, label: "Escalations", href: "/sales-escalations" },
   { icon: RotateCcw, label: "Returns", href: "/sales-returns" },
-  { icon: BarChart2, label: "Reports", href: "/sales-reports" },
-  { icon: Settings, label: "Settings", href: "/sales-settings" },
+  // { icon: BarChart2, label: "Reports", href: "/sales-reports" },
+  // { icon: Settings, label: "Settings", href: "/sales-settings" },
 ];
 
 export function AppSidebar() {

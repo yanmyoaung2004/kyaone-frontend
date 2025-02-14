@@ -4,9 +4,12 @@ import { useEffect, useState } from "react";
 import { StockList } from "../../../components/Warehouse/stock/stock-list";
 import { RestockForm } from "../../../components/Warehouse/stock/restock-form";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart2 } from "lucide-react";
 import axios from "axios";
+import { Search } from "lucide-react";
+import { X } from "lucide-react";
 
 export default function StockManagement() {
   const [stock, setStock] = useState([]);
@@ -62,12 +65,27 @@ export default function StockManagement() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Input
-            placeholder="Search by Product Name or SKU"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="mb-6"
-          />
+          <div className="relative flex-1 mb-6">
+            <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              type="text"
+              placeholder="Search by Product Name or SKU"
+              className="pl-8 pr-10 py-5 rounded-md"
+            />
+            {searchTerm && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-0 top-0 h-full"
+                onClick={() => setSearchTerm("")}
+              >
+                <X className="h-4 w-4" />
+                <span className="sr-only">Clear search</span>
+              </Button>
+            )}
+          </div>
           <div className="flex flex-col lg:flex-row gap-6">
             <StockList
               stock={currentStock}
