@@ -35,10 +35,7 @@ export default function CustomerProfile({ selectedComplaints }) {
           />
           <InfoItem label="Subject" value={subject} />
           <div>
-            <Label className="text-sm font-medium text-muted-foreground">
-              Description
-            </Label>
-            <p className="mt-1 text-lg">{description}</p>
+            <InfoItem label="Description" value={description} />
           </div>
         </CardContent>
       </Card>
@@ -49,8 +46,11 @@ export default function CustomerProfile({ selectedComplaints }) {
 function InfoItem({ label, value }) {
   return (
     <div>
-      <Label className="text-lg">{label}</Label>
-      <p>{value}</p>
+      <Label className=" font-bold text-md">{label}</Label>
+      <br />
+      <Label className="text-sm font-medium text-muted-foreground">
+        {value}
+      </Label>
     </div>
   );
 }

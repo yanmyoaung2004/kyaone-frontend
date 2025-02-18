@@ -38,13 +38,13 @@ export function ComplaintDetailsModal({ complaint, onClose, onStatusUpdate }) {
         return null;
     }
   };
-
+  console.log(complaint);
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
-            Complaint DetaDetails
+            Complaint Details
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="mt-4 max-h-[60vh]">
@@ -76,27 +76,29 @@ export function ComplaintDetailsModal({ complaint, onClose, onStatusUpdate }) {
               <h4 className="text-sm font-medium text-gray-500 mb-1">
                 Subject
               </h4>
-              <p className="text-lg font-medium">{complaint.subject}</p>
+              <p className="text-md font-medium">{complaint.subject}</p>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-500 mb-1">
                 Description
               </h4>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">
+              <p className="text-md whitespace-pre-wrap">
                 {complaint.description}
               </p>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-500 mb-1">Status</h4>
-              <Badge
-                variant="secondary"
-                className={`${getStatusColor(
-                  complaint.status
-                )} flex items-center space-x-1 text-xs px-2 py-1`}
-              >
-                {getStatusIcon(complaint.status)}
-                <span>{complaint.status}</span>
-              </Badge>
+              <div className="flex ">
+                <Badge
+                  variant="secondary"
+                  className={`${getStatusColor(
+                    complaint.status
+                  )} flex items-center space-x-1 text-xs px-2 py-1`}
+                >
+                  {getStatusIcon(complaint.status)}
+                  <span>{complaint.status}</span>
+                </Badge>
+              </div>
             </div>
           </div>
         </ScrollArea>

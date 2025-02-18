@@ -178,13 +178,13 @@ const TableComponent = () => {
               </SelectContent>
             </Select>
           </div>
-          <div className="rounded-md border responsive-table">
+          <div className="rounded-md responsive-table">
             <ScrollArea
               className={`${
                 isSmallScreen ? "w-full" : "max-w-6xl"
               } whitespace-nowrap rounded-md border`}
             >
-              <div className="rounded-md border flex-grow overflow-x-auto bg-white">
+              <div className="rounded-md  flex-grow overflow-x-auto bg-white">
                 <Table>
                   <TableHeader>
                     <TableRow>

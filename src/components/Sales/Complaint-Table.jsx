@@ -32,7 +32,7 @@ export function ComplaintsTable({ complaints, onComplaintSelect }) {
               {new Date(complaint.createdAt).toLocaleDateString()}
             </TableCell>
             <TableCell className="space-x-4 text-center">
-              <Button variant="outline">Accept</Button>
+              <Button>Accept</Button>
               <Button
                 variant="outline"
                 onClick={() => onComplaintSelect(complaint)}

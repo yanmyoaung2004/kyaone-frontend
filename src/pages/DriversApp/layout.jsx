@@ -1,6 +1,5 @@
-import "./globals.css";
+// import "./globals.css";
 import { SidebarProvider } from "@/components/ui/sidebar";
-
 
 export const metadata = {
   title: "v0 App",

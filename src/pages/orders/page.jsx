@@ -100,7 +100,7 @@ export default function OrdersPage() {
                     <TableCell className="font-medium">{order.id}</TableCell>
                     <TableCell>{order.customer}</TableCell>
                     <TableCell>{order.address}</TableCell>
-                    <TableCell>{order.eta}</TableCell>
+                    <TableCell>{order.eta ?? "n/a"}</TableCell>
                     <TableCell>
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-semibold ${

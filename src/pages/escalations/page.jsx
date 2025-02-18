@@ -41,9 +41,12 @@ export default function EscalationsPage() {
       <h1 className="text-3xl font-bold text-gray-900">Escalations</h1>
       <div className="flex justify-between items-center">
         <div className="flex space-x-2">
-          <Input placeholder="Search escalations..." className="w-[300px]" />
+          <Input
+            placeholder="Search escalations..."
+            className="w-[300px] bg-white"
+          />
           <Select>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-white">
               <SelectValue placeholder="Filter by priority" />
             </SelectTrigger>
             <SelectContent>

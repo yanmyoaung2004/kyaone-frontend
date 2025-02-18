@@ -12,7 +12,7 @@ const CustomerLayout = ({ children }) => {
         <Navbar setIsCartOpen={setIsCartOpen} />
       </div>
 
-      <div className="my-5">{children}</div>
+      <div className="">{children}</div>
 
       <ShoppingCartModal
         isOpen={isCartOpen}

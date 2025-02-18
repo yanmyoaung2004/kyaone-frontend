@@ -39,7 +39,7 @@ export function Complaints() {
   return (
     <div>
       <Card>
-        <CardContent>
+        <CardContent className="pt-6">
           {selectedComplaint && (
             <ComplaintDetailsModal
               complaint={selectedComplaint}

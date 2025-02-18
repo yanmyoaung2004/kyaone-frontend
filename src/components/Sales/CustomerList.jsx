@@ -26,7 +26,7 @@ export default function CustomerList({ complaints, changeOrder, selectedId }) {
             </Avatar>
             <div>
               <p className="font-medium">{complaint.customer.user.name}</p>
-              <p className="text-sm text-gray-500">
+              <p className="mt-1 text-sm text-gray-500">
                 {complaint.customer.user.email}
               </p>
             </div>

@@ -52,7 +52,7 @@ export default function CustomerInteractionPage() {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Customer Interaction</h1>
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between space-x-5 items-center">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -60,7 +60,7 @@ export default function CustomerInteractionPage() {
             onChange={(e) => setSearch(e.target.value)}
             type="text"
             placeholder="Search"
-            className="pl-8 pr-10 py-5 rounded-md"
+            className="pl-8 pr-10 bg-white py-5 rounded-md"
           />
           {search && (
             <Button

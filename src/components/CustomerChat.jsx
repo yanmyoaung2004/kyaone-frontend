@@ -12,7 +12,7 @@ function CustomerChat() {
   return (
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
-        <span className="text-white cursor-pointer">
+        <span className="cursor-pointer">
           <MessageCircleMore />
         </span>
       </DrawerTrigger>
