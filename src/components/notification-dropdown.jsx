@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Bell, Check, CheckCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +25,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { DataContext } from "../context/DataContext";
 import { handleNotiToast } from "../helpers/ToastService";
 
 const NotificationItem = ({ notification, onMarkAsRead }) => {
@@ -87,6 +88,7 @@ const NotificationDropdown = () => {
   const [noti, setNoti] = useState([]);
   let userRole = "customer";
   const { currentUser } = useSelector((state) => state.user);
+  const { fresh, setFresh } = useContext(DataContext);
 
   if (currentUser !== null) {
     userRole = currentUser.roles;
@@ -100,8 +102,6 @@ const NotificationDropdown = () => {
     window.Echo.channel("public-updates").listen(
       ".public.notification",
       (response) => {
-        console.log(response);
-
         if (!userRole.some((role) => role.name === response.message.role))
           return;
         handleNotiToast(response.message.message);

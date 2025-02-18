@@ -75,7 +75,6 @@ export function ReturnList({ orders, refreshList }) {
     axios
       .post("/api/orders", data)
       .then((rep) => {
-        console.log(rep.data);
         setOpen(false);
         refreshList();
       })
@@ -99,9 +98,7 @@ export function ReturnList({ orders, refreshList }) {
           <TableRow>
             <TableHead>Order ID</TableHead>
             <TableHead>Customer Name</TableHead>
-            {/* <TableHead>ETA</TableHead> */}
             <TableHead>Status</TableHead>
-            <TableHead>Return</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -118,11 +115,7 @@ export function ReturnList({ orders, refreshList }) {
               <TableCell>
                 <Badge variant="outline">{order?.status}</Badge>
               </TableCell>
-              <TableCell>
-                {order?.isReturn ? (
-                  <Badge variant="destructive">return</Badge>
-                ) : null}
-              </TableCell>
+
               <TableCell>
                 {order?.isReturn ? null : (
                   <Pencil

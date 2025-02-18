@@ -59,7 +59,7 @@ export default function Returns() {
   }
 
   useEffect(() => {
-    axios.get("/api/orders").then((response) => {
+    axios.get("/api/warehouse/getReturns/data").then((response) => {
       console.log(response.data);
       setReturns(response.data);
     });

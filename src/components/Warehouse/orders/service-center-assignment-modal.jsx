@@ -20,7 +20,10 @@ import { DialogTrigger } from "@radix-ui/react-dialog";
 import { Building2 } from "lucide-react";
 import { useEffect } from "react";
 import axios from "axios";
-import { handleFailureToast } from "../../../helpers/ToastService";
+import {
+  handleFailureToast,
+  handleSuccessToast,
+} from "../../../helpers/ToastService";
 
 // Mock data for available service centers
 const availableServiceCenters = [
@@ -29,7 +32,13 @@ const availableServiceCenters = [
   { id: "SC-003", name: "Service Center C", location: "City C" },
 ];
 
-export function ServiceCenterAssignmentModal({ order, onAssign, onClose }) {
+export function ServiceCenterAssignmentModal({
+  order,
+  onAssign,
+  onClose,
+  orders,
+  setOrders,
+}) {
   const [selectedServiceCenter, setSelectedServiceCenter] = useState("");
   const [serviceCenters, setServiceCenters] = useState([]);
 
@@ -47,9 +56,23 @@ export function ServiceCenterAssignmentModal({ order, onAssign, onClose }) {
   }, []);
 
   const handleAssign = () => {
-    if (selectedServiceCenter) {
-      onAssign(order.id, selectedServiceCenter);
-    }
+    // if (selectedServiceCenter) {
+    //   onAssign(order.id, selectedServiceCenter);
+    // }
+    handleSuccessToast("Successfully Assign");
+
+    console.log("sfj");
+
+    // order is array of id
+    setOrders(
+      orders.map((o) =>
+        order.includes(o.id)
+          ? { ...o, serviceCenter: selectedServiceCenter }
+          : o
+      )
+    );
+
+    console.log(orders);
   };
 
   return (

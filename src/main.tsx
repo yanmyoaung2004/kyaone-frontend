@@ -6,9 +6,10 @@ import { store, persistor } from "./redux/store";
 import App from "./App";
 import axios from "axios";
 import "./echo";
-
-// axios.defaults.baseURL = "http://192.168.0.52:8000";
-axios.defaults.baseURL = "http://127.0.0.1:8000";
+axios.defaults.baseURL = "http://192.168.20.192:8000";
+// axios.defaults.baseURL = "http://127.0.0.1:8000";
+//
+// useEffect(() => {}, []);
 
 createRoot(document.getElementById("root")!).render(
   <PersistGate persistor={persistor}>

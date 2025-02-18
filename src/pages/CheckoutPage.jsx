@@ -25,7 +25,8 @@ import {
 import { useNavigate } from "react-router-dom";
 
 export default function CheckoutPage() {
-  const { cartItems, setCartItems } = useContext(DataContext);
+  const { cartItems, setCartItems, setRefresh, refresh } =
+    useContext(DataContext);
   const [shipmentCost, setShipmentCost] = useState(10.0);
   const [total, setTotal] = useState(0.0);
   const [cities, setCities] = useState([]);
@@ -100,6 +101,9 @@ export default function CheckoutPage() {
 
       if (res.status === 201) {
         setCartItems([]);
+
+        setRefresh(!refresh);
+
         handleSuccessToast("Order has been successfully!");
         navigate("/products");
       }
@@ -117,7 +121,7 @@ export default function CheckoutPage() {
     <CustomerLayout>
       <div className="min-h-screen bg-gray-50 pb-12">
         <div className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-8">
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-8 font-['geist']">
             Checkout
           </h1>
 
@@ -137,7 +141,7 @@ export default function CheckoutPage() {
                         <li className="flex py-6" key={item.id}>
                           <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                             <img
-                              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-EGoUBVmYOALYumdqsUsOMdhyjfxBV8.png"
+                              src={item.image}
                               alt="Premium Wireless Headphones"
                               className="h-full w-full object-cover object-center"
                             />
@@ -246,18 +250,21 @@ export default function CheckoutPage() {
                     <div className="mb-3">
                       <div>
                         <Label htmlFor="city">City</Label>
-
                         <Select
                           onValueChange={(value) =>
                             handleFormChange("city", value)
                           }
+                          value={shipmentInfo.city.toString()}
                         >
                           <SelectTrigger>
                             <SelectValue placeholder="Select City" />
                           </SelectTrigger>
                           <SelectContent>
                             {cities.map((city) => (
-                              <SelectItem key={city.id} value={city.id}>
+                              <SelectItem
+                                key={city.id}
+                                value={city.id.toString()}
+                              >
                                 {city.name}
                               </SelectItem>
                             ))}

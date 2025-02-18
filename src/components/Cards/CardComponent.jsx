@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../theme-provider";
+import { Image } from "lucide-react";
 
 const CardComponent = ({ item, addToCart, isAdded }) => {
   const navigate = useNavigate();
@@ -37,11 +38,15 @@ const CardComponent = ({ item, addToCart, isAdded }) => {
             alt={item.name}
             className="w-full h-full object-cover"
           /> */}
-          <img
-            src="https://cartlow.gumlet.io/items/f7b708096234ea0f70ceeac55d056260.jpeg?width=350&height=0"
-            alt=""
-            className="w-full h-full object-cover"
-          />
+          {item.image ? (
+            <img
+              src={item.image || "/placeholder.svg"}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="text-center">There is no image</div>
+          )}
         </div>
         <div className="flex justify-between items-center">
           <p className="text-xl font-semibold">${item.price.toFixed(2)}</p>

@@ -2,13 +2,15 @@ import { X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
 import { formatToSpecificDateTime } from "../../helpers/services";
+import { DataContext } from "../../context/DataContext";
 
 const OrderDetails = ({ isOpen, onClose, orderId, callBackOnSuccess }) => {
   const [order, setOrder] = useState();
+  const { setRefresh, refresh } = useContext(DataContext);
   const fetchData = async () => {
     try {
       const res = await axios.get(`/api/orders/getorderbyid/${orderId}`);
@@ -25,6 +27,8 @@ const OrderDetails = ({ isOpen, onClose, orderId, callBackOnSuccess }) => {
     try {
       const res = await axios.get(`/api/orders/accept/${orderId}`);
       if (res.status === 200) {
+        setRefresh(!refresh);
+
         callBackOnSuccess(orderId);
       }
     } catch (error) {
@@ -108,7 +112,7 @@ const ProductList = ({ products }) => {
   if (!products) return null;
   return (
     <div>
-      <h3 className="font-semibold text-lg mb-2">Products Ordered</h3>
+      <h3 className="font-semibold text-lg mb-2 ">Products Ordered</h3>
       <div className="space-y-2">
         {products.map((p) => (
           <ProductItem
@@ -116,7 +120,7 @@ const ProductList = ({ products }) => {
             name={p.name}
             quantity={p.pivot.quantity}
             price={p.unitprice.price}
-            image={p.media[0].original_url}
+            image={p?.media[0]?.original_url}
           />
         ))}
       </div>

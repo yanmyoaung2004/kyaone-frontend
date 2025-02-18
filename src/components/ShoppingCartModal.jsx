@@ -70,9 +70,9 @@ export function ShoppingCartModal({ isOpen, onClose }) {
                         <span className="sr-only">Increase quantity</span>
                       </Button>
                     </div>
-                    <div className="w-20 text-right">
+                    <div className="w-20 text-right ">
                       <p className="font-medium">
-                        {item.price.toLocaleString()}Ks
+                        ${item.price * item.quantity}
                       </p>
                     </div>
                   </div>

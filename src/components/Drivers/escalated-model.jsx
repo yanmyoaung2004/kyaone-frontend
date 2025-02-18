@@ -40,64 +40,46 @@ import { BadgeAlert } from "lucide-react";
 import SideBar from "../../pages/DriversApp/SideBar";
 import Header from "../../pages/DriversApp/Header";
 import { useEffect } from "react";
-
-// Mock data for the table
-const mockIssues = [
-  {
-    id: 1,
-    description: "Late delivery",
-    orderId: 1001,
-    driverId: 5001,
-    priority: "high",
-    status: "pending",
-  },
-  {
-    id: 2,
-    description: "Wrong item received",
-    orderId: 1002,
-    driverId: 5002,
-    priority: "medium",
-    status: "inprogress",
-  },
-  {
-    id: 3,
-    description: "Driver was rude",
-    orderId: 1003,
-    driverId: 5003,
-    priority: "low",
-    status: "resolved",
-  },
-  // Add more mock data as needed
-];
-
-// Mock data for orders
-const mockOrders = [
-  { id: 1001, display: "Order #1001" },
-  { id: 1002, display: "Order #1002" },
-  { id: 1003, display: "Order #1003" },
-  // Add more mock orders as needed
-];
+import axios from "axios";
+import { useSelector } from "react-redux";
 
 export default function EscalatedIssues() {
-  const [issues, setIssues] = useState(mockIssues);
+  const [issues, setIssues] = useState([]);
   const [sortColumn, setSortColumn] = useState("id");
   const [sortDirection, setSortDirection] = useState("asc");
   const [filterPriority, setFilterPriority] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [orders, setOrders] = useState([]);
+  const currentUser = useSelector((state) => state.user.currentUser);
 
   const [newIssue, setNewIssue] = useState({
     description: "",
     priority: "",
     status: "",
-    orderId: "",
+    order_id: "",
+    driver_id: 2,
   });
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
 
     return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(`api/orders`)
+      .then((resp) => setOrders(resp.data))
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get("/api/escalated-issues")
+      .then((resp) => setIssues(resp.data))
+      .catch((err) => console.log(err));
   }, []);
 
   const handleSort = (column) => {
@@ -124,16 +106,18 @@ export default function EscalatedIssues() {
     });
 
   const handleCreateIssue = () => {
-    const newId = Math.max(...issues.map((issue) => issue.id)) + 1;
-    const createdIssue = {
-      ...newIssue,
-      id: newId,
-      driverId: Math.floor(5000 + Math.random() * 1000), // Random driver ID for this example
-      orderId: Number.parseInt(newIssue.orderId),
-    };
-    setIssues([...issues, createdIssue]);
+    console.log(newIssue);
+
+    axios
+      .post("/api/escalated-issues", newIssue)
+      .then((res) => {
+        setIssues([...issues, res.data.data]);
+        console.log(res);
+      })
+      .catch((err) => console.error(err));
+
     setIsModalOpen(false);
-    setNewIssue({ description: "", priority: "", status: "", orderId: "" });
+    setNewIssue({ description: "", priority: "", status: "", order_id: "" });
   };
 
   const getPriorityColor = (priority) => {
@@ -238,27 +222,27 @@ export default function EscalatedIssues() {
                     </Select>
                   </div>
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="orderId" className="text-right">
+                    <Label htmlFor="order_id" className="text-right">
                       Order ID
                     </Label>
                     <Select
-                      value={newIssue.orderId}
                       onValueChange={(value) =>
-                        setNewIssue({ ...newIssue, orderId: value })
+                        setNewIssue({ ...newIssue, order_id: value })
                       }
                     >
                       <SelectTrigger className="col-span-3">
                         <SelectValue placeholder="Select order" />
                       </SelectTrigger>
                       <SelectContent>
-                        {mockOrders.map((order) => (
-                          <SelectItem
-                            key={order.id}
-                            value={order.id.toString()}
-                          >
-                            {order.display}
-                          </SelectItem>
-                        ))}
+                        {orders &&
+                          orders.map((order) => (
+                            <SelectItem
+                              key={order.id}
+                              value={order.id.toString()}
+                            >
+                              ORD# {order.id}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -318,7 +302,7 @@ export default function EscalatedIssues() {
                   </TableHead>
                   <TableHead>Description</TableHead>
                   <TableHead>Order ID</TableHead>
-                  <TableHead>Driver ID</TableHead>
+
                   <TableHead>Priority</TableHead>
                   <TableHead>Status</TableHead>
                 </TableRow>
@@ -328,8 +312,8 @@ export default function EscalatedIssues() {
                   <TableRow key={issue.id}>
                     <TableCell className="font-medium">{issue.id}</TableCell>
                     <TableCell>{issue.description}</TableCell>
-                    <TableCell>{issue.orderId}</TableCell>
-                    <TableCell>{issue.driverId}</TableCell>
+                    <TableCell>{issue.order_id}</TableCell>
+
                     <TableCell>
                       <Badge className={`${getPriorityColor(issue.priority)}`}>
                         {issue.priority}

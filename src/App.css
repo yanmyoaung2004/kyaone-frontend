@@ -3,6 +3,12 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  font-family: "Geist";
+}
+
+body {
+  font-family: "Geist";
+  /* color: red; */
 }
 
 .custom-scrollbar::-webkit-scrollbar {

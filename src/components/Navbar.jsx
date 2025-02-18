@@ -26,7 +26,7 @@ export default function Navbar({ setIsCartOpen }) {
       >
         <div className="container flex justify-between items-center">
           <Link to={"/"}>
-            <h1 className="text-white text-2xl font-semibold">Kyaone</h1>
+            <h1 className="text-white text-2xl font-semibold">MyanTech</h1>
           </Link>
           <div className="md:hidden">
             <button onClick={() => setIsOpen(!isOpen)} className="text-white">
@@ -135,6 +135,12 @@ export default function Navbar({ setIsCartOpen }) {
             {currentUser && (
               <li className="relative w-14 flex items-center">
                 <NotificationDropdown />
+              </li>
+            )}
+
+            {currentUser && (
+              <li className="w-14">
+                <CustomerChat />
               </li>
             )}
 

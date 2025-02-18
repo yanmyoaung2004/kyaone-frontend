@@ -25,11 +25,6 @@ const chartConfig = {
 };
 
 export function TopRegion({ chartData }) {
-  const currentMonth = chartData[chartData.length - 1];
-  const previousMonth = chartData[chartData.length - 2];
-  const percentageChange =
-    ((currentMonth.orders - previousMonth.orders) / previousMonth.orders) * 100;
-
   return (
     <div>
       <Card className="max-w-3xl mx-auto">
@@ -69,20 +64,7 @@ export function TopRegion({ chartData }) {
             </BarChart>
           </ChartContainer>
         </CardContent>
-        <CardFooter className="flex-col items-start gap-2 text-sm">
-          <div className="flex gap-2 font-medium leading-none">
-            {percentageChange > 0 ? "Trending up " : "Trending down "}
-            {Math.abs(percentageChange).toFixed(1)}% this month{" "}
-            <TrendingUp
-              className={`h-4 w-4 ${
-                percentageChange > 0 ? "text-green-500" : "text-red-500"
-              }`}
-            />
-          </div>
-          <div className="leading-none text-muted-foreground">
-            Showing top selling regions for the last 6 months
-          </div>
-        </CardFooter>
+        <CardFooter className="flex-col items-start gap-2 text-sm"></CardFooter>
       </Card>
     </div>
   );

@@ -4,6 +4,7 @@ import { handleWarningToast } from "../helpers/ToastService";
 export const DataContext = createContext();
 
 const DataProvider = ({ children }) => {
+  const [refresh, setRefresh] = useState(true);
   const [cartItems, setCartItems] = useState(() => {
     const savedCartItems = localStorage.getItem("cartItems");
     return savedCartItems ? JSON.parse(savedCartItems) : [];
@@ -81,6 +82,8 @@ const DataProvider = ({ children }) => {
     <DataContext.Provider
       value={{
         cartItems,
+        setRefresh,
+        refresh,
         setCartItems,
         increaseCount,
         decreaseCount,

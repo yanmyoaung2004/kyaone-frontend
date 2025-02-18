@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 import SkeletonCard from "../components/Cards/SkeletonCard";
+import Hero from "../components/Hero";
 
 const ProductList = () => {
   const { cartItems, addToCart } = useContext(DataContext);
@@ -80,7 +81,9 @@ const ProductList = () => {
 
   return (
     <CustomerLayout>
-      <div className="overflow-x-hidden">{/* <Hero /> */}</div>
+      <div className="overflow-x-hidden">
+        <Hero />
+      </div>
       <div className="w-5/6 mx-auto my-5">
         <div className="flex items-center space-x-2">
           <div className="relative flex-1">
@@ -138,14 +141,19 @@ const ProductList = () => {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-5/6 mx-auto gap-6 my-5">
             {itemList.length > 0 &&
-              itemList.map((item) => (
-                <CardComponent
-                  item={item}
-                  key={item.id}
-                  addToCart={addToCart}
-                  isAdded={cartItems.some((product) => product.id === item.id)}
-                />
-              ))}
+              itemList.map(
+                (item) =>
+                  item.available > 0 && (
+                    <CardComponent
+                      item={item}
+                      key={item.id}
+                      addToCart={addToCart}
+                      isAdded={cartItems.some(
+                        (product) => product.id === item.id
+                      )}
+                    />
+                  )
+              )}
           </div>
           {itemList.length > 0 && (
             <div className="w-5/6 mx-auto my-5">

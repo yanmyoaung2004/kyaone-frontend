@@ -21,7 +21,6 @@ export default function OrdersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [currentOrder, setCurrentOrder] = useState(null);
-  const [currentOrderDetail, setCurrentOrderDetail] = useState(null);
 
   const fetchOrder = async () => {
     try {

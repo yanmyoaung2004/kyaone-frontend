@@ -36,6 +36,7 @@ export default function Orders() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [selectedComplaintId, setSelectedComplaintId] = useState(null);
   const [selectedServiceCenter, setSelectedServiceCenter] = useState(null);
+  const [cities, setCities] = useState([]);
 
   const handleOrderClick = (order) => {
     setSelectedOrder(order);
@@ -79,6 +80,12 @@ export default function Orders() {
         setOrders(res.data);
       }
 
+      const resCities = await axios.get("/api/cities");
+      if (res.status === 200) {
+        setCities(resCities.data);
+        // log
+      }
+
       const resDriver = await axios.get("/api/drivers/getfree");
       if (resDriver.status === 200) {
         setDrivers(resDriver.data);
@@ -92,6 +99,8 @@ export default function Orders() {
       console.log(error);
     }
   };
+
+  // const cityFilter = (c.id) => {};
 
   useEffect(() => {
     fetchData();
@@ -116,7 +125,12 @@ export default function Orders() {
                 <Truck className="mr-2 h-4 w-4" />
                 Assign Trucks
               </Button>
-              <ServiceCenterAssignmentModal order={selectedOrders} />
+              <ServiceCenterAssignmentModal
+                order={selectedOrders}
+                orders={orders}
+                setOrders={setOrders}
+                // onClose={onclose}
+              />
             </div>
           )}
         </CardHeader>
@@ -154,6 +168,18 @@ export default function Orders() {
                 <SelectItem value="Shipped">Shipped</SelectItem>
                 <SelectItem value="Delivered">Delivered</SelectItem>
                 <SelectItem value="Cancelled">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder="Filter by Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">Cities</SelectItem>
+                {cities &&
+                  cities.map((c) => (
+                    <SelectItem value={c.id}>{c.name}</SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>

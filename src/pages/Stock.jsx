@@ -33,7 +33,7 @@ export function Stock() {
       <Card>
         <CardHeader>
           <CardTitle>Stock Chart</CardTitle>
-          <CardDescription>January - June 2024</CardDescription>
+          {/* <CardDescription>January - June 2024</CardDescription> */}
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig}>

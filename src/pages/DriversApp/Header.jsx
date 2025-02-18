@@ -19,6 +19,7 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Bell } from "lucide-react";
+import NotificationDropdown from "../../components/notification-dropdown";
 
 const Header = ({ currentTime }) => {
   return (
@@ -59,20 +60,20 @@ const Header = ({ currentTime }) => {
         </div>
       </div>
       <div className="flex items-center space-x-4">
-        <Button variant="ghost" size="icon">
-          <Bell className="h-5 w-5" />
-        </Button>
-        <span className="text-sm text-gray-600">
-          {currentTime.toLocaleString("en-US", {
-            weekday: "short",
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          })}
-        </span>
+        <div className="flex items-center space-x-4">
+          <NotificationDropdown />
+          <span className="text-sm text-gray-600">
+            {currentTime.toLocaleString("en-US", {
+              weekday: "short",
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+            })}
+          </span>
+        </div>
       </div>
     </header>
   );
