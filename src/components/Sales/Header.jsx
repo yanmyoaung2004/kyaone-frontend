@@ -64,7 +64,7 @@ export default function Header() {
             <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <span className="font-semibold text-lg">{currentUser?.name}</span>
+        {/* <span className="font-semibold text-lg">{currentUser?.name}</span> */}
       </div>
 
       <div className="flex items-center space-x-4">

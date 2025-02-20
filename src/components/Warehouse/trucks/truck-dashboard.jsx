@@ -202,8 +202,31 @@ export function TruckDashboard({
                     : "None"}
                 </TableCell> */}
                 <TableCell>
-                  <div className="flex items-center justify-center gap-1">
-                    <Pencil
+                  <div className="flex items-center justify-center space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsFormOpen(!isFormOpen);
+                        setIsEditTruck(true);
+                        setFormdata(truck);
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsDeleteTruck(true);
+                        setDeleteTruck(truck);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                    {/* <Pencil
                       size={24}
                       className="hover:bg-gray-300 text-gray-500 rounded-md p-1"
                       onClick={(e) => {
@@ -212,8 +235,8 @@ export function TruckDashboard({
                         setIsEditTruck(true);
                         setFormdata(truck);
                       }}
-                    />
-                    <Trash2Icon
+                    /> */}
+                    {/* <Trash2Icon
                       size={24}
                       className="hover:bg-gray-300 rounded-md p-1 text-red-500"
                       onClick={(e) => {
@@ -221,7 +244,7 @@ export function TruckDashboard({
                         setIsDeleteTruck(true);
                         setDeleteTruck(truck);
                       }}
-                    />
+                    /> */}
                   </div>
                 </TableCell>
               </TableRow>

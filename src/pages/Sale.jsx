@@ -44,7 +44,9 @@ const Sale = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* <RecentActivity />
         <DeliveryTracking /> */}
-        {monthlyData.length > 0 && <SalePerformance ordersData={monthlyData} />}
+        {monthlyData?.length > 0 && (
+          <SalePerformance ordersData={monthlyData} />
+        )}
         {topSellingLocations.length > 0 && (
           <TopRegion chartData={topSellingLocations} />
         )}
