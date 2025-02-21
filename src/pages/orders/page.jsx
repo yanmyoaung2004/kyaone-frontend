@@ -9,67 +9,45 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import axios from "axios";
-
-const orders = [
-  {
-    id: "12345",
-    customer: "Alice Johnson",
-    address: "123 Main St, City",
-    eta: "11:00 AM",
-    status: "In Progress",
-  },
-  {
-    id: "67890",
-    customer: "Bob Smith",
-    address: "456 Elm St, Town",
-    eta: "12:00 PM",
-    status: "Delayed",
-  },
-  {
-    id: "54321",
-    customer: "Charlie Brown",
-    address: "789 Oak St, Village",
-    eta: "1:30 PM",
-    status: "On Time",
-  },
-  {
-    id: "98765",
-    customer: "Diana Prince",
-    address: "321 Pine St, County",
-    eta: "2:45 PM",
-    status: "Pending",
-  },
-  {
-    id: "13579",
-    customer: "Ethan Hunt",
-    address: "654 Maple St, State",
-    eta: "3:15 PM",
-    status: "Delivered",
-  },
-];
+import { useEffect, useState } from "react";
+import OrderDetails from "./OrderDetials";
+import { X } from "lucide-react";
+import { Search } from "lucide-react";
 
 export default function OrdersPage() {
-  // const createOrder = async () => {
-  //   try {
-  //     const res = await axios.post("url", data);
+  const [allOrders, setAllOrders] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [currentOrder, setCurrentOrder] = useState(null);
 
-  //     if (!res.ok) {
-  //       throw new Error("Error");
-  //     }
+  const fetchOrder = async () => {
+    try {
+      const res = await axios.get("/api/orders");
+      setAllOrders(res.data);
+      setOrders(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchOrder();
+  }, []);
 
-  //     const data = res.data;
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // };
+  const fuzzySearch = (query) => {
+    if (!query.trim()) return allOrders;
+    const lowerQuery = query.toLowerCase();
+    return allOrders.filter((item) =>
+      Object.values(item).some(
+        (value) =>
+          typeof value === "string" && value.toLowerCase().includes(lowerQuery)
+      )
+    );
+  };
+  useEffect(() => {
+    setOrders(fuzzySearch(search));
+  }, [search]);
 
   return (
     <div className="space-y-6">
@@ -81,68 +59,90 @@ export default function OrdersPage() {
         <CardContent>
           <div className="flex justify-between items-center mb-4">
             <div className="flex space-x-2">
-              <Input placeholder="Search orders..." className="w-[300px]" />
-              <Select>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="delivered">Delivered</SelectItem>
-                  <SelectItem value="delayed">Delayed</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  type="text"
+                  placeholder="Search"
+                  className="pl-8 pr-10 py-5 rounded-md"
+                />
+                {search && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full"
+                    onClick={() => setSearch("")}
+                  >
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Clear search</span>
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Order ID</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Delivery Address</TableHead>
-                <TableHead>ETA</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-center">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {orders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-medium">{order.id}</TableCell>
-                  <TableCell>{order.customer}</TableCell>
-                  <TableCell>{order.address}</TableCell>
-                  <TableCell>{order.eta}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        order.status === "In Progress"
-                          ? "bg-blue-100 text-blue-800"
-                          : order.status === "Delayed"
-                          ? "bg-red-100 text-red-800"
-                          : order.status === "On Time"
-                          ? "bg-green-100 text-green-800"
-                          : order.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Button variant="outline" size="sm">
-                      Create Order
-                    </Button>
-                    <Button variant="outline" size="sm" className="ml-2">
-                      View Details
-                    </Button>
-                  </TableCell>
+          <div className="rounded-md border flex-grow overflow-x-auto bg-white">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">Order ID</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Delivery Address</TableHead>
+                  <TableHead>ETA</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {orders.map((order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-medium">{order.id}</TableCell>
+                    <TableCell>{order.customer}</TableCell>
+                    <TableCell>{order.address}</TableCell>
+                    <TableCell>{order.eta ?? "n/a"}</TableCell>
+                    <TableCell>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          order.status === "In Progress"
+                            ? "bg-blue-100 text-blue-800"
+                            : order.status === "Delayed"
+                            ? "bg-red-100 text-red-800"
+                            : order.status === "On Time"
+                            ? "bg-green-100 text-green-800"
+                            : order.status === "Pending"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {order.status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setCurrentOrder(order);
+                          setIsModalOpen(true);
+                        }}
+                      >
+                        View Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <OrderDetails
+              orderId={currentOrder?.id}
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+              callBackOnSuccess={(id) => {
+                setOrders(allOrders.filter((order) => order.id !== id));
+              }}
+            />
+          </div>
         </CardContent>
       </Card>
     </div>

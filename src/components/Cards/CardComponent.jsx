@@ -4,14 +4,16 @@ import { Button } from "@/components/ui/button";
 import { Eye, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../theme-provider";
+import { Image } from "lucide-react";
 
 const CardComponent = ({ item, addToCart, isAdded }) => {
   const navigate = useNavigate();
   const { theme } = useTheme();
+  // console.log(item);
   return (
     <Card
       className={`w-full max-w-md mx-auto shadow-md ${
-        theme === "dark" ? "bg-white text-black" : "bg-black text-white"
+        theme !== "dark" ? "bg-white text-black" : "bg-black text-white"
       }`}
     >
       <CardHeader>
@@ -31,14 +33,26 @@ const CardComponent = ({ item, addToCart, isAdded }) => {
       </CardHeader>
       <CardContent className="space-y-4">
         <div className={`relative w-full h-48 overflow-hidden rounded-lg`}>
-          <img
+          {/* <img
             src={item.image || "/placeholder.svg"}
             alt={item.name}
             className="w-full h-full object-cover"
-          />
+          /> */}
+          {item.image ? (
+            <img
+              src={item.image || "/placeholder.svg"}
+              alt=""
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="text-center">There is no image</div>
+          )}
         </div>
         <div className="flex justify-between items-center">
           <p className="text-xl font-semibold">${item.price.toFixed(2)}</p>
+
+          {/* <p className="text-sm opacity-90">Available: {item.available}</p> */}
+
           <div className="flex gap-3">
             <Button
               variant="outline"

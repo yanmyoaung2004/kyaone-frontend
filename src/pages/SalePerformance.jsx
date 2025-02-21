@@ -17,15 +17,6 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
-const chartData = [
-  { month: "January", orders: 1250 },
-  { month: "February", orders: 1420 },
-  { month: "March", orders: 1350 },
-  { month: "April", orders: 1610 },
-  { month: "May", orders: 1520 },
-  { month: "June", orders: 1000 },
-];
-
 const chartConfig = {
   orders: {
     label: "Orders",
@@ -33,31 +24,27 @@ const chartConfig = {
   },
 };
 
-export function SalePerformance() {
-  // const [chartData, setChartData] = useState([]);
+const reorderMonths = (ordersArray) => {
+  const currentMonthIndex = new Date().getMonth();
+
+  return [
+    ...ordersArray.slice(currentMonthIndex),
+    ...ordersArray.slice(0, currentMonthIndex),
+  ];
+};
+
+export function SalePerformance({ ordersData }) {
+  const chartData = reorderMonths(ordersData);
   const currentMonth = chartData[chartData.length - 1];
   const previousMonth = chartData[chartData.length - 2];
+
   const percentageChange =
-    ((currentMonth.orders - previousMonth.orders) / previousMonth.orders) * 100;
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-        // const res =  await axios.get("url");
-
-  //       if (!res.ok) {
-  //         console.error("Error fetching data...");
-  //       }
-  //       const data = res.data();
-
-  //       setChartData(data);
-  //     } catch (err) {
-  //       console.error(err);
-  //     }
-
-  //     fetchData();
-  //   };
-  // }, []);
+    previousMonth.orders !== 0
+      ? ((currentMonth.orders - previousMonth.orders) / previousMonth.orders) *
+        100
+      : currentMonth.orders > 0
+      ? 100
+      : 0;
 
   return (
     <Card className="max-w-3xl w-full mx-auto flex flex-col justify-between">
@@ -101,7 +88,7 @@ export function SalePerformance() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 font-medium leading-none">
-          {percentageChange > 0 ? "Trending up" : "Trending down"}
+          {percentageChange > 0 ? "Trending up " : "Trending down "}
           {Math.abs(percentageChange).toFixed(1)}% this month{" "}
           <TrendingUp
             className={`h-4 w-4 ${

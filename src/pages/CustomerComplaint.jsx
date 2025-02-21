@@ -4,18 +4,17 @@ import axios from "axios";
 
 const CustomerComplaint = () => {
   const onSubmit = async (data) => {
-    try{
+    try {
       const res = await axios.post(url, {
-        data
+        data,
       });
 
-      if(!res.ok) {
+      if (!res.ok) {
         console.error("Error");
       }
 
       console.log("Success");
-
-    } catch(err) {
+    } catch (err) {
       console.error(err);
     }
   };

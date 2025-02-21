@@ -17,55 +17,101 @@ import {
   SelectValue,
 } from "../../components/ui/select";
 import QuickStats from "../../components/Sales/QuickStats";
-
-const deliveries = [
-  {
-    id: "12345",
-    customer: "Alice Johnson",
-    address: "123 Main St, City",
-    eta: "11:00 AM",
-    status: "In Progress",
-    driver: "John Doe",
-  },
-  {
-    id: "67890",
-    customer: "Bob Smith",
-    address: "456 Elm St, Town",
-    eta: "12:00 PM",
-    status: "Delayed",
-    driver: "Jane Smith",
-  },
-  {
-    id: "54321",
-    customer: "Charlie Brown",
-    address: "789 Oak St, Village",
-    eta: "1:30 PM",
-    status: "On Time",
-    driver: "Mike Johnson",
-  },
-  {
-    id: "98765",
-    customer: "Diana Prince",
-    address: "321 Pine St, County",
-    eta: "2:45 PM",
-    status: "Pending",
-    driver: "Sarah Williams",
-  },
-  {
-    id: "13579",
-    customer: "Ethan Hunt",
-    address: "654 Maple St, State",
-    eta: "3:15 PM",
-    status: "Delivered",
-    driver: "Tom Wilson",
-  },
-];
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import DeliveryTracking from "./DeliveryTracking";
+import { Search } from "lucide-react";
+import { X } from "lucide-react";
 
 export default function DeliveriesPage() {
+  const [seeOrderDetail, setSeeOrderDetail] = useState(false);
+  const [status, setStatus] = useState();
+  const [searchStatus, setSearchStatus] = useState();
+  const [allDeliveries, setAllDeliveries] = useState([]);
+  const [deliveries, setDeliveries] = useState([]);
+  const [orderTruck, setOrderTruck] = useState([]);
+  const [allOrderTruck, setAllOrderTruck] = useState([]);
+  const [viewMode, setViewMode] = useState("byorder");
+  const [search, setSearch] = useState("");
+  const [selectedDelivery, setSelectedDelivery] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(`/api/deliveries`);
+      setDeliveries(res.data.order);
+      setAllDeliveries(res.data.order);
+      setOrderTruck(res.data.orderTruck);
+      setAllOrderTruck(res.data.orderTruck);
+      setStatus(res.data.status);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fuzzySearch = (query) => {
+    if (viewMode === "byorder") {
+      if (!query.trim()) return allDeliveries;
+      const lowerQuery = query.toLowerCase();
+      return allDeliveries.filter((item) =>
+        Object.values(item).some(
+          (value) =>
+            typeof value === "string" &&
+            value.toLowerCase().includes(lowerQuery)
+        )
+      );
+    } else {
+      if (!query.trim()) return allOrderTruck;
+      const lowerQuery = query.toLowerCase();
+      return allOrderTruck.filter((item) =>
+        Object.values(item).some(
+          (value) =>
+            typeof value === "string" &&
+            value.toLowerCase().includes(lowerQuery)
+        )
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (searchStatus === "all") {
+      if (viewMode === "byorder") {
+        setDeliveries(allDeliveries);
+      } else {
+        setOrderTruck(allOrderTruck);
+      }
+      return;
+    }
+    if (viewMode === "byorder") {
+      setDeliveries(
+        allDeliveries.filter((item) => item.status === searchStatus)
+      );
+    } else {
+      setOrderTruck(
+        allOrderTruck.filter((item) => item.status === searchStatus)
+      );
+    }
+  }, [searchStatus, allDeliveries]);
+
+  useEffect(() => {
+    if (viewMode === "byorder") {
+      setDeliveries(fuzzySearch(search));
+    } else {
+      setOrderTruck(fuzzySearch(search));
+    }
+  }, [search, allDeliveries]);
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Delivery Tracking</h1>
-      <QuickStats />
+      <QuickStats
+        activeDelivery={status?.activeDelivery}
+        escalatedDelivery={status?.escalatedDelivery}
+        pendingDelivery={status?.pendingDelivery}
+      />
       <Card>
         <CardHeader>
           <CardTitle>Active Deliveries</CardTitle>
@@ -73,68 +119,178 @@ export default function DeliveriesPage() {
         <CardContent>
           <div className="flex justify-between items-center mb-4">
             <div className="flex space-x-2">
-              <Input placeholder="Search deliveries..." className="w-[300px]" />
-              <Select>
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  type="text"
+                  placeholder="Search"
+                  className="pl-8 pr-10 py-5 rounded-md"
+                />
+                {search && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-full"
+                    onClick={() => setSearch("")}
+                  >
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Clear search</span>
+                  </Button>
+                )}
+              </div>
+              <Select
+                onValueChange={(value) => {
+                  setSearchStatus(value);
+                }}
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
-                  <SelectItem value="delivered">Delivered</SelectItem>
-                  <SelectItem value="delayed">Delayed</SelectItem>
+                  <SelectItem value="processing">Progressing</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select onValueChange={(value) => setViewMode(value)}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="View delivery" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="byorder">By Order</SelectItem>
+                  <SelectItem value="bytruck">By Truck</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <Button>Refresh</Button>
           </div>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Order ID</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Delivery Address</TableHead>
-                <TableHead>ETA</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Driver</TableHead>
-                <TableHead className="text-right">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {deliveries.map((delivery) => (
-                <TableRow key={delivery.id}>
-                  <TableCell className="font-medium">{delivery.id}</TableCell>
-                  <TableCell>{delivery.customer}</TableCell>
-                  <TableCell>{delivery.address}</TableCell>
-                  <TableCell>{delivery.eta}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        delivery.status === "In Progress"
-                          ? "bg-blue-100 text-blue-800"
-                          : delivery.status === "Delayed"
-                          ? "bg-red-100 text-red-800"
-                          : delivery.status === "On Time"
-                          ? "bg-green-100 text-green-800"
-                          : delivery.status === "Pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-gray-100 text-gray-800"
-                      }`}
-                    >
-                      {delivery.status}
-                    </span>
-                  </TableCell>
-                  <TableCell>{delivery.driver}</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="outline" size="sm">
-                      Track
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {viewMode === "byorder" && (
+            <div className="rounded-md border flex-grow overflow-x-auto bg-white">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Order ID</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Delivery Address</TableHead>
+                    <TableHead>ETA</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Driver</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {deliveries.map((delivery, i) => (
+                    <TableRow key={i}>
+                      <TableCell className="font-medium">
+                        {delivery.id.slice(0, 9)}
+                      </TableCell>
+
+                      <TableCell>{delivery.customer}</TableCell>
+                      <TableCell>{delivery.address}</TableCell>
+                      <TableCell>
+                        {delivery.eta === null ? 10 : delivery.eta}
+                      </TableCell>
+
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                            delivery.status === "In Progress"
+                              ? "bg-blue-100 text-blue-800"
+                              : delivery.status === "Delayed"
+                              ? "bg-red-100 text-red-800"
+                              : delivery.status === "On Time"
+                              ? "bg-green-100 text-green-800"
+                              : delivery.status === "Pending"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {delivery.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>{delivery.driver}</TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            setSelectedDelivery(delivery);
+                            setSeeOrderDetail(true);
+                          }}
+                        >
+                          Track
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <DeliveryTracking
+                isOpen={seeOrderDetail}
+                onClose={() => setSeeOrderDetail(false)}
+                delivery={selectedDelivery}
+              />
+            </div>
+          )}
+
+          {viewMode === "bytruck" && (
+            <div className="rounded-md border flex-grow overflow-x-auto bg-white">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">No.</TableHead>
+                    <TableHead>Driver</TableHead>
+                    <TableHead>Truck</TableHead>
+                    <TableHead>Route</TableHead>
+                    <TableHead>ETA</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {orderTruck.map((order, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">{index + 1}</TableCell>
+                      <TableCell>{order.driver_name}</TableCell>
+                      <TableCell>{order.truck_name}</TableCell>
+                      <TableCell>{order.route}</TableCell>
+                      <TableCell>
+                        {order.eta === null ? 10 : order.eta}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                            order.status === "In Progress"
+                              ? "bg-blue-100 text-blue-800"
+                              : order.status === "Delayed"
+                              ? "bg-red-100 text-red-800"
+                              : order.status === "On Time"
+                              ? "bg-green-100 text-green-800"
+                              : order.status === "Pending"
+                              ? "bg-yellow-100 text-yellow-800"
+                              : "bg-gray-100 text-gray-800"
+                          }`}
+                        >
+                          {order.status}
+                        </span>
+                      </TableCell>
+
+                      <TableCell className="text-right">
+                        <Link to={`detail/${order.truck_id}`}>
+                          <Button variant="outline" size="sm">
+                            Details
+                          </Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -1,36 +1,62 @@
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-export function PaginationForItems() {
+export function PaginationForItems({
+  current_page,
+  last_page,
+  next_page_url,
+  prev_page_url,
+  per_page,
+  total,
+  onPageChange,
+}) {
+  const pageNumbers = [];
+  for (let i = 1; i <= last_page; i++) {
+    pageNumbers.push(i);
+  }
+
   return (
     <Pagination>
       <PaginationContent>
         <PaginationItem>
-          <PaginationPrevious href="#" />
+          <PaginationPrevious
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              if (prev_page_url) onPageChange(current_page - 1);
+            }}
+            className={!prev_page_url ? "pointer-events-none opacity-50" : ""}
+          />
         </PaginationItem>
+        {pageNumbers.map((number) => (
+          <PaginationItem key={number}>
+            <PaginationLink
+              href="#"
+              isActive={number === current_page}
+              onClick={(e) => {
+                e.preventDefault();
+                onPageChange(number);
+              }}
+            >
+              {number}
+            </PaginationLink>
+          </PaginationItem>
+        ))}
         <PaginationItem>
-          <PaginationLink href="#">1</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#" isActive>
-            2
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink href="#">3</PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationEllipsis />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationNext href="#" />
+          <PaginationNext
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              if (next_page_url) onPageChange(current_page + 1);
+            }}
+            className={!next_page_url ? "pointer-events-none opacity-50" : ""}
+          />
         </PaginationItem>
       </PaginationContent>
     </Pagination>

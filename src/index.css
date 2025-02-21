@@ -147,6 +147,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Geist', Arial, Helvetica, sans-serif;
   }
   :root {
     --chart-1: 12 76% 61%;

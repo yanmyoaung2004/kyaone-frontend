@@ -1,3 +1,3 @@
-import ItemDetails from "./ItemDetails";
+import ItemDetails from "./ProductList";
 
 export { ItemDetails };

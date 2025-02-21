@@ -9,7 +9,12 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  define: {
-    'process.env': {}  // This will define process.env as an empty object in the browser
-  }
+  // server: {
+  //   proxy: {
+  //     "/api": {
+  //       target: "http://kyone-backend.test",
+  //       secure: false,
+  //     },
+  //   },
+  // },
 });

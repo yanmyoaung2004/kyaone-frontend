@@ -1,63 +1,68 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useState } from "react"
-import { Link } from "react-router-dom"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import axios from "axios";
+import { signInSuccess } from "../redux/user/userSlice";
+import {
+  handleFailureToast,
+  handleWarningToast,
+} from "../helpers/ToastService";
+import { Toaster } from "@/components/ui/toaster";
 
-export function RegisterForm({
-  className,
-  ...props
-}) {
-  
-  let [email, setEmail] = useState('');
-    let [password, setPassword] = useState('');
-    let [confirmPassword, setConfirmPassword] = useState('');
-    let [name, setName] = useState('')
+export function RegisterForm({ className, ...props }) {
+  let [email, setEmail] = useState("");
+  let [password, setPassword] = useState("");
+  let [confirmPassword, setConfirmPassword] = useState("");
+  let [name, setName] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    let [error, setError] = useState(null);
-    // let navigate = useNavigate();
-  
-
-    let register = async (e) => {
-        try {
-            e.preventDefault();
-            setError(null);
-
-            let data = {
-                email,
-                password
-            }
-
-            // let res = await axios.post('/api/users/login', data, {
-            //     withCredentials : true
-            // });
-            // if(res.status === 200) {
-            //     navigate('/');
-            // } ;
-        } catch(e) {
-            setError(e.response.data.error);
-        }
+  let register = async (e) => {
+    if (name === "" || email === "" || password === "") {
+      handleWarningToast("Please fill all the fields!");
     }
+    try {
+      e.preventDefault();
+      const res = await axios.post("api/register", {
+        name: name,
+        email: email,
+        password: password,
+      });
+
+      if (res.status === 201) {
+        dispatch(signInSuccess(res.data.user));
+        localStorage.setItem("token", JSON.stringify(res.data.token));
+        navigate("/");
+      }
+    } catch (e) {
+      console.log(e);
+      handleFailureToast("Internal Server Error!");
+    }
+  };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden">
-        <CardContent className="grid p-0 md:grid-cols-2">
+        <Toaster />
+        <CardContent>
           <form onSubmit={register} className="p-6 md:p-8">
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Welcome back</h1>
                 <p className="text-balance text-muted-foreground">
-                  Sign up to your Acme Inc account
+                  Sign up to your account
                 </p>
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="name">Name</Label>
                 <Input
                   value={name}
-                  onChange={e => setName(e.target.value)}
+                  onChange={(e) => setName(e.target.value)}
                   id="name"
                   type="text"
                   placeholder="Name"
@@ -68,7 +73,7 @@ export function RegisterForm({
                 <Label htmlFor="email">Email</Label>
                 <Input
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={(e) => setEmail(e.target.value)}
                   id="email"
                   type="email"
                   placeholder="m@example.com"
@@ -79,14 +84,26 @@ export function RegisterForm({
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                 </div>
-                <Input value={password} onChange={e => setPassword(e.target.value)} id="password" type="password" required />
+                <Input
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  id="password"
+                  type="password"
+                  required
+                />
               </div>
 
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="confirmPassword">Confrim Password</Label>
                 </div>
-                <Input value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} id="confirmPassword" type="password" required />
+                <Input
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  id="confirmPassword"
+                  type="password"
+                  required
+                />
               </div>
               <Button type="submit" className="w-full">
                 Register
@@ -127,19 +144,12 @@ export function RegisterForm({
               </div>
               <div className="text-center text-sm">
                 Already had an account?{" "}
-                <Link to={'/login'} className="underline underline-offset-4">
+                <Link to={"/login"} className="underline underline-offset-4">
                   Sign in
                 </Link>
               </div>
             </div>
           </form>
-          <div className="relative hidden bg-muted md:block">
-            <img
-              src="/placeholder.svg"
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-            />
-          </div>
         </CardContent>
       </Card>
       <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
@@ -147,5 +157,5 @@ export function RegisterForm({
         and <a href="#">Privacy Policy</a>.
       </div>
     </div>
-  )
+  );
 }

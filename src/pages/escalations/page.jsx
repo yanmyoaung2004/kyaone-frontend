@@ -10,16 +10,43 @@ import {
 } from "@/components/ui/select";
 import EscalationList from "../../components/Sales/EscalationList";
 import EscalationDetails from "../../components/Sales/EscalationDetails";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function EscalationsPage() {
+  const [issues, setIssues] = useState([]);
+  const [allSelectedIssues, setAllSelectedIssues] = useState();
+  const [selectedIssues, setSelectedIssues] = useState();
+
+  const changeIssue = (id) => {
+    setSelectedIssues(issues.find((c) => c.id === id));
+  };
+
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(`/api/escalated-issues`);
+      setIssues(res.data);
+      setSelectedIssues(res.data[0]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold text-gray-900">Escalations</h1>
       <div className="flex justify-between items-center">
         <div className="flex space-x-2">
-          <Input placeholder="Search escalations..." className="w-[300px]" />
+          <Input
+            placeholder="Search escalations..."
+            className="w-[300px] bg-white"
+          />
           <Select>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-[180px] bg-white">
               <SelectValue placeholder="Filter by priority" />
             </SelectTrigger>
             <SelectContent>
@@ -38,7 +65,13 @@ export default function EscalationsPage() {
             <CardTitle>Escalated Issues</CardTitle>
           </CardHeader>
           <CardContent>
-            <EscalationList />
+            {issues.length > 0 && (
+              <EscalationList
+                escalations={issues}
+                changeIssue={changeIssue}
+                selectedId={selectedIssues.id}
+              />
+            )}
           </CardContent>
         </Card>
         <Card className="md:col-span-2">
@@ -46,7 +79,9 @@ export default function EscalationsPage() {
             <CardTitle>Escalation Details</CardTitle>
           </CardHeader>
           <CardContent>
-            <EscalationDetails />
+            {selectedIssues && (
+              <EscalationDetails selectedIssues={selectedIssues} />
+            )}
           </CardContent>
         </Card>
       </div>

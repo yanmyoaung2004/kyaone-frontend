@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { FileText, Search, X, RefreshCcw } from "lucide-react";
+import { FileText, Search, X } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -17,6 +17,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,83 +37,23 @@ import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import axios from "axios";
-
 import TableDetailComponent from "./TableDetailComponent";
 import CustomerLayout from "../../layout/CustomerLayout";
 import { PaginationForItems } from "../PaginationForItems";
-
-const invoices = [
-  {
-    invoiceId: "INV001",
-    product: [
-      {
-        productName: "Wireless Mouse",
-        quantity: 2,
-        totalAmount: 1299.99,
-      },
-      {
-        productName: "Laptop",
-        quantity: 1,
-        totalAmount: 1000,
-      },
-    ],
-    totalAmount: 2299.99,
-    buyDate: new Date("2023-05-15"),
-    status: "Paid",
-  },
-  {
-    invoiceId: "INV002",
-    product: [
-      {
-        productName: "Wireless Mouse",
-        quantity: 3,
-        totalAmount: 1299.99,
-      },
-    ],
-    totalAmount: 49.99,
-    buyDate: new Date("2023-05-18"),
-    status: "Processing",
-  },
-  {
-    invoiceId: "INV003",
-    product: [
-      {
-        productName: "Laptop Pro X",
-        quantity: 2,
-        totalAmount: 399.99,
-      },
-    ],
-    totalAmount: 399.99,
-    buyDate: new Date("2023-05-20"),
-    status: "Shipped",
-  },
-];
+import { useSelector } from "react-redux";
 
 const TableComponent = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState("");
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [isSmallScreen, setIsSmallScreen] = useState(
-      window.matchMedia("(max-width: 500px)").matches
+    window.matchMedia("(max-width: 500px)").matches
   );
-  // const [invoices, setInvoices] = useState([]);
+  const [invoices, setInvoices] = useState([]);
+  let [filterInvoices, setFilterInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const filteredInvoices = invoices.filter((invoice) => {
-    const idMatch = invoice.invoiceId
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const productNameMatch = invoice.product.some((item) =>
-      item.productName.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    return idMatch || productNameMatch;
-  });
-
-  const totalAmount = filteredInvoices.reduce(
-    (sum, invoice) => sum + invoice.totalAmount,
-    0
-  );
+  const { currentUser } = useSelector((state) => state.user);
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -120,8 +67,9 @@ const TableComponent = () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await axios.get("/api/invoices");
-      // setInvoices(res.data);
+      const res = await axios.get(`/api/orders/user/${currentUser.id}`);
+      setInvoices(res.data);
+      setFilterInvoices(res.data);
     } catch (err) {
       console.error(err);
       setError("Failed to fetch invoices. Please try again later.");
@@ -129,20 +77,30 @@ const TableComponent = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    let filtered = invoices;
+    if (searchTerm) {
+      filtered = filtered.filter((invoice) =>
+        invoice.product?.some((p) =>
+          p.productName.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+    }
+    if (category && category !== "all") {
+      filtered = filtered.filter((invoice) => invoice.status === category);
+    }
+
+    setFilterInvoices(filtered);
+  }, [searchTerm, category, invoices]);
 
   useEffect(() => {
     fetchData();
-
     const mediaQuery = window.matchMedia("(max-width: 500px)");
-
     const handleMediaChange = (e) => {
       setIsSmallScreen(e.matches);
     };
-
     handleMediaChange(mediaQuery);
-
     mediaQuery.addListener(handleMediaChange);
-
     return () => {
       mediaQuery.removeListener(handleMediaChange);
     };
@@ -152,9 +110,7 @@ const TableComponent = () => {
     return (
       <CustomerLayout>
         <Card className="max-w-6xl mb-10 mx-auto">
-          <CardContent className="flex items-center justify-center h-64">
-            <RefreshCcw className="w-8 h-8 animate-spin" />
-          </CardContent>
+          <CardContent className="flex items-center justify-center h-64" />
         </Card>
       </CustomerLayout>
     );
@@ -177,9 +133,7 @@ const TableComponent = () => {
     <CustomerLayout>
       <Card className="max-w-6xl mb-10 mx-auto">
         <CardHeader>
-          <CardTitle>
-            Invoice History
-          </CardTitle>
+          <CardTitle>Invoice History</CardTitle>
           <CardDescription>
             View and manage your recent purchases
           </CardDescription>
@@ -207,96 +161,108 @@ const TableComponent = () => {
                 </Button>
               )}
             </div>
-            <Button onClick={fetchData} className="flex items-center">
-              <RefreshCcw className="w-4 h-4 mr-2" />
-              Refresh
-            </Button>
+            <Select
+              onValueChange={(value) => {
+                setCategory(value);
+              }}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="in-progress">In Progress</SelectItem>
+                <SelectItem value="delivered">Delivered</SelectItem>
+                <SelectItem value="delayed">Delayed</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <div className="rounded-md border responsive-table">
+          <div className="rounded-md responsive-table">
             <ScrollArea
               className={`${
                 isSmallScreen ? "w-full" : "max-w-6xl"
               } whitespace-nowrap rounded-md border`}
             >
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">Invoice ID</TableHead>
-                    <TableHead>Product Name</TableHead>
-                    <TableHead>
-                      Buy Date
-                    </TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Total Amount</TableHead>
-                    <TableHead className="w-[100px] text-center">
-                      Details
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredInvoices.map((invoice) => (
-                    <TableRow key={invoice.invoiceId}>
-                      <TableCell className="font-medium">
-                        {invoice.invoiceId}
-                      </TableCell>
-                      <TableCell>
-                        {invoice.product.map((prod) => (
-                          <div key={prod.productName}>{prod.productName},</div>
-                        ))}
-                      </TableCell>
-                      <TableCell>
-                        {format(new Date(invoice.buyDate), "MMM d, yyyy")}
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={
-                            invoice.status === "Paid"
-                              ? "success"
-                              : invoice.status === "Processing"
-                              ? "warning"
-                              : "default"
-                          }
-                        >
-                          {invoice.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        ${invoice.totalAmount.toFixed(2)}
-                      </TableCell>
-                      <TableCell className="text-center">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => setSelectedInvoice(invoice)}
-                            >
-                              <FileText className="w-4 h-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-4xl">
-                            <DialogHeader>
-                              <DialogTitle>Invoice Details</DialogTitle>
-                            </DialogHeader>
-                            <TableDetailComponent
-                              isSmallScreen={isSmallScreen}
-                              invoice={selectedInvoice}
-                            />
-                          </DialogContent>
-                        </Dialog>
-                      </TableCell>
+              <div className="rounded-md  flex-grow overflow-x-auto bg-white">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[100px]">Invoice ID</TableHead>
+                      <TableHead>Product Name</TableHead>
+                      <TableHead>Buy Date</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-right">Total Amount</TableHead>
+                      <TableHead className="w-[100px] text-center">
+                        Details
+                      </TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {filterInvoices.length > 0 &&
+                      filterInvoices.map((invoice) => (
+                        <TableRow key={invoice.invoiceId}>
+                          <TableCell className="font-medium">
+                            {invoice.invoiceId}
+                          </TableCell>
+                          <TableCell>
+                            {invoice.product.map((prod) => (
+                              <div key={prod.productName}>
+                                {prod.productName},
+                              </div>
+                            ))}
+                          </TableCell>
+                          <TableCell>
+                            {format(new Date(invoice.buyDate), "MMM d, yyyy")}
+                          </TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                invoice.status === "Paid"
+                                  ? "success"
+                                  : invoice.status === "Processing"
+                                  ? "warning"
+                                  : "default"
+                              }
+                            >
+                              {invoice.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            ${invoice.totalAmount}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => setSelectedInvoice(invoice)}
+                                >
+                                  <FileText className="w-4 h-4" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-4xl">
+                                <DialogHeader>
+                                  <DialogTitle>Invoice Details</DialogTitle>
+                                </DialogHeader>
+                                <TableDetailComponent
+                                  isSmallScreen={isSmallScreen}
+                                  invoice={selectedInvoice}
+                                />
+                              </DialogContent>
+                            </Dialog>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </div>
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
           </div>
           <div className="flex justify-between items-center mt-4">
-            <PaginationForItems />
-            <p className="text-sm font-medium">
-              Total: <span className="text-lg">${totalAmount.toFixed(2)}</span>
-            </p>
+            {/* <PaginationForItems /> */}
           </div>
         </CardContent>
       </Card>

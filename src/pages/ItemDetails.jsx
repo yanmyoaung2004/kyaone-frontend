@@ -99,6 +99,7 @@ const itemList = [
 ];
 const ItemDetails = () => {
   const { cartItems, addToCart } = useContext(DataContext);
+  console.log(cartItems);
   return (
     <>
       <CustomerLayout>

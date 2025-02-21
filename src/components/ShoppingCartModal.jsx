@@ -35,53 +35,62 @@ export function ShoppingCartModal({ isOpen, onClose }) {
 
         <ScrollArea className="max-h-[400px] pr-4">
           <div className="space-y-4 px-2">
-            {cartItems.map((item) => (
-              <div
-                key={item.id}
-                className="flex items-center justify-between py-4 gap-3"
-              >
-                <div className="flex-1">
-                  <h4 className="font-medium">{item.name}</h4>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => {
-                        decreaseCount(item.id);
-                      }}
-                    >
-                      <Minus className="h-4 w-4" />
-                      <span className="sr-only">Decrease quantity</span>
-                    </Button>
-                    <span className="w-8 text-center">{item.quantity}</span>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      className="h-8 w-8"
-                      onClick={() => {
-                        increaseCount(item.id);
-                      }}
-                    >
-                      <Plus className="h-4 w-4" />
-                      <span className="sr-only">Increase quantity</span>
-                    </Button>
+            {cartItems.length > 0 ? (
+              cartItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between py-4 gap-3"
+                >
+                  <div className="flex-1">
+                    <h4 className="font-medium">{item.name}</h4>
                   </div>
-                  <div className="w-20 text-right">
-                    <p className="font-medium">
-                      {item.price.toLocaleString()}Ks
-                    </p>
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => {
+                          decreaseCount(item.id);
+                        }}
+                      >
+                        <Minus className="h-4 w-4" />
+                        <span className="sr-only">Decrease quantity</span>
+                      </Button>
+                      <span className="w-8 text-center">{item.quantity}</span>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => {
+                          increaseCount(item.id);
+                        }}
+                      >
+                        <Plus className="h-4 w-4" />
+                        <span className="sr-only">Increase quantity</span>
+                      </Button>
+                    </div>
+                    <div className="w-20 text-right ">
+                      <p className="font-medium">
+                        ${item.price * item.quantity}
+                      </p>
+                    </div>
                   </div>
                 </div>
+              ))
+            ) : (
+              <div>
+                <p className="py-5 font-semibold">
+                  You haven't selected any product
+                </p>
               </div>
-            ))}
+            )}
           </div>
         </ScrollArea>
 
         <div className="flex space-x-2 mt-4 justify-end">
           <Button
+            disabled={cartItems.length === 0}
             onClick={() => {
               navigate("/checkout");
             }}

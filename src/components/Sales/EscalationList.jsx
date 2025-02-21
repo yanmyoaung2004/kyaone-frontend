@@ -1,48 +1,63 @@
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge";
 
-const escalations = [
-  { id: 1, customer: "Alice Johnson", issue: "Late Delivery", priority: "High", status: "Open" },
-  { id: 2, customer: "Bob Smith", issue: "Wrong Item", priority: "Medium", status: "In Progress" },
-  { id: 3, customer: "Charlie Brown", issue: "Damaged Package", priority: "High", status: "Open" },
-  { id: 4, customer: "Diana Prince", issue: "Billing Dispute", priority: "Low", status: "Resolved" },
-  { id: 5, customer: "Ethan Hunt", issue: "Missing Item", priority: "Medium", status: "In Progress" },
-]
+export default function EscalationList({
+  escalations,
+  changeIssue,
+  selectedId,
+}) {
+  const getPriorityVariant = (priority) => {
+    switch (priority) {
+      case "high":
+        return "destructive";
+      case "medium":
+        return "default";
+      default:
+        return "secondary";
+    }
+  };
 
-export default function EscalationList() {
+  const getStatusVariant = (status) => {
+    switch (status) {
+      case "Open":
+        return "outline";
+      case "In Progress":
+        return "default";
+      default:
+        return "secondary";
+    }
+  };
+
   return (
-    <ul className="space-y-4">
-      {escalations.map((escalation) => (
-        <li
-          key={escalation.id}
-          className="flex items-center justify-between space-x-4 cursor-pointer hover:bg-gray-100 p-2 rounded"
-        >
-          <div>
-            <p className="font-medium">{escalation.customer}</p>
-            <p className="text-sm text-gray-500">{escalation.issue}</p>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Badge
-              variant={
-                escalation.priority === "High"
-                  ? "destructive"
-                  : escalation.priority === "Medium"
-                    ? "default"
-                    : "secondary"
-              }
-            >
-              {escalation.priority}
-            </Badge>
-            <Badge
-              variant={
-                escalation.status === "Open" ? "outline" : escalation.status === "In Progress" ? "default" : "secondary"
-              }
-            >
-              {escalation.status}
-            </Badge>
-          </div>
-        </li>
-      ))}
-    </ul>
-  )
+    <div className="max-h-96 overflow-y-auto pr-4 custom-scrollbar">
+      <ul className="space-y-4">
+        {escalations.map((escalation) => (
+          <li
+            onClick={() => {
+              changeIssue(escalation.id);
+            }}
+            key={escalation.id}
+            className={`flex justify-between items-center space-x-4 cursor-pointer hover:bg-gray-200 p-4 rounded-lg transition-all ${
+              selectedId === escalation.id
+                ? "bg-gray-200 hover:bg-gray-300"
+                : ""
+            }`}
+          >
+            <div>
+              <p className="font-medium text-gray-900">
+                {escalation.driver.user.name}
+              </p>
+              {/* <p className="text-sm text-gray-600">
+                {escalation.description.slice(0, 25)}
+              </p> */}
+            </div>
+            <div className="flex items-center space-x-2">
+              <Badge variant={getPriorityVariant(escalation.priority)}>
+                {escalation.priority}
+              </Badge>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
-
