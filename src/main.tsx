@@ -6,10 +6,9 @@ import { store, persistor } from "./redux/store";
 import App from "./App";
 import axios from "axios";
 import "./echo";
-axios.defaults.baseURL = "http://kyone-backend.test";
-// axios.defaults.baseURL = "http://127.0.0.1:8000";
-//
-// useEffect(() => {}, []);
+
+axios.defaults.baseURL = "https://modern-opossum-singular.ngrok-free.app";
+axios.defaults.headers.common["ngrok-skip-browser-warning"] = "69420";
 
 createRoot(document.getElementById("root")!).render(
   <PersistGate persistor={persistor}>

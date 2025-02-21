@@ -35,7 +35,7 @@ import DataProvider from "./context/DataContext";
 import { ThemeProvider } from "./components/theme-provider";
 
 // Sales Pages
-import SaleLayout from "./pages/layout";
+import SaleLayout from "./pages/Layout";
 import DeliveryDetail from "./pages/deliveries/deliveryDetail";
 import Products from "./components/Warehouse/products/Products";
 import { Toaster } from "@/components/ui/toaster";
@@ -95,7 +95,7 @@ const App = () => {
     },
     {
       path: "/history",
-      element: <TableComponent />,
+      element: <SaleHistory />,
     },
     {
       path: "/customer-complaint",
@@ -114,7 +114,7 @@ const App = () => {
       ),
     },
     {
-      path: "/warehouse-dashboard",
+      path: "/sales-dashboard",
       element: (
         <SaleProtectedRoute>
           <SaleLayout>
@@ -193,14 +193,6 @@ const App = () => {
         </SaleProtectedRoute>
       ),
     },
-    // {
-    //   path: "/product-management",
-    //   element: (
-    //   <WarehouseLayout>
-    //     <Products />
-    //   </WarehouseLayout>
-    //   ),
-    // },
     {
       path: "/sales-escalations",
       element: (

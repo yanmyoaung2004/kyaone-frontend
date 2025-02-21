@@ -17,7 +17,7 @@ import moment from "moment/moment";
 import { useToast } from "@/hooks/use-toast";
 import { useSelector } from "react-redux";
 import SideBar from "./SideBar";
-import Header from "./Header";
+import Header from "../../components/Sales/Header";
 
 function MetricCard({ icon: Icon, title, value }) {
   return (
@@ -174,16 +174,6 @@ export default function DriverDashboard() {
                     </div>
                   </CardContent>
                 </Card>
-
-                <div className="mt-6 flex justify-between items-center">
-                  <p className="text-muted-foreground">
-                    You have 3 pending deliveries
-                  </p>
-                  <Button size="lg">
-                    <Truck className="mr-2 h-4 w-4" />
-                    Start Next Delivery
-                  </Button>
-                </div>
               </div>
             </>
           </div>

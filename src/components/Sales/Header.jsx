@@ -39,6 +39,22 @@ export default function Header() {
     <header className="bg-white shadow-md py-4 px-6 flex items-center justify-between relative">
       <div className="flex items-center space-x-4">
         <SidebarTrigger />
+        {/* <span className="font-semibold text-lg">{currentUser?.name}</span> */}
+      </div>
+
+      <div className="flex items-center space-x-4">
+        <NotificationDropdown />
+        <span className="text-sm text-gray-600">
+          {currentTime.toLocaleString("en-US", {
+            weekday: "short",
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          })}
+        </span>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -64,22 +80,6 @@ export default function Header() {
             <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        {/* <span className="font-semibold text-lg">{currentUser?.name}</span> */}
-      </div>
-
-      <div className="flex items-center space-x-4">
-        <NotificationDropdown />
-        <span className="text-sm text-gray-600">
-          {currentTime.toLocaleString("en-US", {
-            weekday: "short",
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          })}
-        </span>
       </div>
     </header>
   );
