@@ -45,7 +45,7 @@ import Cities from "./components/Warehouse/city/City";
 
 // Driver
 import DriverProtectedRoute from "./auth/DriverProtectedRoute";
-import DriversLayout from "./pages/DriversApp/layout";
+import DriversLayout from "./pages/DriversApp/Layout";
 import DriverPage from "./pages/DriversApp/page";
 import EscalatedIssues from "./components/Drivers/escalated-model";
 import ServiceCenter from "./components/Warehouse/service-center/ServiceCenter";
