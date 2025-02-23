@@ -1,7 +1,6 @@
 import { WarehouseSidebar } from "../../components/Warehouse/SideBar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import React from "react";
-import { Toaster } from "@/components/ui/toaster";
 import Header from "../../components/Sales/Header";
 
 export const metadata = {
@@ -19,7 +18,6 @@ export default function Layout({ children }) {
           <main className="flex-1 overflow-y-auto p-6">{children}</main>
         </div>
       </div>
-      <Toaster />
     </SidebarProvider>
   );
 }

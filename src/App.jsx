@@ -49,6 +49,13 @@ import DriversLayout from "./pages/DriversApp/layout";
 import DriverPage from "./pages/DriversApp/page";
 import EscalatedIssues from "./components/Drivers/escalated-model";
 import ServiceCenter from "./components/Warehouse/service-center/ServiceCenter";
+import Warehouse from "./components/Warehouse/warehouse/Warehouse";
+import WarehouseProduct from "./components/Warehouse/warehouseProduct/WarehouseProduct";
+import PurchasePage from "./components/Warehouse/purchase/PurchasePage";
+import PurchaseList from "./components/Warehouse/purchase/PurchaseList";
+import PurchaseDetail from "./components/Warehouse/purchase/PurchaseDetail";
+import AssignPurchasedProduct from "./components/Warehouse/purchase/AssignPurchasedProduct";
+import WarehouseTransfer from "./components/Warehouse/warehouse/WarehouseTransfer";
 
 // Protected Route Component
 const ProtectedRoute = ({ element, allowedRoles = [] }) => {
@@ -281,6 +288,76 @@ const App = () => {
         <WarehouseProtectedRoute>
           <WarehouseLayout>
             <Settings />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/warehouses",
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <Warehouse />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/warehouse-product/:warehouseId",
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <WarehouseProduct />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/warehouse-transfer",
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <WarehouseTransfer />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/purchase",
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <PurchaseList />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/purchase-detail/:invoice_number",
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <PurchaseDetail />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/purchase-create",
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <PurchasePage />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/purchase-assign",
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <AssignPurchasedProduct />
           </WarehouseLayout>
         </WarehouseProtectedRoute>
       ),

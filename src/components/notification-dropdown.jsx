@@ -124,7 +124,6 @@ const NotificationDropdown = () => {
     axios
       .get("/api/notifications")
       .then((response) => {
-        console.log(response);
         const updatedNoti = response.data
           .filter((noti) => userRole.some((role) => role.name === noti.role))
           .map((n) => ({ ...n, read: getReadStatus(n.id) }));

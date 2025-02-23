@@ -1,6 +1,5 @@
 import { AppSidebar } from "../components/Sales/AppSidebar";
 import Header from "../components/Sales/Header";
-import { Toaster } from "@/components/ui/toaster";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 const Layout = ({ children }) => {
@@ -14,7 +13,6 @@ const Layout = ({ children }) => {
             {children}
           </main>
         </div>
-        <Toaster />
       </SidebarProvider>
     </>
   );

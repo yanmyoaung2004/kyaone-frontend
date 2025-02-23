@@ -9,6 +9,8 @@ import {
   Settings,
   Truck,
   PackageSearch,
+  ShoppingBasket,
+  Rotate3d,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -38,7 +40,9 @@ const navItems = [
     href: "/warehouse-service-centers",
   },
   { icon: Truck, label: "Truck Management", href: "/warehouse-trucks" },
-  // { icon: Settings, label: "Settings", href: "/warehouse-setting" },
+  { icon: Settings, label: "Warehouses", href: "/warehouses" },
+  { icon: ShoppingBasket, label: "Purchase", href: "/purchase" },
+  { icon: Rotate3d, label: "Warehouse Transfer", href: "/warehouse-transfer" },
 ];
 
 export function WarehouseSidebar() {
