@@ -1,6 +1,6 @@
-# E-Commerce Management System
+# MyanTech E-Commerce Management System
 
-A comprehensive React-based e-commerce management system that handles the complete lifecycle of retail operations, from customer orders through delivery management.
+A comprehensive React-based e-commerce management system for MyanTech that handles the complete lifecycle of retail operations, from customer orders through delivery management.
 
 ## 🚀 Features
 
@@ -14,17 +14,24 @@ A comprehensive React-based e-commerce management system that handles the comple
 
 ### Sales Management
 
+- View products and order metrics
 - Order processing and management
 - Customer communication interface
 - Complaint resolution system
 - Real-time delivery tracking
+- View driver escalations
+- Track returns
 
 ### Warehouse Operations
 
+- View stocks and trucks metrics
+- Order management
+  - Assign to trucks or service center
 - Inventory management
-- Order fulfillment
+- Product management
 - Service center operations
 - Location/City management
+- Trucks management
 
 ### Driver Portal
 
@@ -55,7 +62,7 @@ A comprehensive React-based e-commerce management system that handles the comple
 1. Clone the repository:
 
 ```bash
-git clone [repository-url]
+git clone
 ```
 
 2. Install dependencies:

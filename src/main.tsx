@@ -7,8 +7,16 @@ import App from "./App";
 import axios from "axios";
 import "./echo";
 
-axios.defaults.baseURL = "https://modern-opossum-singular.ngrok-free.app";
+axios.defaults.baseURL = import.meta.env.VITE_API_URL;
 axios.defaults.headers.common["ngrok-skip-browser-warning"] = "69420";
+axios.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  console.log(token);
+  if (token) {
+    config.headers.Authorization = `Bearer ${JSON.parse(token)}`;
+  }
+  return config;
+});
 
 createRoot(document.getElementById("root")!).render(
   <PersistGate persistor={persistor}>

@@ -4,8 +4,8 @@ if (!window.Echo) {
   window.pusher = Pusher;
   window.Echo = new Echo({
     broadcaster: "pusher",
-    key: "627d4e3594ce53596e94",
-    cluster: "ap1",
+    key: import.meta.env.VITE_PUSHER_APP_KEY,
+    cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
     forceTLS: true,
   });
 }
