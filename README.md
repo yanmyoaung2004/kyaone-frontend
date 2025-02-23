@@ -1,50 +1,153 @@
-# React + TypeScript + Vite
+# E-Commerce Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A comprehensive React-based e-commerce management system that handles the complete lifecycle of retail operations, from customer orders through delivery management.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Customer Portal
 
-## Expanding the ESLint configuration
+- Product browsing and shopping cart
+- Order history tracking
+- Real-time chat with sales representatives
+- Customer complaint submission
+- User profile management
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### Sales Management
 
-- Configure the top-level `parserOptions` property like this:
+- Order processing and management
+- Customer communication interface
+- Complaint resolution system
+- Real-time delivery tracking
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### Warehouse Operations
+
+- Inventory management
+- Order fulfillment
+- Service center operations
+- Location/City management
+
+### Driver Portal
+
+- Delivery management
+- Route tracking
+- Escalation handling
+
+## 🛠 Tech Stack
+
+- **Frontend Framework:** React 19
+- **State Management:** Redux Toolkit
+- **Routing:** React Router v7
+- **Real-time Features:** Laravel Echo & Pusher
+- **UI Components:**
+  - Radix UI
+  - Shadcn Components
+  - Tailwind CSS
+- **Form Handling:**
+  - React Hook Form
+  - Zod Validation
+- **Data Visualization:** Recharts
+- **Authentication:** JWT
+- **Build Tool:** Vite
+- **Type Checking:** TypeScript
+
+## 📦 Installation
+
+1. Clone the repository:
+
+```bash
+git clone [repository-url]
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+2. Install dependencies:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+npm install
 ```
+
+3. Create a `.env` file in the root directory and add necessary environment variables:
+
+```env
+VITE_API_URL=your_api_url
+VITE_PUSHER_APP_KEY=your_pusher_key
+VITE_PUSHER_APP_CLUSTER=your_pusher_cluster
+```
+
+4. Start the development server:
+
+```bash
+npm run dev
+```
+
+## 🔧 Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+
+## 📁 Project Structure
+
+```
+src/
+├── components/        # Reusable UI components
+├── features/         # Feature-based modules
+├── hooks/           # Custom React hooks
+├── layouts/         # Layout components
+├── lib/             # Utility functions
+├── pages/           # Route pages
+├── services/        # API services
+├── store/           # Redux store configuration
+├── styles/          # Global styles
+└── types/           # TypeScript type definitions
+```
+
+## 🔐 Environment Variables
+
+| Variable                | Description            |
+| ----------------------- | ---------------------- |
+| VITE_API_URL            | Backend API URL        |
+| VITE_PUSHER_APP_KEY     | Pusher application key |
+| VITE_PUSHER_APP_CLUSTER | Pusher cluster region  |
+
+## 🔑 Authentication
+
+The system uses role-based authentication with the following user types:
+
+- Customer
+- Sales Representative
+- Warehouse Manager
+- Driver
+
+## 🌐 API Integration
+
+The frontend communicates with a RESTful API backend. API documentation is available at:
+`[API_DOCUMENTATION_URL]`
+
+## 📱 Responsive Design
+
+The application is fully responsive and optimized for:
+
+- Desktop (1024px and above)
+- Tablet (768px to 1023px)
+- Mobile (below 768px)
+
+## 🎨 Theme Support
+
+- Light Mode
+- Dark Mode
+- System preference detection
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+For support, email [support@email.com] or join our Slack channel.
