@@ -42,8 +42,6 @@ export default function ProductModal({
     image: null,
   });
 
-  console.log(product);
-
   useEffect(() => {
     if (product) {
       setFormData({

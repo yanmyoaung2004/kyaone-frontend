@@ -23,14 +23,16 @@ import {
   handleWarningToast,
 } from "../helpers/ToastService";
 import { useNavigate } from "react-router-dom";
+import LocationSelector from "../components/googleMap/components/location-selector";
 
 export default function CheckoutPage() {
   const { cartItems, setCartItems, setRefresh, refresh } =
     useContext(DataContext);
   const [shipmentCost, setShipmentCost] = useState(10.0);
+  const [locationChoice, setLocationChoice] = useState("dropdown");
   const [total, setTotal] = useState(0.0);
   const [cities, setCities] = useState([]);
-
+  const [isValidLocation, setIsValidLocation] = useState(true);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
@@ -39,7 +41,6 @@ export default function CheckoutPage() {
     phone: "",
     city: "",
     address: "",
-    zipCode: "",
   });
 
   const subTotal = cartItems.reduce(
@@ -73,12 +74,13 @@ export default function CheckoutPage() {
       handleWarningToast("You haven't selected any product to buy yet!");
       return;
     }
-
+    if (!isValidLocation) {
+      return;
+    }
     if (
       shipmentInfo.name === "" ||
       shipmentInfo.address === "" ||
       shipmentInfo.city === "" ||
-      shipmentInfo.phone === "" ||
       shipmentInfo.phone === ""
     ) {
       handleWarningToast("Please fill all the required fields!");
@@ -97,6 +99,7 @@ export default function CheckoutPage() {
         payment: "paypal",
         total: total,
         customer_id: currentUser.id,
+        locationChoice: locationChoice,
       });
 
       if (res.status === 201) {
@@ -110,6 +113,28 @@ export default function CheckoutPage() {
     } catch (error) {
       console.log(error);
       handleFailureToast("Ordering failed: " + error.message);
+    }
+  };
+
+  function extractCity(address) {
+    const parts = address.split(",");
+    for (let i = 0; i < parts.length; i++) {
+      const part = parts[i].trim();
+      if (
+        part.toLowerCase().includes("myanmar") ||
+        part.toLowerCase().includes("burma")
+      ) {
+        return parts[i - 1].trim();
+      }
+    }
+    return "";
+  }
+
+  const getAddressFromMap = (rawAddress, withinService) => {
+    if (rawAddress) {
+      const city = extractCity(rawAddress);
+      setShipmentInfo((prev) => ({ ...prev, address: rawAddress, city: city }));
+      setIsValidLocation(withinService);
     }
   };
 
@@ -247,55 +272,81 @@ export default function CheckoutPage() {
                         />
                       </div>
                     </div>
-                    <div className="mb-3">
-                      <div>
-                        <Label htmlFor="city">City</Label>
+
+                    <div>
+                      <Label>
+                        How would you like to choose your delivery location?
+                      </Label>
+                      <div className="py-3">
                         <Select
-                          onValueChange={(value) =>
-                            handleFormChange("city", value)
-                          }
-                          value={shipmentInfo.city.toString()}
+                          onValueChange={(value) => setLocationChoice(value)}
+                          value={locationChoice}
+                          className="w-full"
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select City" />
+                            <SelectValue placeholder="Choose your location method" />
                           </SelectTrigger>
                           <SelectContent>
-                            {cities.map((city) => (
-                              <SelectItem
-                                key={city.id}
-                                value={city.id.toString()}
-                              >
-                                {city.name}
-                              </SelectItem>
-                            ))}
+                            <SelectItem value="dropdown">
+                              Choose a Location from Our Available Options
+                            </SelectItem>
+                            <SelectItem value="map">
+                              Select Location on Map
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                     </div>
-                    <div>
-                      <Label htmlFor="address">Street Address</Label>
-                      <Input
-                        id="address"
-                        className="mt-1"
-                        placeholder="123 Main St"
-                        value={shipmentInfo.address}
-                        onChange={(e) =>
-                          handleFormChange("address", e.target.value)
-                        }
-                      />
-                    </div>
-                    <div className=" mt-3">
-                      <Label htmlFor="zip">ZIP Code</Label>
-                      <Input
-                        id="zip"
-                        className="mt-1"
-                        placeholder="12345"
-                        value={shipmentInfo.zipCode}
-                        onChange={(e) =>
-                          handleFormChange("zipCode", e.target.value)
-                        }
-                      />
-                    </div>
+
+                    {locationChoice === "dropdown" ? (
+                      <>
+                        <div className="mb-3">
+                          <Label htmlFor="city">City</Label>
+                          <Select
+                            onValueChange={(value) =>
+                              handleFormChange("city", value)
+                            }
+                            value={shipmentInfo.city.toString()}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select City" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {cities.map((city) => (
+                                <SelectItem
+                                  key={city.id}
+                                  value={city.id.toString()}
+                                >
+                                  {city.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <Label htmlFor="address">Address</Label>
+                          <Input
+                            id="address"
+                            className="mt-1"
+                            placeholder="123 Main St"
+                            value={shipmentInfo.address}
+                            onChange={(e) =>
+                              handleFormChange("address", e.target.value)
+                            }
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="mb-3">
+                        <Label htmlFor="map">Select Location on Map</Label>
+                        <div className="border-1 border border-gray-300 rounded p-1">
+                          <LocationSelector
+                            getAddressFromMap={getAddressFromMap}
+                          />
+                        </div>
+                      </div>
+                    )}
+
                     <div className="mt-8 flex justify-end">
                       <Button
                         size="lg"
