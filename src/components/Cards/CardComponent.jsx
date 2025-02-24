@@ -19,16 +19,7 @@ const CardComponent = ({ item, addToCart, isAdded }) => {
       <CardHeader>
         <CardTitle className="text-2xl font-bol">{item.name}</CardTitle>
         <div>
-          <Badge
-            variant="outline"
-            className={`${
-              theme === "dark"
-                ? "text-black border-black"
-                : "text-white border-white"
-            }`}
-          >
-            {item.category}
-          </Badge>
+          <Badge variant="outline">{item.category}</Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
