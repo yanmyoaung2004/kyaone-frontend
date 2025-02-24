@@ -131,7 +131,7 @@ const TableComponent = () => {
 
   return (
     <CustomerLayout>
-      <Card className="max-w-6xl mb-10 mx-auto">
+      <Card className="max-w-6xl my-10 mx-auto">
         <CardHeader>
           <CardTitle>Invoice History</CardTitle>
           <CardDescription>

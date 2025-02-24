@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Navbar from "../components/Navbar";
 import { ShoppingCartModal } from "../components/ShoppingCartModal";
 import { Toaster } from "@/components/ui/toaster";
-
+import Footer from "./Footer";
 const CustomerLayout = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   return (
@@ -18,6 +18,7 @@ const CustomerLayout = ({ children }) => {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
       />
+      <Footer />
     </>
   );
 };

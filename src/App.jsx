@@ -10,6 +10,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import SaleHistory from "./pages/SaleHistory";
 import SaleRecord from "./pages/SaleRecord";
 import Sale from "./pages/Sale";
+import Profile from "./pages/Profile";
 
 // Warehouse Pages
 import WarehouseLayout from "./pages/Warehouse/Layout";
@@ -60,8 +61,9 @@ const ProtectedRoute = ({ element, allowedRoles = [] }) => {
     !allowedRoles.some((role) =>
       currentUser.roles.map((role) => role.name).includes(role)
     )
-  )
+  ) {
     return <Navigate to="/" />;
+  }
   return element;
 };
 
@@ -212,6 +214,10 @@ const App = () => {
           </SaleLayout>
         </SaleProtectedRoute>
       ),
+    },
+    {
+      path: "/profile",
+      element: <Profile />,
     },
 
     // Protected Routes (Warehouse)

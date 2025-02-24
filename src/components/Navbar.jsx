@@ -150,9 +150,7 @@ export default function Navbar({ setIsCartOpen }) {
         ) : (
           <>
             <Link to={"/login"}>
-              <Button variant="ghost" className="">
-                Login
-              </Button>
+              <Button className="">Login</Button>
             </Link>
           </>
         )}
