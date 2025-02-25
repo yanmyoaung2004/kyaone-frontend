@@ -13,7 +13,10 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 import { formatToSpecificDateTime } from "../../helpers/services";
-
+import {
+  handleSuccessToast,
+  handleFailureToast,
+} from "../../helpers/ToastService";
 export default function EscalationDetails({ selectedIssues }) {
   const [status, setStatus] = useState(selectedIssues.status);
 
@@ -25,8 +28,10 @@ export default function EscalationDetails({ selectedIssues }) {
           status: status,
         }
       );
+      handleSuccessToast("Status updated successfully");
     } catch (error) {
       console.log(error);
+      handleFailureToast("Error updating status");
     }
   };
   const handleStatusChange = (newStatus) => {

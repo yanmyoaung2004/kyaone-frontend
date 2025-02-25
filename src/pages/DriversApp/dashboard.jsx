@@ -64,9 +64,10 @@ export default function DriverDashboard() {
         setDriver(response.data);
         let trucks = response.data?.order_assing_truck;
         if (trucks?.length > 0) {
-          setTruckId(trucks[0].truck_id);
+          let truckId = trucks[0].truck_id;
+          setTruckId(truckId);
           axios
-            .get("/api/truck/" + trucks[0].truck_id + "/orders")
+            .get("/api/truck/" + truckId + "/orders")
             .then((response) => {
               setOrders(response.data.orders);
               setOrderCount(response.data.order_count);

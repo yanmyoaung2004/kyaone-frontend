@@ -42,6 +42,10 @@ import Header from "../../components/Sales/Header";
 import { useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import {
+  handleFailureToast,
+  handleSuccessToast,
+} from "../../helpers/ToastService";
 
 export default function EscalatedIssues() {
   const [issues, setIssues] = useState([]);
@@ -53,13 +57,26 @@ export default function EscalatedIssues() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [orders, setOrders] = useState([]);
   const currentUser = useSelector((state) => state.user.currentUser);
+  const [driver, setDriver] = useState(null);
+  const [truckId, setTruckId] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(`api/dirvers/${currentUser.id}`)
+      .then((resp) => {
+        setDriver(resp.data);
+        let truckId = resp.data?.order_assing_truck[0].truck_id;
+        setTruckId(truckId);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const [newIssue, setNewIssue] = useState({
     description: "",
     priority: "",
     status: "",
     order_id: "",
-    driver_id: 2,
+    driver_id: driver?.id,
   });
 
   useEffect(() => {
@@ -70,10 +87,12 @@ export default function EscalatedIssues() {
 
   useEffect(() => {
     axios
-      .get(`api/orders`)
-      .then((resp) => setOrders(resp.data))
+      .get(`api/truck/${truckId}/orders`)
+      .then((resp) => {
+        setOrders(resp.data?.orders);
+      })
       .catch((err) => console.log(err));
-  }, []);
+  }, [truckId]);
 
   useEffect(() => {
     axios
@@ -107,12 +126,12 @@ export default function EscalatedIssues() {
 
   const handleCreateIssue = () => {
     console.log(newIssue);
-
+    newIssue.driver_id = driver?.id;
     axios
       .post("/api/escalated-issues", newIssue)
       .then((res) => {
         setIssues([...issues, res.data.data]);
-        console.log(res);
+        handleSuccessToast("Issue created successfully");
       })
       .catch((err) => console.error(err));
 
