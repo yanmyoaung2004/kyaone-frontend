@@ -17,7 +17,8 @@ import {
   handleSuccessToast,
   handleFailureToast,
 } from "../../helpers/ToastService";
-export default function EscalationDetails({ selectedIssues }) {
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+export default function EscalationDetails({ selectedIssues, truck }) {
   const [status, setStatus] = useState(selectedIssues.status);
 
   const changeStatus = async (status) => {
@@ -42,48 +43,74 @@ export default function EscalationDetails({ selectedIssues }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label>Customer</Label>
-          <p className="text-lg font-medium">
-            {selectedIssues?.order.customer.user.name}
-          </p>
+        <InfoItem
+          label="Customer"
+          value={selectedIssues?.order.customer.user.name}
+        />
+        <InfoItem
+          label="Order Number"
+          value={`ORD# ${selectedIssues?.order.id}`}
+        />
+        <InfoItem
+          label="Invoice Number"
+          value={selectedIssues?.order.invoice.invoice_number.slice(0, 9)}
+        />
+        <InfoItem label="Priority" value={selectedIssues?.priority} />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex flex-col gap-4">
+          <div>
+            <InfoItem label="Description" value={selectedIssues?.description} />
+          </div>
+          <div>
+            <Label className=" font-bold text-md mb-2">Status</Label>
+            <Select
+              className="mt-2"
+              onValueChange={handleStatusChange}
+              defaultValue={status}
+            >
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="inprogress">In Progress</SelectItem>
+                <SelectItem value="resolved">Resolved</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <InfoItem
+              label="Timeline"
+              value={formatToSpecificDateTime(selectedIssues.created_at)}
+            />
+          </div>
         </div>
-        <div>
-          <Label>Order Number</Label>
-          <p>{selectedIssues?.order.invoice.invoice_number.slice(0, 9)}</p>
+
+        <div className="w-full">
+          <Card>
+            <CardHeader>
+              <CardTitle>Truck Info</CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+              <InfoItem label="License Plate" value={truck?.license_plate} />
+              <InfoItem label="Status" value={truck?.status} />
+            </CardContent>
+          </Card>
         </div>
-        <div>
-          <Label>Priority</Label>
-          <p>{selectedIssues?.priority}</p>
-        </div>
       </div>
-      <div>
-        <Label>Description</Label>
-        <p>{selectedIssues?.description}</p>
-      </div>
-      <div>
-        <Label>Status</Label>
-        <Select onValueChange={handleStatusChange} defaultValue={status}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="inprogress">In Progress</SelectItem>
-            <SelectItem value="resolved">Resolved</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <Label>Timeline</Label>
-        <ul className="space-y-2">
-          <li className="text-sm">
-            <span className="font-medium">
-              {formatToSpecificDateTime(selectedIssues.created_at)}
-            </span>
-          </li>
-        </ul>
-      </div>
+    </div>
+  );
+}
+
+function InfoItem({ label, value }) {
+  return (
+    <div>
+      <Label className=" font-bold text-md">{label}</Label>
+      <br />
+      <Label className="text-sm font-medium text-muted-foreground">
+        {value}
+      </Label>
     </div>
   );
 }

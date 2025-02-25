@@ -17,10 +17,20 @@ export default function EscalationsPage() {
   const [issues, setIssues] = useState([]);
   const [allSelectedIssues, setAllSelectedIssues] = useState();
   const [selectedIssues, setSelectedIssues] = useState();
-
+  const [filterPriority, setFilterPriority] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [truck, setTruck] = useState();
   const changeIssue = (id) => {
     setSelectedIssues(issues.find((c) => c.id === id));
   };
+
+  useEffect(() => {
+    axios
+      .get(`/api/orders/${selectedIssues?.order_id}/truck-driver`)
+      .then((res) => {
+        setTruck(res.data.order_assign_truck.truck);
+      });
+  }, [selectedIssues]);
 
   const fetchData = async () => {
     try {
@@ -32,6 +42,15 @@ export default function EscalationsPage() {
     }
   };
 
+  const filteredIssues = issues.filter(
+    (issue) =>
+      issue.priority === filterPriority ||
+      (filterPriority === "all" &&
+        issue.driver.user.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()))
+  );
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -42,10 +61,14 @@ export default function EscalationsPage() {
       <div className="flex justify-between items-center">
         <div className="flex space-x-2">
           <Input
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search escalations..."
             className="w-[300px] bg-white"
           />
-          <Select>
+          <Select
+            onValueChange={setFilterPriority}
+            defaultValue={filterPriority}
+          >
             <SelectTrigger className="w-[180px] bg-white">
               <SelectValue placeholder="Filter by priority" />
             </SelectTrigger>
@@ -57,7 +80,6 @@ export default function EscalationsPage() {
             </SelectContent>
           </Select>
         </div>
-        <Button>New Escalation</Button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-1">
@@ -67,7 +89,7 @@ export default function EscalationsPage() {
           <CardContent>
             {issues.length > 0 && (
               <EscalationList
-                escalations={issues}
+                escalations={filteredIssues}
                 changeIssue={changeIssue}
                 selectedId={selectedIssues.id}
               />
@@ -76,11 +98,18 @@ export default function EscalationsPage() {
         </Card>
         <Card className="md:col-span-2">
           <CardHeader>
-            <CardTitle>Escalation Details</CardTitle>
+            <CardTitle>
+              <h1 className="text-3xl font-bold text-gray-900">
+                Escalation Details
+              </h1>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             {selectedIssues && (
-              <EscalationDetails selectedIssues={selectedIssues} />
+              <EscalationDetails
+                selectedIssues={selectedIssues}
+                truck={truck}
+              />
             )}
           </CardContent>
         </Card>
