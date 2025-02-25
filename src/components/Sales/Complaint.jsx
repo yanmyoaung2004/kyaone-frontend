@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ComplaintsTable } from "./Complaint-Table";
 import { ComplaintDetailsModal } from "./Complaint-Detials-Modal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import axios from "axios";
+import { handleSuccessToast } from "../../helpers/ToastService";
 // Mock data
 const initialComplaints = [
   {
@@ -25,16 +27,32 @@ const initialComplaints = [
     createdAt: "2025-02-09T14:30:00Z",
   },
 ];
-export function Complaints() {
-  const [complaints, setComplaints] = useState(initialComplaints);
+export function Complaints({ searchQuery, filteredStatus }) {
+  const [complaints, setComplaints] = useState([]);
   const [selectedComplaint, setSelectedComplaint] = useState("");
 
+  useEffect(() => {
+    axios.get("/api/complaints").then((resp) => {
+      setComplaints(resp.data);
+    });
+  }, []);
+  const filteredComplaints = complaints.filter(
+    (complaint) =>
+      complaint.customer.user.name
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) &&
+      (filteredStatus === "all" || complaint.status === filteredStatus)
+  );
+
   const updateComplaintStatus = (id, newStatus) => {
-    setComplaints(
-      complaints.map((complaint) =>
-        complaint.id === id ? { ...complaint, status: newStatus } : complaint
-      )
-    );
+    axios.put(`/api/complaints/${id}`, { status: newStatus }).then((resp) => {
+      setComplaints(
+        complaints.map((complaint) =>
+          complaint.id === id ? { ...complaint, status: newStatus } : complaint
+        )
+      );
+      handleSuccessToast("Complaint status updated successfully");
+    });
   };
   return (
     <div>
@@ -50,7 +68,7 @@ export function Complaints() {
             />
           )}
           <ComplaintsTable
-            complaints={complaints}
+            complaints={filteredComplaints}
             onComplaintSelect={setSelectedComplaint}
           />
         </CardContent>

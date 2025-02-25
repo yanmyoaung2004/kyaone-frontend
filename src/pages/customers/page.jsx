@@ -1,4 +1,9 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
 import { Input } from "../../components/ui/input";
 import { Button } from "../../components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,6 +29,12 @@ export default function CustomerInteractionPage() {
 
       setAllComplaints(res.data);
       setSelectedComplaints(res.data[0]);
+      const query = new URLSearchParams(window.location.search);
+      const complaintId = query.get("complaintId");
+
+      if (complaintId) {
+        setSelectedComplaints(res.data.find((c) => c.id == complaintId));
+      }
     } catch (error) {
       console.log(error);
     }

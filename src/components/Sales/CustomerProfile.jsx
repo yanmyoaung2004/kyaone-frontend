@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 
 export default function CustomerProfile({ selectedComplaints }) {
-  const { customer, order, subject, description } = selectedComplaints;
+  const { customer, order, type, description } = selectedComplaints;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
@@ -33,7 +33,7 @@ export default function CustomerProfile({ selectedComplaints }) {
             label="Invoice ID"
             value={order.invoice.invoice_number.slice(0, 9)}
           />
-          <InfoItem label="Subject" value={subject} />
+          <InfoItem label="Type" value={type} />
           <div>
             <InfoItem label="Description" value={description} />
           </div>
