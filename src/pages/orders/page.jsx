@@ -14,13 +14,23 @@ import { useEffect, useState } from "react";
 import OrderDetails from "./OrderDetials";
 import { X } from "lucide-react";
 import { Search } from "lucide-react";
-
+import { CheckCircle, XCircle } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { handleSuccessToast } from "../../helpers/ToastService";
 export default function OrdersPage() {
   const [allOrders, setAllOrders] = useState([]);
   const [orders, setOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [currentOrder, setCurrentOrder] = useState(null);
+  const [isReturnFilter, setIsReturnFilter] = useState("all");
+  const [refresh, setRefresh] = useState(false);
 
   const fetchOrder = async () => {
     try {
@@ -33,21 +43,26 @@ export default function OrdersPage() {
   };
   useEffect(() => {
     fetchOrder();
-  }, []);
+  }, [refresh]);
 
   const fuzzySearch = (query) => {
-    if (!query.trim()) return allOrders;
     const lowerQuery = query.toLowerCase();
+    console.log(isReturnFilter);
     return allOrders.filter((item) =>
       Object.values(item).some(
         (value) =>
-          typeof value === "string" && value.toLowerCase().includes(lowerQuery)
+          typeof value === "string" &&
+          value.toLowerCase().includes(lowerQuery) &&
+          (isReturnFilter === "all" ||
+            (isReturnFilter === "isReturn" && item.isReturn) ||
+            (isReturnFilter === "notReturn" && !item.isReturn))
       )
     );
   };
   useEffect(() => {
-    setOrders(fuzzySearch(search));
-  }, [search]);
+    const filteredOrders = fuzzySearch(search);
+    setOrders(filteredOrders);
+  }, [search, isReturnFilter]); // isReturnFilter is included here to ensure the orders are updated when the filter changes
 
   return (
     <div className="space-y-6">
@@ -58,7 +73,7 @@ export default function OrdersPage() {
         </CardHeader>
         <CardContent>
           <div className="flex justify-between items-center mb-4">
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 items-center">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -80,6 +95,21 @@ export default function OrdersPage() {
                   </Button>
                 )}
               </div>
+              <div>
+                <Select
+                  value={isReturnFilter}
+                  onValueChange={(value) => setIsReturnFilter(value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Filter by Is Return" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="isReturn">Is Return</SelectItem>
+                    <SelectItem value="notReturn">Not Return</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
           <div className="rounded-md border flex-grow overflow-x-auto bg-white">
@@ -91,6 +121,7 @@ export default function OrdersPage() {
                   <TableHead>Delivery Address</TableHead>
                   <TableHead>ETA</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Is Return</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -118,6 +149,13 @@ export default function OrdersPage() {
                         {order.status}
                       </span>
                     </TableCell>
+                    <TableCell className="text-start">
+                      {order.isReturn ? (
+                        <CheckCircle className="w-4 h-4 text-green-500 " />
+                      ) : (
+                        <XCircle className="w-4 h-4 text-red-500" />
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="outline"
@@ -139,7 +177,9 @@ export default function OrdersPage() {
               isOpen={isModalOpen}
               onClose={() => setIsModalOpen(false)}
               callBackOnSuccess={(id) => {
-                setOrders(allOrders.filter((order) => order.id !== id));
+                // setOrders(allOrders.filter((order) => order.id !== id));
+                setRefresh(!refresh);
+                handleSuccessToast("Order updated successfully");
               }}
             />
           </div>

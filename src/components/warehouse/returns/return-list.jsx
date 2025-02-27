@@ -32,6 +32,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
+import OrderDetails from "../../../pages/orders/OrderDetials";
 
 export function ReturnList({ orders, refreshList }) {
   const [open, setOpen] = useState(false);
@@ -41,10 +42,14 @@ export function ReturnList({ orders, refreshList }) {
   const [total, setTotal] = useState(0);
   const [unitpriceId, setUnitPriceId] = useState(null);
   const [returnReason, setReturnReason] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   function onSubmit() {
     console.log(values);
     setOpen(false);
   }
+
+  console.log(orders);
 
   function onReturnClick(order) {
     console.log(order);
@@ -98,6 +103,7 @@ export function ReturnList({ orders, refreshList }) {
           <TableRow>
             <TableHead>Order ID</TableHead>
             <TableHead>Customer Name</TableHead>
+            <TableHead>ETA</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Action</TableHead>
           </TableRow>
@@ -112,69 +118,34 @@ export function ReturnList({ orders, refreshList }) {
               <TableCell>{order?.id}</TableCell>
               <TableCell>{order?.customer}</TableCell>
               {/* <TableCell>{order?.eta}</TableCell> */}
+              <TableCell>{order?.eta}</TableCell>
               <TableCell>
                 <Badge variant="outline">{order?.status}</Badge>
               </TableCell>
-
               <TableCell>
-                {order?.isReturn ? null : (
-                  <Pencil
-                    onClick={() => {
-                      setSelectedOrder(order);
-                      setOpen(true);
-                      console.log(order);
-                    }}
-                    className="w-4 cursor-pointer"
-                  ></Pencil>
-                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedOrder(order);
+                    setIsModalOpen(true);
+                  }}
+                >
+                  View
+                </Button>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Order #{selectedOrder?.id}</DialogTitle>
-            <DialogDescription>
-              Make changes to your order here. Click save when you're done.
-            </DialogDescription>
-          </DialogHeader>
-          <Label>Product ID</Label>
-          <Input
-            required
-            label="Product ID"
-            placeholder="Enter product id"
-            onChange={(e) => {
-              setProductId(e.target.value);
-              onProductIdChange(e.target.value);
-            }}
-          />
-          <Label>Quantity</Label>
-          <Input
-            label="Quantity"
-            required
-            placeholder="Enter quantity"
-            onChange={(e) => setQuantity(e.target.value)}
-          />
-          <Label>Total Amount</Label>
-          <Input
-            label="Total"
-            required
-            placeholder="Enter total"
-            onChange={(e) => setTotal(e.target.value)}
-          />
-          <Label>Return Reason</Label>
-          <Textarea
-            required
-            onChange={(e) => setReturnReason(e.target.value)}
-            placeholder="Enter Return Reason"
-          />
-          {selectedOrder?.isReturn ? null : (
-            <Button onClick={() => markAsReturn()}>Mark as Return</Button>
-          )}
-        </DialogContent>
-      </Dialog>
+      <OrderDetails
+        orderId={selectedOrder?.id}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        callBackOnSuccess={(id) => {
+          setOrders(orders.filter((order) => order.id !== id));
+        }}
+      />
     </div>
   );
 }

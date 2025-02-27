@@ -35,7 +35,7 @@ const navItems = [
     href: "/sales-complaints",
   },
   { icon: AlertTriangle, label: "Escalations", href: "/sales-escalations" },
-  { icon: RotateCcw, label: "Returns", href: "/sales-returns" },
+  // { icon: RotateCcw, label: "Returns", href: "/sales-returns" },
   // { icon: BarChart2, label: "Reports", href: "/sales-reports" },
   // { icon: Settings, label: "Settings", href: "/sales-settings" },
 ];
