@@ -15,14 +15,14 @@ import { handleFailureToast } from "../../helpers/ToastService";
 //   { id: 4, sender: "agent", content: "Thank you. I can see that your order #12345 is currently in transit and is expected to be delivered tomorrow.", timestamp: "10:07 AM" },
 // ];
 
-export default function ChatInterface({ selectedComplaints, isCustomer }) {
+export default function ChatInterface({ selectedCustomer, isCustomer }) {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef(null);
   const currentUser = useSelector((state) => state.user.currentUser);
-  const selectedReceiverId = selectedComplaints?.customer.user.id;
+  const selectedReceiverId = selectedCustomer?.customer_id;
 
-  console.log(selectedComplaints);
+  // console.log(selectedCustomer);
 
   const fetchCustomer = (customer_id) => {
     axios
@@ -86,7 +86,7 @@ export default function ChatInterface({ selectedComplaints, isCustomer }) {
 
     channel.listen(".message.sent", (data) => {
       console.log("New message received:", data);
-      if (data.sender_id === selectedComplaints?.customer.user.id) {
+      if (data.sender_id === selectedCustomer?.customer_id) {
         setMessages((prevMessages) => [
           ...prevMessages,
           {
@@ -105,7 +105,7 @@ export default function ChatInterface({ selectedComplaints, isCustomer }) {
     return () => {
       channel.stopListening(".message.sent");
     };
-  }, [selectedComplaints]);
+  }, [selectedCustomer]);
 
   useEffect(() => {
     if (!currentUser.roles.some((role) => role.name === "customer")) return;

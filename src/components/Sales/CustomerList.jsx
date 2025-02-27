@@ -1,34 +1,38 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export default function CustomerList({ complaints, changeOrder, selectedId }) {
+export default function CustomerList({
+  changeOrder,
+  customerList,
+  selectedCustomer,
+}) {
   return (
     <div className="h-[600px] overflow-y-auto pr-2 scrollbar-hide scroll-smooth">
       <ul className="space-y-4">
-        {complaints.map((complaint) => (
+        {customerList.map((customer) => (
           <li
-            key={complaint.id}
-            onClick={() => changeOrder(complaint.id)}
+            key={customer.customer_id}
+            onClick={() => changeOrder(customer.customer_id)}
             className={`flex items-center space-x-4 cursor-pointer hover:bg-gray-200 p-2 rounded-lg transition-all ${
-              selectedId === complaint.id ? "bg-gray-200 hover:bg-gray-300" : ""
+              selectedCustomer.customer_id === customer.customer_id
+                ? "bg-gray-200 hover:bg-gray-300"
+                : ""
             }`}
           >
             <Avatar>
               <AvatarImage
                 // src={complaint.customer.image || ""}
-                alt={complaint.customer.user.name}
+                alt={customer.name}
               />
               <AvatarFallback>
-                {complaint.customer.user.name
+                {customer.name
                   .split(" ")
                   .map((n) => n[0])
                   .join("")}
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-medium">{complaint.customer.user.name}</p>
-              <p className="mt-1 text-sm text-gray-500">
-                {complaint.customer.user.email}
-              </p>
+              <p className="font-medium">{customer.name}</p>
+              <p className="mt-1 text-sm text-gray-500">{customer.email}</p>
             </div>
           </li>
         ))}

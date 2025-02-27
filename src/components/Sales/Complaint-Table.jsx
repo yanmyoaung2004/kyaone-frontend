@@ -33,7 +33,23 @@ export function ComplaintsTable({
             <TableCell className="text-center">
               {complaint.customer?.user?.name}
             </TableCell>
-            <TableCell className="text-center">{complaint.type}</TableCell>
+            <TableCell className="text-center">
+              <Badge
+                className={
+                  complaint.type == "delayed"
+                    ? "bg-red-500"
+                    : complaint.type == "faulty"
+                    ? "bg-yellow-500"
+                    : complaint.type == "wrong"
+                    ? "bg-red-500"
+                    : complaint.type == "missing"
+                    ? "bg-blue-500"
+                    : "bg-green-500"
+                }
+              >
+                {complaint.type}
+              </Badge>
+            </TableCell>
             <TableCell className="text-center">
               <Badge
                 className={
@@ -65,7 +81,9 @@ export function ComplaintsTable({
               >
                 View Details
               </Button>
-              <Link to={`/sales-customers?complaintId=${complaint.id}`}>
+              <Link
+                to={`/sales-customers?complaintId=${complaint.id}&tab=chat`}
+              >
                 <Button>Chat</Button>
               </Link>
             </TableCell>

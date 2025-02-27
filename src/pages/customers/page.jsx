@@ -13,27 +13,40 @@ import ChatInterface from "../../components/Sales/ChatInterface";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import WrongOrderModal from "../../components/WrongOrderModal";
-import { X } from "lucide-react";
+import { CloudCog, X } from "lucide-react";
 import { Search } from "lucide-react";
+import { ComplaintDetailsModal } from "../../components/Sales/Complaint-Detials-Modal";
+import { handleSuccessToast } from "../../helpers/ToastService";
 
 export default function CustomerInteractionPage() {
-  const [allComplaints, setAllComplaints] = useState([]);
-  const [complaints, setComplaints] = useState([]);
-  const [selectedComplaints, setSelectedComplaints] = useState();
+  const [selectedCustomer, setSelectedCustomer] = useState();
+  const [selectedComplaint, setSelectedComplaint] = useState();
   const [search, setSearch] = useState("");
+  const [customerList, setCustomerList] = useState([]);
+  const [allCustomers, setAllCustomers] = useState([]);
+  const [refresh, setRefresh] = useState(false);
+  const query = new URLSearchParams(window.location.search);
+  const tab = query.get("tab");
+
+  console.log(selectedComplaint);
 
   const fetchData = async () => {
     try {
       const res = await axios.get("/api/complaints");
-      setComplaints(res.data);
-
-      setAllComplaints(res.data);
-      setSelectedComplaints(res.data[0]);
+      const complaintsData = res.data;
+      const customerList = transformComplaintsData(complaintsData);
+      setCustomerList(customerList);
+      setSelectedCustomer(customerList[0]);
+      setAllCustomers(customerList);
       const query = new URLSearchParams(window.location.search);
       const complaintId = query.get("complaintId");
 
       if (complaintId) {
-        setSelectedComplaints(res.data.find((c) => c.id == complaintId));
+        setSelectedCustomer(
+          customerList.find((c) =>
+            c.complaints.some((c) => c.id == complaintId)
+          )
+        );
       }
     } catch (error) {
       console.log(error);
@@ -42,23 +55,25 @@ export default function CustomerInteractionPage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [refresh]);
 
   const changeOrder = (id) => {
-    setSelectedComplaints(complaints.find((c) => c.id === id));
+    setSelectedCustomer(customerList.find((c) => c.customer_id === id));
   };
 
+  const updateComplaintStatus = (id, newStatus) => {
+    axios.put(`/api/complaints/${id}`, { status: newStatus }).then((resp) => {
+      setRefresh(!refresh);
+      handleSuccessToast("Complaint status updated successfully");
+    });
+  };
   useEffect(() => {
-    if (search.trim() === "") {
-      setComplaints(allComplaints);
-    } else {
-      setComplaints(
-        allComplaints.filter((c) =>
-          c.customer.user.name.toLowerCase().includes(search.toLowerCase())
-        )
-      );
-    }
-  }, [search, allComplaints]);
+    const filteredCustomerList = allCustomers.filter((customer) =>
+      customer.name.toLowerCase().includes(search.toLowerCase())
+    );
+    setCustomerList(filteredCustomerList);
+    console.log(filteredCustomerList);
+  }, [search]);
 
   return (
     <div className="space-y-6">
@@ -85,7 +100,10 @@ export default function CustomerInteractionPage() {
             </Button>
           )}
         </div>
-        <WrongOrderModal selectComplaint={selectedComplaints} />
+        <WrongOrderModal
+          selectedCustomer={selectedCustomer}
+          selectedComplaint={selectedComplaint}
+        />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-1">
@@ -93,11 +111,11 @@ export default function CustomerInteractionPage() {
             <CardTitle>Customers</CardTitle>
           </CardHeader>
           <CardContent>
-            {complaints.length > 0 ? (
+            {customerList.length > 0 ? (
               <CustomerList
-                complaints={complaints}
+                customerList={customerList}
                 changeOrder={changeOrder}
-                selectedId={selectedComplaints.id}
+                selectedCustomer={selectedCustomer}
               />
             ) : (
               <>No Customer Complaints</>
@@ -105,7 +123,7 @@ export default function CustomerInteractionPage() {
           </CardContent>
         </Card>
         <Card className="md:col-span-2">
-          <Tabs defaultValue="profile">
+          <Tabs defaultValue={tab || "profile"}>
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>Customer Details</CardTitle>
@@ -117,13 +135,35 @@ export default function CustomerInteractionPage() {
             </CardHeader>
             <CardContent>
               <TabsContent value="profile">
-                {selectedComplaints && (
-                  <CustomerProfile selectedComplaints={selectedComplaints} />
+                {selectedCustomer && (
+                  <CustomerProfile
+                    selectedCustomer={selectedCustomer}
+                    customerList={customerList}
+                    setSelectedComplaint={setSelectedComplaint}
+                  />
                 )}
               </TabsContent>
               <TabsContent value="chat">
-                <ChatInterface selectedComplaints={selectedComplaints} />
+                <ChatInterface selectedCustomer={selectedCustomer} />
               </TabsContent>
+              {selectedComplaint && (
+                <ComplaintDetailsModal
+                  onStatusUpdate={(newStatus) =>
+                    updateComplaintStatus(selectedComplaint.id, newStatus)
+                  }
+                  complaint={(() => {
+                    selectedComplaint.customerName = selectedCustomer.name;
+                    selectedComplaint.customer = {
+                      user: {
+                        name: selectedCustomer.name,
+                        email: selectedCustomer.email,
+                      },
+                    };
+                    return selectedComplaint;
+                  })()}
+                  onClose={() => setSelectedComplaint(null)}
+                />
+              )}
             </CardContent>
           </Tabs>
         </Card>
@@ -131,3 +171,45 @@ export default function CustomerInteractionPage() {
     </div>
   );
 }
+
+const transformComplaintsData = (complaintsData) => {
+  const customerMap = {};
+
+  complaintsData.forEach((complaint) => {
+    const { customer, order } = complaint;
+
+    if (!customerMap[customer.id]) {
+      customerMap[customer.id] = {
+        customer_id: customer.id,
+        name: customer.user.name,
+        email: customer.user.email,
+        phone: customer.phone,
+        address: customer.address,
+        complaints: [],
+      };
+    }
+
+    customerMap[customer.id].complaints.push({
+      id: complaint.id,
+      order_id: complaint.order_id,
+      description: complaint.description,
+      status: complaint.status,
+      type: complaint.type,
+      created_at: complaint.created_at,
+      updated_at: complaint.updated_at,
+      order: {
+        id: order.id,
+        status: order.status,
+        total_price: order.total_price,
+        eta: order.eta,
+        invoice: {
+          id: order.invoice.id,
+          invoice_number: order.invoice.invoice_number,
+          total_amount: order.invoice.total_amount,
+        },
+      },
+    });
+  });
+
+  return Object.values(customerMap);
+};

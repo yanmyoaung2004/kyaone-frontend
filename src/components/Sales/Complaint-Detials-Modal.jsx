@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import WrongOrderModal from "../WrongOrderModal";
 export function ComplaintDetailsModal({ complaint, onClose, onStatusUpdate }) {
   const getStatusColor = (status) => {
     switch (status) {
@@ -119,9 +120,11 @@ export function ComplaintDetailsModal({ complaint, onClose, onStatusUpdate }) {
           </div>
         </ScrollArea>
         <DialogFooter className="mt-6">
-          <div className="flex justify-start items-center w-full">
-            <span className="mr-2 text-sm font-medium">Update Status : </span>
-            <div>
+          <div className="flex justify-between items-end w-full">
+            <div className="flex flex-col items-center space-y-3">
+              <span className="mr-2 text-sm  font-bold text-gray-500">
+                Update Status :{" "}
+              </span>
               <Select
                 onValueChange={(value) => onStatusUpdate(value)}
                 defaultValue={complaint.status}
@@ -136,6 +139,9 @@ export function ComplaintDetailsModal({ complaint, onClose, onStatusUpdate }) {
                   <SelectItem value="closed">Closed</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div>
+              <WrongOrderModal selectComplaint={complaint} />
             </div>
           </div>
         </DialogFooter>
