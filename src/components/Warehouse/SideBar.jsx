@@ -3,9 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import {
   Home,
   Package,
-  AlertCircle,
   BarChart2,
-  RotateCcw,
   Settings,
   Truck,
   PackageSearch,
@@ -25,24 +23,27 @@ import { Building } from "lucide-react";
 
 const navItems = [
   { icon: Home, label: "Dashboard", href: "/warehouse-dashboard" },
-  { icon: Package, label: "Orders", href: "/warehouse-orders" },
-  { icon: AlertCircle, label: "Complaints", href: "/warehouse-complaints" },
   { icon: BarChart2, label: "Stock Management", href: "/warehouse-stock" },
   {
     icon: PackageSearch,
     label: "Product Management",
     href: "/product-management",
   },
-  { icon: Building, label: "City", href: "/warehouse-cities" },
-  {
-    icon: Building2,
-    label: "Service Centers",
-    href: "/warehouse-service-centers",
-  },
-  { icon: Truck, label: "Truck Management", href: "/warehouse-trucks" },
   { icon: Settings, label: "Warehouses", href: "/warehouses" },
   { icon: ShoppingBasket, label: "Purchase", href: "/purchase" },
   { icon: Rotate3d, label: "Warehouse Transfer", href: "/warehouse-transfer" },
+  // { icon: Package, label: "Orders", href: "/warehouse-orders" },
+  // { icon: Building, label: "City", href: "/warehouse-cities" },
+  // {
+  //   icon: Building2,
+  //   label: "Service Centers",
+  //   href: "/warehouse-service-centers",
+  // },
+  // {
+  //   icon: Truck,
+  //   label: "Truck & Driver Management",
+  //   href: "/warehouse-trucks",
+  // },
 ];
 
 export function WarehouseSidebar() {

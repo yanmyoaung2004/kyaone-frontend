@@ -30,19 +30,6 @@ import {
 import axios from "axios";
 import { handleSuccessToast } from "../../../helpers/ToastService";
 
-// const suppliers = [
-//   { name: "Supplier 1", id: 1 },
-//   { name: "Supplier 2", id: 2 },
-//   { name: "Supplier 3", id: 3 },
-//   { name: "Supplier 4", id: 4 },
-// ];
-// const productOptions = [
-//   { name: "Product 1", id: 1 },
-//   { name: "Product 2", id: 2 },
-//   { name: "Product 3", id: 3 },
-//   { name: "Product 4", id: 4 },
-// ];
-
 export default function PurchasePage() {
   const [suppliers, setSuppliers] = useState([]);
   const [productOptions, setProductOptions] = useState([]);
@@ -81,11 +68,6 @@ export default function PurchasePage() {
   };
 
   const handleSubmit = async () => {
-    console.log("Submitting purchase:", {
-      serviceCenter: supplier,
-      products,
-      total: calculateTotal(),
-    });
     try {
       const res = await axios.post("api/purchase/create", {
         serviceCenter: supplier,

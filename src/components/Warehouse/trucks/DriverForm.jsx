@@ -45,7 +45,6 @@ const DriverCreateDialog = ({ open, onClose, onSave }) => {
         </DialogHeader>
         <Label>Name</Label>
         <Input
-          autoFocus
           name="name"
           label="User ID"
           type="text"
@@ -55,7 +54,6 @@ const DriverCreateDialog = ({ open, onClose, onSave }) => {
         />
         <Label>Email</Label>
         <Input
-          autoFocus
           name="email"
           label="User ID"
           type="email"
@@ -65,7 +63,6 @@ const DriverCreateDialog = ({ open, onClose, onSave }) => {
         />
         <Label>Password</Label>
         <Input
-          autoFocus
           name="password"
           label="Password"
           type="password"

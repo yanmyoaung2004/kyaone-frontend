@@ -54,30 +54,35 @@ const OrderDetails = ({ isOpen, onClose, orderId, callBackOnSuccess }) => {
           <div className="p-6 space-y-6">
             {order && (
               <>
-                <CustomerInfo customer={order.customer} />
+                <CustomerInfo customer={order} />
                 <Separator />
                 <OrderInfo orderId={order?.id} date={order?.created_at} />
                 <Separator />
                 <ProductList products={order?.products} />
                 <Separator />
-                <OrderSummary products={order?.products} />
+                <OrderSummary
+                  products={order?.products}
+                  shipping={order?.location?.city.shippingCost}
+                />
                 <Separator />
               </>
             )}
           </div>
         </ScrollArea>
 
-        <div className="p-4 border-t">
-          <Button
-            className="w-full"
-            onClick={() => {
-              acceptOrder();
-              onClose();
-            }}
-          >
-            Accept
-          </Button>
-        </div>
+        {order.status === "pending" && (
+          <div className="p-4 border-t">
+            <Button
+              className="w-full"
+              onClick={() => {
+                acceptOrder();
+                onClose();
+              }}
+            >
+              Accept
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -90,10 +95,10 @@ const CustomerInfo = ({ customer }) => {
   return (
     <div>
       <h3 className="font-semibold text-lg mb-2">Customer Information</h3>
-      <p>{customer.user?.name}</p>
-      <p>{customer.user?.email}</p>
-      <p>{customer.phone}</p>
-      <p>{customer.address}</p>
+      <p>Name : {customer?.name}</p>
+      <p>Phone : {customer?.phone}</p>
+      <p>Note : {customer?.note}</p>
+      <p>Address : {customer?.location?.address}</p>
     </div>
   );
 };
@@ -145,17 +150,14 @@ const ProductItem = ({ name, quantity, price, image }) => (
   </div>
 );
 
-const OrderSummary = ({ products }) => {
+const OrderSummary = ({ products, shipping }) => {
   if (!products) return null;
   const subtotal = products.reduce(
     (acc, p) => acc + p.pivot.quantity * p.unitprice.price,
     0
   );
 
-  const shipping = 0.0;
-  const discount = 0.0;
-
-  const total = subtotal + shipping - discount;
+  const total = Number(subtotal) + Number(shipping);
 
   return (
     <div>
@@ -167,12 +169,9 @@ const OrderSummary = ({ products }) => {
         </div>
         <div className="flex justify-between">
           <span>Shipping</span>
-          <span>${shipping.toFixed(2)}</span>
+          <span>${shipping}</span>
         </div>
-        <div className="flex justify-between">
-          <span>Discount</span>
-          <span>${discount.toFixed(2)}</span>
-        </div>
+
         <div className="flex justify-between font-semibold">
           <span>Total</span>
           <span>${total.toFixed(2)}</span>

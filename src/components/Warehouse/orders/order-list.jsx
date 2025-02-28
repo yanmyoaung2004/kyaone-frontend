@@ -15,13 +15,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
-import { PaginationForItems } from "../../PaginationForItems";
+import { useEffect, useState } from "react";
+
 import {
   Pagination,
   PaginationContent,
   PaginationItem,
-  PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
@@ -46,17 +45,32 @@ const getStatusColor = (status) => {
 export function OrderList({
   orders,
   onOrderClick,
-  onComplaintClick,
   onServiceCenterClick,
   selectedOrders,
   onSelectOrder,
   handleAssignTruckClick,
+  cityFilter,
 }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const [filteredOrders, setFilteredOrders] = useState(orders);
+
   const ordersPerPage = 10;
 
-  const totalPages = Math.ceil(orders.length / ordersPerPage);
-  const paginatedOrders = orders.slice(
+  useEffect(() => {
+    if (cityFilter !== "All") {
+      const filterProducts = orders.filter(
+        (order) => order.city.id === cityFilter
+      );
+      setFilteredOrders(filterProducts);
+      setCurrentPage(1);
+    } else {
+      setFilteredOrders(orders);
+    }
+  }, [cityFilter, orders]);
+
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+
+  const paginatedOrders = filteredOrders.slice(
     (currentPage - 1) * ordersPerPage,
     currentPage * ordersPerPage
   );
@@ -69,77 +83,79 @@ export function OrderList({
             <TableHead className="w-[50px] text-center"></TableHead>
             <TableHead className="text-center">Order ID</TableHead>
             <TableHead className="text-center">Customer Name</TableHead>
+            <TableHead className="text-center">City</TableHead>
             <TableHead className="text-center">Status</TableHead>
             <TableHead className="text-center">Assigned Truck</TableHead>
-
             <TableHead className="text-center">Service Center</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {paginatedOrders.map((order) => (
-            <TableRow key={order.id}>
-              <TableCell className="text-center">
-                <Checkbox
-                  checked={selectedOrders.includes(order.id)}
-                  onCheckedChange={() => {
-                    onSelectOrder(order.id);
-                  }}
-                />
-              </TableCell>
-              <TableCell className="font-medium text-center">
-                {order.id}
-              </TableCell>
-              <TableCell className="text-center">{order.customer}</TableCell>
-              <TableCell className="text-center">
-                <span
-                  className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(
-                    order.status
-                  )}`}
-                >
-                  {order.status}
-                </span>
-              </TableCell>
-              <TableCell className="text-center">
-                {order.assignedTruck || "Not Assigned"}
-              </TableCell>
-
-              <TableCell className="text-center">
-                {order.serviceCenter ? (
-                  <Button
-                    variant="link"
-                    onClick={() => onServiceCenterClick(order.serviceCenter)}
+          {paginatedOrders.length > 0 &&
+            paginatedOrders.map((order) => (
+              <TableRow key={order.id}>
+                <TableCell className="text-center">
+                  <Checkbox
+                    checked={selectedOrders.includes(order.id)}
+                    onCheckedChange={() => {
+                      onSelectOrder(order.id);
+                    }}
+                  />
+                </TableCell>
+                <TableCell className="font-medium text-center">
+                  {order.id}
+                </TableCell>
+                <TableCell className="text-center">{order.customer}</TableCell>
+                <TableCell className="text-center">{order.city.name}</TableCell>
+                <TableCell className="text-center">
+                  <span
+                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(
+                      order.status
+                    )}`}
                   >
-                    {order.serviceCenter}
-                  </Button>
-                ) : (
-                  "Not Assigned"
-                )}
-              </TableCell>
-              <TableCell className="text-center">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="h-8 w-8 p-0">
-                      <span className="sr-only">Open menu</span>
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => onOrderClick(order)}>
-                      View Details
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => {
-                        handleAssignTruckClick();
-                      }}
+                    {order.status}
+                  </span>
+                </TableCell>
+                <TableCell className="text-center">
+                  {order.assignedTruck || "Not Assigned"}
+                </TableCell>
+
+                <TableCell className="text-center">
+                  {order.serviceCenter ? (
+                    <Button
+                      variant="link"
+                      onClick={() => onServiceCenterClick(order.serviceCenter)}
                     >
-                      Assign Truck
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </TableCell>
-            </TableRow>
-          ))}
+                      {order.serviceCenter}
+                    </Button>
+                  ) : (
+                    "Not Assigned"
+                  )}
+                </TableCell>
+                <TableCell className="text-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" className="h-8 w-8 p-0">
+                        <span className="sr-only">Open menu</span>
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => onOrderClick(order)}>
+                        View Details
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => {
+                          handleAssignTruckClick();
+                        }}
+                      >
+                        Assign Truck
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
 

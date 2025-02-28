@@ -46,7 +46,6 @@ export function ServiceCenterAssignmentModal({
     axios
       .get("/api/service-centers")
       .then((response) => {
-        console.log(response.data);
         setServiceCenters(response.data);
       })
       .catch((error) => {

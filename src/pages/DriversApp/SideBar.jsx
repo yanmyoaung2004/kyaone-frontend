@@ -3,7 +3,6 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard } from "lucide-react";

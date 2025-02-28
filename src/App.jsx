@@ -1,5 +1,9 @@
-import React, { useEffect } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import React from "react";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 
 // Pages
 import Login from "./pages/Login";
@@ -20,7 +24,6 @@ import Customer from "./pages/customers/page";
 import ComplaintsPage from "./pages/complaints/Page";
 import Page from "./pages/Warehouse/Page";
 import Orders from "./pages/Warehouse/orders/page";
-import Complaints from "./pages/Warehouse/complaints/page";
 import StockManagement from "./pages/Warehouse/stock/page";
 import Returns from "./pages/Warehouse/returns/page";
 import TruckManagement from "./pages/Warehouse/trucks/page";
@@ -55,22 +58,12 @@ import PurchasePage from "./components/Warehouse/purchase/PurchasePage";
 import PurchaseList from "./components/Warehouse/purchase/PurchaseList";
 import PurchaseDetail from "./components/Warehouse/purchase/PurchaseDetail";
 import AssignPurchasedProduct from "./components/Warehouse/purchase/AssignPurchasedProduct";
+import AssignPage from "./components/Warehouse/purchase/AssignPage";
 import WarehouseTransfer from "./components/Warehouse/warehouse/WarehouseTransfer";
-
-// Protected Route Component
-const ProtectedRoute = ({ element, allowedRoles = [] }) => {
-  const currentUser = useSelector((state) => state.user.currentUser);
-  console.log(currentUser);
-
-  if (!currentUser) return <Navigate to="/login" />;
-  if (
-    !allowedRoles.some((role) =>
-      currentUser.roles.map((role) => role.name).includes(role)
-    )
-  )
-    return <Navigate to="/" />;
-  return element;
-};
+import LogisticLayout from "./components/logistics/LogisticLayout";
+import SalesReport from "./pages/reports/SaleReports";
+import ReportList from "./pages/reports/ReportList";
+import ChatCustomerList from "./pages/customersChat/ChatCustomerList";
 
 // App Component
 const App = () => {
@@ -126,6 +119,16 @@ const App = () => {
         <SaleProtectedRoute>
           <SaleLayout>
             <Sale />
+          </SaleLayout>
+        </SaleProtectedRoute>
+      ),
+    },
+    {
+      path: "/sales-customer",
+      element: (
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <ChatCustomerList />
           </SaleLayout>
         </SaleProtectedRoute>
       ),
@@ -243,16 +246,6 @@ const App = () => {
       ),
     },
     {
-      path: "/warehouse-complaints",
-      element: (
-        <WarehouseProtectedRoute>
-          <WarehouseLayout>
-            <Complaints />
-          </WarehouseLayout>
-        </WarehouseProtectedRoute>
-      ),
-    },
-    {
       path: "/warehouse-stock",
       element: (
         <WarehouseProtectedRoute>
@@ -353,11 +346,21 @@ const App = () => {
       ),
     },
     {
-      path: "/purchase-assign",
+      path: "/purchase-assign/:invoice_number",
       element: (
         <WarehouseProtectedRoute>
           <WarehouseLayout>
             <AssignPurchasedProduct />
+          </WarehouseLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/purchase/test",
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <AssignPage />
           </WarehouseLayout>
         </WarehouseProtectedRoute>
       ),
@@ -382,10 +385,74 @@ const App = () => {
         </DriverProtectedRoute>
       ),
     },
+    {
+      path: "/logistic-orders",
+      element: (
+        <WarehouseProtectedRoute>
+          <LogisticLayout>
+            <Orders />
+          </LogisticLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/logistic-cities",
+      element: (
+        <WarehouseProtectedRoute>
+          <LogisticLayout>
+            <Cities />
+          </LogisticLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/logistic-service-centers",
+      element: (
+        <WarehouseProtectedRoute>
+          <LogisticLayout>
+            <ServiceCenter />
+          </LogisticLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/logistic-trucks",
+      element: (
+        <WarehouseProtectedRoute>
+          <LogisticLayout>
+            <TruckManagement />
+          </LogisticLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/sales-reports",
+      element: (
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <ReportList />
+          </SaleLayout>
+        </SaleProtectedRoute>
+      ),
+    },
+    {
+      path: "/sales-reports-detail/:id",
+      element: (
+        <SaleProtectedRoute>
+          <SaleLayout>
+            <SalesReport />
+          </SaleLayout>
+        </SaleProtectedRoute>
+      ),
+    },
+    {
+      path: "*",
+      element: <Navigate to="/" replace />,
+    },
   ]);
 
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <DataProvider>
         <RouterProvider router={router} />
         <Toaster />

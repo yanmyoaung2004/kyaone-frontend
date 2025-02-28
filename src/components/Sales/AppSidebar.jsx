@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { MessageSquareWarning } from "lucide-react";
+import { FileText } from "lucide-react";
+import { Users } from "lucide-react";
 
 const navItems = [
   { icon: Home, label: "Dashboard", href: "/sales-dashboard" },
@@ -30,12 +32,13 @@ const navItems = [
     href: "/sales-customers",
   },
   {
-    icon: MessageSquareWarning,
-    label: "Complaints",
-    href: "/sales-complaints",
+    icon: Users,
+    label: "Customers",
+    href: "/sales-customer",
   },
   { icon: AlertTriangle, label: "Escalations", href: "/sales-escalations" },
   { icon: RotateCcw, label: "Returns", href: "/sales-returns" },
+  { icon: FileText, label: "Reports", href: "/sales-reports" },
   // { icon: BarChart2, label: "Reports", href: "/sales-reports" },
   // { icon: Settings, label: "Settings", href: "/sales-settings" },
 ];

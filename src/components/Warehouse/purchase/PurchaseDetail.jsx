@@ -27,8 +27,11 @@ export default function PurchaseDetail() {
       const res = await axios.get(
         `api/purchase/data/product/${invoice_number}`
       );
+      console.log(res);
       setProductList(res.data);
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {

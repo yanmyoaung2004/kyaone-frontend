@@ -13,7 +13,7 @@ const Sale = () => {
   const fetchTopSellingProductData = async () => {
     try {
       const res1 = await axios.get(`/api/sale/products/getMonthlyOrders`);
-      setMonthlyData(res1.data["2025"]);
+      setMonthlyData(res1.data);
 
       const res2 = await axios.get(
         `/api/sale/products/topSellingLocations/2025`

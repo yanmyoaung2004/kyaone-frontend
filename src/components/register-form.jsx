@@ -17,13 +17,21 @@ import { Toaster } from "@/components/ui/toaster";
 export function RegisterForm({ className, ...props }) {
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
+  let [phone, setPhone] = useState("");
+  let [address, setAddress] = useState("");
   let [confirmPassword, setConfirmPassword] = useState("");
   let [name, setName] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   let register = async (e) => {
-    if (name === "" || email === "" || password === "") {
+    if (
+      name === "" ||
+      email === "" ||
+      password === "" ||
+      address === "" ||
+      phone === ""
+    ) {
       handleWarningToast("Please fill all the fields!");
     }
     try {
@@ -32,6 +40,8 @@ export function RegisterForm({ className, ...props }) {
         name: name,
         email: email,
         password: password,
+        phone: phone,
+        address: address,
       });
 
       if (res.status === 201) {
@@ -80,6 +90,29 @@ export function RegisterForm({ className, ...props }) {
                   required
                 />
               </div>
+              <div className="grid gap-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  id="phone"
+                  type="text"
+                  placeholder="098765432"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="address">Address</Label>
+                <Input
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  id="address"
+                  type="text"
+                  placeholder="Your Address"
+                  required
+                />
+              </div>
+
               <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>

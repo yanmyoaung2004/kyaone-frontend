@@ -1,133 +1,128 @@
-import React, { useEffect, useState } from "react";
-import Instragram from "./icon/Instragram";
-import Facebook from "./icon/Facebook";
-import X from "./icon/X";
-import silver from "/silver.png";
-import { ComputerData } from "../data/MockData";
-import { motion, AnimatePresence, easeInOut } from "framer-motion";
-import { SlideRight } from "./icon/util/animation";
+"use client";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useState, useEffect, useCallback } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Hero() {
-  const [activeData, setActiveData] = useState(ComputerData[1]);
+  const [current, setCurrent] = useState(0);
 
-  const [currentIndex, setCurretnIndex] = useState(0);
+  const slides = [
+    {
+      id: 1,
+      title: "Next-Gen Smartphones",
+      description:
+        "Experience the future with our latest smartphone collection",
+      image:
+        "https://res.cloudinary.com/jerrick/image/upload/v1686848296/648b432828c9e7001d5a230f.jpg",
+      cta: "Shop Now",
+      link: "/category/smartphones",
+      color: "bg-blue-500",
+    },
+    {
+      id: 2,
+      title: "Premium Audio",
+      description:
+        "Immerse yourself in crystal-clear sound with our premium headphones",
+      image:
+        "https://sonnydickson.com/wp-content/uploads/2024/02/BW-PX7-S2e-_0000_Cloud-Grey-angled-shot.jpg",
+      cta: "Explore",
+      link: "/category/audio",
+      color: "bg-purple-500",
+    },
+    {
+      id: 3,
+      title: "Special Offers",
+      description: "Limited time deals on our most popular electronics",
+      image:
+        "https://media.gq.com/photos/6740e840f77c3632162d282c/16:9/w_2560%2Cc_limit/ledeimage1.png",
+      cta: "View Deals",
+      link: "/deals",
+      color: "bg-red-500",
+    },
+  ];
 
+  const next = useCallback(() => {
+    setCurrent((current + 1) % slides.length);
+  }, [current, slides.length]);
+
+  const prev = useCallback(() => {
+    setCurrent((current - 1 + slides.length) % slides.length);
+  }, [current, slides.length]);
+
+  // Auto-advance slides
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurretnIndex((prevIndex) => (prevIndex + 1) % ComputerData.length);
-    }, 3000); // change every 3 seconds
+      next();
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [next]);
 
-    return () => clearInterval(interval); // cleanup interval on component unmount
-  }, [currentIndex]);
-
-  useEffect(() => {
-    setActiveData(ComputerData[currentIndex]);
-  }, [currentIndex]);
-  //  return "";
   return (
-    <Card className="border-none">
-      <CardContent className="md:mx-auto md:w-[1500px] bg-white">
-        <motion.section>
-          <div
-            className="container grid grid-cols-1 md:grid-cols-2 p-10
-            h-screen md:h-[500px] relative "
-          >
-            <div
-              className="flex flex-col justify-center py-14 md:py-0 
-                5rem:max-w-[500px] order-2 md:order-1 mx-auto "
-            >
-              <div
-                className="space-y-5 md:space-y-7 text-center  
-                    md:text-left p-20"
-              >
-                <AnimatePresence mode="wait">
-                  <motion.h1
-                    key={activeData.id}
-                    variants={SlideRight(0.2)}
-                    initial="hidden"
-                    animate="show"
-                    exit="exit"
-                    className="text-black text-3xl 4rem:text-4xl 5rem:text-5xl font-bold"
-                  >
-                    {activeData.title}
-                  </motion.h1>
-                </AnimatePresence>
-                <AnimatePresence mode="wait">
-                  <motion.p
-                    key={activeData.id}
-                    variants={SlideRight(0.4)}
-                    initial="hidden"
-                    animate="show"
-                    exit="exit"
-                    className="text-sm leading-loose text-black/80"
-                  >
-                    {activeData.subtitle}
-                  </motion.p>
-                </AnimatePresence>
-                <motion.p
-                  key={activeData.id}
-                  variants={SlideRight(0.6)}
-                  initial="hidden"
-                  animate="show"
-                  exit="exit"
-                  className="text-black text-3xl 4rem:text-4xl 5rem:text-5xl font-bold"
-                >
-                  {activeData.price}
-                </motion.p>
-                <div
-                  className="flex items-center justify-center 
-                        md:justify-start gap-4 text-3xl text-black"
-                >
-                  <Instragram
-                    className="cursor-pointer border rounded-full
-                            p-[6px]"
-                  />
-                  <Facebook
-                    className="cursor-pointer border rounded-full
-                            p-[6px]"
-                  />
-                  <X
-                    className="cursor-pointer border rounded-full
-                            p-[6px]"
-                  />
-                </div>
+    <div className="relative overflow-hidden rounded-lg mx-4 mt-2">
+      <div
+        className="flex transition-transform duration-500 ease-out h-[400px] md:h-[500px]"
+        style={{ transform: `translateX(-${current * 100}%)` }}
+      >
+        {slides.map((slide) => (
+          <div key={slide.id} className="min-w-full relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/20 z-10" />
+            <img
+              src={slide.image || "/placeholder.svg"}
+              alt={slide.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 flex flex-col justify-center z-20 p-8 md:p-16 max-w-3xl">
+              <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
+                {slide.title}
+              </h1>
+              <p className="text-white/90 text-lg md:text-xl mb-8">
+                {slide.description}
+              </p>
+              <div>
+                <Button size="lg" className={slide.color}>
+                  {slide.cta}
+                </Button>
               </div>
             </div>
-            <div
-              className="flex flex-col items-center justify-center
-                md:order-2"
-            >
-              <AnimatePresence mode="wait">
-                <motion.img
-                  key={activeData.id}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, ease: easeInOut, delay: 0.2 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  src={activeData.image}
-                  alt=""
-                  className="w-[300px] md:w-[400px]
-                        4rem:w-[500px] relative z-10"
-                />
-              </AnimatePresence>
-              {/* <div className='text-[300px] absolute top-0 left-1/2
-                    -translate-x-1/2 -translate-y-1/2 z-0 
-                    font-poppins font-extrabold'>
-                        Silver
-                    </div> */}
-            </div>
           </div>
-        </motion.section>
-      </CardContent>
-    </Card>
+        ))}
+      </div>
+
+      {/* Navigation buttons */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/30 text-white hover:bg-black/50 z-30"
+        onClick={prev}
+      >
+        <ChevronLeft className="h-6 w-6" />
+        <span className="sr-only">Previous slide</span>
+      </Button>
+
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/30 text-white hover:bg-black/50 z-30"
+        onClick={next}
+      >
+        <ChevronRight className="h-6 w-6" />
+        <span className="sr-only">Next slide</span>
+      </Button>
+
+      {/* Indicators */}
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-30">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrent(index)}
+            className={`w-3 h-3 rounded-full transition-colors ${
+              index === current ? "bg-white" : "bg-white/50"
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

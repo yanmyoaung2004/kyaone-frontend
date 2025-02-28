@@ -11,9 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { PlusCircle, Search } from "lucide-react";
-import CityModal from "./ServiceCenterDetail";
 import { PackageSearch } from "lucide-react";
 import { X } from "lucide-react";
 import axios from "axios";
@@ -24,6 +29,8 @@ export default function ServiceCenter() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
 
   const fetchData = async () => {
     try {
@@ -65,6 +72,12 @@ export default function ServiceCenter() {
     return product.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
+  const totalPages = Math.ceil(filterProducts.length / ordersPerPage);
+  const paginatedOrders = filterProducts.slice(
+    (currentPage - 1) * ordersPerPage,
+    currentPage * ordersPerPage
+  );
+
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -77,7 +90,7 @@ export default function ServiceCenter() {
     <div>
       <div className="text-3xl font-bold mb-8 flex items-center flex-start">
         <PackageSearch size={24} />
-        City Management
+        Service Center Management
       </div>
       <div className="flex justify-between items-center mb-6">
         <div className="relative flex-1 mr-2">
@@ -117,7 +130,7 @@ export default function ServiceCenter() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filterProducts.map((product) => (
+            {paginatedOrders.map((product) => (
               <TableRow key={product.id}>
                 <TableCell>SC-{product.id}</TableCell>
                 <TableCell>{product.name}</TableCell>
@@ -147,6 +160,30 @@ export default function ServiceCenter() {
             ))}
           </TableBody>
         </Table>
+        <Pagination className="py-5">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="cursor-pointer hover:bg-transparent"
+              />
+            </PaginationItem>
+            <span className="font-semibold text-sm">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <PaginationItem>
+              <PaginationNext
+                className="cursor-pointer hover:bg-transparent"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
       {isModalOpen && (
         <ServiceCenterDetail

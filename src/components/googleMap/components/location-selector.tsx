@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { GoogleMap, LoadScript, Marker, Circle } from "@react-google-maps/api";
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import type { Location } from "../type";
+import type { Location, ServiceArea } from "../type";
 import { calculateDistance } from "../utils/distance";
 import { SERVICE_AREAS } from "../utils/ServiceArea";
 
@@ -26,8 +26,12 @@ const mapContainerStyle = {
 
 type Props = {
   getAddressFromMap: (address: string | null, withinService: boolean) => void;
+  getCity: (city: string) => void;
 };
-export default function LocationSelector({ getAddressFromMap }: Props) {
+export default function LocationSelector({
+  getAddressFromMap,
+  getCity,
+}: Props) {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(
     null
   );
@@ -109,9 +113,9 @@ export default function LocationSelector({ getAddressFromMap }: Props) {
     }
   };
 
-  // const handleCircleClick = (area: ServiceArea) => {
-  //   console.log("Clicked inside the service area circle", area);
-  // };
+  const handleCircleClick = (area: ServiceArea) => {
+    getCity(area.city);
+  };
 
   return (
     <div>
@@ -151,7 +155,7 @@ export default function LocationSelector({ getAddressFromMap }: Props) {
                 radius={area.radiusKm * 1000}
                 onClick={(e) => {
                   handleMapClick(e);
-                  // handleCircleClick(area);
+                  handleCircleClick(area);
                 }}
                 options={{
                   fillColor: "rgba(66, 133, 244, 0.2)",

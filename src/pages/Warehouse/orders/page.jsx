@@ -3,7 +3,7 @@ import { OrderList } from "../../../components/Warehouse/orders/order-list";
 import { OrderDetails } from "../../../components/Warehouse/orders/order-details";
 import { TruckAssignmentModal } from "../../../components/Warehouse/orders/truck-assignment-modal";
 import { ServiceCenterAssignmentModal } from "../../../components/Warehouse/orders/service-center-assignment-modal";
-import { ComplaintDetailsModal } from "../../../components/Warehouse/complaints/complaint-details-modal";
+// import { ComplaintDetailsModal } from "../../../components/Warehouse/complaints/complaint-details-modal";
 import { ServiceCenterDetailsModal } from "../../../components/Warehouse/service-center/service-center-details-modal";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,12 +15,16 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Package, Truck, Building } from "lucide-react";
+import { Package, Truck } from "lucide-react";
 import toast from "react-hot-toast";
 import { useEffect } from "react";
 import axios from "axios";
 import { X } from "lucide-react";
 import { Search } from "lucide-react";
+import {
+  handleFailureToast,
+  handleWarningToast,
+} from "../../../helpers/ToastService";
 
 // Mock data for demonstration
 
@@ -34,9 +38,11 @@ export default function Orders() {
   const [isAssigningTruck, setIsAssigningTruck] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
+  const [cityFilter, setCityFilter] = useState("All");
   const [selectedComplaintId, setSelectedComplaintId] = useState(null);
   const [selectedServiceCenter, setSelectedServiceCenter] = useState(null);
   const [cities, setCities] = useState([]);
+  const [deliveryCity, setDeliveryCity] = useState("");
 
   const handleOrderClick = (order) => {
     setSelectedOrder(order);
@@ -45,15 +51,38 @@ export default function Orders() {
   const handleAssignTruck = () => {
     setOrders(orders.filter((o) => !selectedOrders.includes(o.id)));
     setSelectedOrders([]);
+    setDeliveryCity("");
     setIsAssigningTruck(false);
   };
 
   const handleSelectOrder = (orderId) => {
-    setSelectedOrders((prev) =>
-      prev.includes(orderId)
-        ? prev.filter((id) => id !== orderId)
-        : [...prev, orderId]
-    );
+    const selectedOrder = orders.find((order) => order.id === orderId);
+    if (!selectedOrder) {
+      handleFailureToast("Order not found!");
+      return;
+    }
+    const selectedCity = selectedOrder.city.name;
+    if (!deliveryCity) {
+      setDeliveryCity(selectedCity);
+      setSelectedOrders([orderId]);
+      return;
+    }
+    if (selectedOrders.includes(orderId)) {
+      setSelectedOrders((prev) => {
+        const newSelectedOrders = prev.filter((id) => id !== orderId);
+
+        if (newSelectedOrders.length === 0) {
+          setDeliveryCity("");
+        }
+        return newSelectedOrders;
+      });
+    } else {
+      if (deliveryCity === selectedCity) {
+        setSelectedOrders((prev) => [...prev, orderId]);
+      } else {
+        handleWarningToast("Please select the same city!");
+      }
+    }
   };
 
   const handleStatusUpdate = (orderId, newStatus) => {
@@ -70,6 +99,8 @@ export default function Orders() {
       toast.error("No orders selected. Please select at least one order");
       return;
     }
+    const order = orders.find((order) => order.id === selectedOrders[0]);
+    setDeliveryCity(order.city.name);
     setIsAssigningTruck(true);
   };
 
@@ -78,12 +109,16 @@ export default function Orders() {
       const res = await axios.get("/api/warehouse/orders/data");
       if (res.status === 200) {
         setOrders(res.data);
-      }
-
-      const resCities = await axios.get("/api/cities");
-      if (res.status === 200) {
-        setCities(resCities.data);
-        // log
+        setCities(
+          Array.from(
+            new Map(
+              res.data.map((d) => [
+                d.city.id,
+                { id: d.city.id, name: d.city.name, eta: d.city.eta },
+              ])
+            ).values()
+          )
+        );
       }
 
       const resDriver = await axios.get("/api/drivers/getfree");
@@ -99,8 +134,6 @@ export default function Orders() {
       console.log(error);
     }
   };
-
-  // const cityFilter = (c.id) => {};
 
   useEffect(() => {
     fetchData();
@@ -170,15 +203,17 @@ export default function Orders() {
                 <SelectItem value="Cancelled">Cancelled</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={cityFilter} onValueChange={setCityFilter}>
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="All">Cities</SelectItem>
+                <SelectItem value="All">All Cities</SelectItem>
                 {cities &&
                   cities.map((c) => (
-                    <SelectItem value={c.id}>{c.name}</SelectItem>
+                    <SelectItem value={c.id} key={c.id}>
+                      {c.name}
+                    </SelectItem>
                   ))}
               </SelectContent>
             </Select>
@@ -187,6 +222,7 @@ export default function Orders() {
           <div className="flex flex-col lg:flex-row gap-6">
             {orders.length > 0 && (
               <OrderList
+                cityFilter={cityFilter}
                 orders={orders}
                 onOrderClick={handleOrderClick}
                 onComplaintClick={setSelectedComplaintId}
@@ -211,6 +247,7 @@ export default function Orders() {
         selectedOrders.length > 0 && ( */}
       {isAssigningTruck && (
         <TruckAssignmentModal
+          deliveryCity={deliveryCity}
           drivers={drivers}
           trucks={trucks}
           selectedOrders={selectedOrders}
@@ -219,12 +256,12 @@ export default function Orders() {
         />
       )}
 
-      {selectedComplaintId && (
+      {/* {selectedComplaintId && (
         <ComplaintDetailsModal
           complaintId={selectedComplaintId}
           onClose={() => setSelectedComplaintId(null)}
         />
-      )}
+      )} */}
 
       {selectedServiceCenter && (
         <ServiceCenterDetailsModal

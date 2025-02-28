@@ -14,6 +14,13 @@ import { useEffect, useState } from "react";
 import OrderDetails from "./OrderDetials";
 import { X } from "lucide-react";
 import { Search } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function OrdersPage() {
   const [allOrders, setAllOrders] = useState([]);
@@ -21,10 +28,13 @@ export default function OrdersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [currentOrder, setCurrentOrder] = useState(null);
+  const [searchStatus, setSearchStatus] = useState("pending");
 
   const fetchOrder = async () => {
     try {
-      const res = await axios.get("/api/orders");
+      const res = await axios.get(`/api/getorderbystatus`, {
+        params: { status: searchStatus },
+      });
       setAllOrders(res.data);
       setOrders(res.data);
     } catch (error) {
@@ -33,7 +43,7 @@ export default function OrdersPage() {
   };
   useEffect(() => {
     fetchOrder();
-  }, []);
+  }, [searchStatus]);
 
   const fuzzySearch = (query) => {
     if (!query.trim()) return allOrders;
@@ -80,6 +90,22 @@ export default function OrdersPage() {
                   </Button>
                 )}
               </div>
+              <Select
+                onValueChange={(value) => {
+                  setSearchStatus(value);
+                }}
+              >
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="processing">Progressing</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                  <SelectItem value="completed">Completed</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <div className="rounded-md border flex-grow overflow-x-auto bg-white">

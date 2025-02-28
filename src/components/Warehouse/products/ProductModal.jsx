@@ -99,11 +99,13 @@ export default function ProductModal({
         if (res.status === 200) {
           handleSuccessToast("Product updated successfully!");
           onSave({
-            id: res.data.product.id,
-            name: res.data.product.name,
-            category: "testing",
-            description: res.data.product.description,
-            price: res.data.product.unitprice.price,
+            id: res.data.id,
+            name: res.data.name,
+            category: res.data.category.name,
+            category_id: res.data.category.id,
+            description: res.data.description,
+            price: res.data.unitprice.price,
+            image: res.data.media[0].original_url,
           });
         }
       } else {
@@ -115,9 +117,11 @@ export default function ProductModal({
           onSave({
             id: res.data.product.id,
             name: res.data.product.name,
-            category: "testing",
+            category: res.data.product.category.name,
+            category_id: res.data.product.category.id,
             description: res.data.product.description,
             price: res.data.product.unitprice.price,
+            image: res.data.product.media[0].original_url,
           });
         }
       }

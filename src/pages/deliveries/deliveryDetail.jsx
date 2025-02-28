@@ -130,10 +130,6 @@ export default function DeliveryDetail() {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle className="text-xl">Order Details</CardTitle>
-                <TabsList>
-                  <TabsTrigger value="profile">Profile</TabsTrigger>
-                  <TabsTrigger value="chat">Chat</TabsTrigger>
-                </TabsList>
               </div>
             </CardHeader>
             <CardContent>

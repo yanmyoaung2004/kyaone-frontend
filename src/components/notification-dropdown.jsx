@@ -27,6 +27,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { DataContext } from "../context/DataContext";
 import { handleNotiToast } from "../helpers/ToastService";
+import echo from "../echo";
 
 const NotificationItem = ({ notification, onMarkAsRead }) => {
   const icons = {
@@ -88,7 +89,6 @@ const NotificationDropdown = () => {
   const [noti, setNoti] = useState([]);
   let userRole = "customer";
   const { currentUser } = useSelector((state) => state.user);
-  const { fresh, setFresh } = useContext(DataContext);
 
   if (currentUser !== null) {
     userRole = currentUser.roles;
@@ -99,11 +99,26 @@ const NotificationDropdown = () => {
   }, []);
 
   useEffect(() => {
-    window.Echo.channel("public-updates").listen(
-      ".public.notification",
-      (response) => {
+    echo
+      .channel("public-updates")
+      .listen(".public.notification", (response) => {
+        console.log("message");
+        console.log(response.message);
         if (!userRole.some((role) => role.name === response.message.role))
           return;
+        if (
+          response.message.role === "customer" &&
+          response.message.resource_id !== currentUser.id
+        )
+          return;
+        if (
+          response.message.role === "driver" &&
+          response.message.resource_id !== currentUser.id
+        )
+          return;
+        console.log(response.message.role);
+        console.log(response.message.resource_id);
+        console.log(currentUser.id);
         handleNotiToast(response.message.message);
         setNoti((prev) => {
           if (
@@ -116,13 +131,12 @@ const NotificationDropdown = () => {
             { ...response.message, read: getReadStatus(response.message.id) },
           ];
         });
-      }
-    );
+      });
   }, []);
 
   const fetchNoti = () => {
     axios
-      .get("/api/notifications")
+      .get(`/api/notifications/${currentUser.id}`)
       .then((response) => {
         const updatedNoti = response.data
           .filter((noti) => userRole.some((role) => role.name === noti.role))

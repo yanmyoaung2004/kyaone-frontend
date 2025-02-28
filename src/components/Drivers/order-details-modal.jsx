@@ -7,19 +7,14 @@ import OrderOverview from "./order-overview";
 import ProductsTable from "./products-table";
 // import IssuesComplaints from "./issues-complaints";
 import axios from "axios";
-import { useToast } from "@/hooks/use-toast";
 import { handleSuccessToast } from "../../helpers/ToastService";
 
 export default function OrderDetailsModal({
   isOpen,
   onClose,
   order,
-  customer,
-  products,
   setRefresh,
 }) {
-  const { toast } = useToast();
-
   const [orderStatus, setOrderStatus] = useState("In Transit");
   const markAsComplete = () => {
     axios
@@ -49,7 +44,7 @@ export default function OrderDetailsModal({
           />
           <div className="p-6 space-y-6">
             <OrderOverview order={order} />
-            <ProductsTable products={products} order={order} />
+            <ProductsTable products={order.products} />
             {order.isReturn ? (
               <div className="mt-6 p-4 border rounded-md flex flex-col space-y-2">
                 <h3 className="font-semibold mb-2">Return Order Details</h3>

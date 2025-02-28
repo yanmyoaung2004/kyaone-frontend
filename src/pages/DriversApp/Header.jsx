@@ -18,10 +18,17 @@ import { Link } from "react-router-dom";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Bell } from "lucide-react";
 import NotificationDropdown from "../../components/notification-dropdown";
+import { useState } from "react";
+import { useEffect } from "react";
 
-const Header = ({ currentTime }) => {
+const Header = () => {
+  const [currentTime, setCurrentTime] = useState(new Date());
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <header className="bg-white shadow-md border-b p-4 flex justify-between items-center">
       <div className="flex items-center space-x-4">

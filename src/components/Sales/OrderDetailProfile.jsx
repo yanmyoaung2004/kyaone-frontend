@@ -5,11 +5,16 @@ export default function OrderDetailProfile({ selectedOrder }) {
   return (
     selectedOrder &&
     selectedOrder.products && (
-      <div className="space-y-6">
+      <div className="space-y-3">
+        <div>
+          <Label className="text-lg">
+            Invoice Number : {selectedOrder.invoice.invoice_number.slice(0, 9)}
+          </Label>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <Label className="text-lg">Name</Label>
-            <p>{selectedOrder.customer.user.name}</p>
+            <p>{selectedOrder.name}</p>
           </div>
           <div>
             <Label className="text-lg">Email</Label>
@@ -17,14 +22,11 @@ export default function OrderDetailProfile({ selectedOrder }) {
           </div>
           <div>
             <Label className="text-lg">Phone</Label>
-            <p>{selectedOrder.customer.phone}</p>
+            <p>{selectedOrder.phone}</p>
           </div>
           <div>
             <Label className="text-lg">Address</Label>
-            <p>
-              {selectedOrder.location.address} , {selectedOrder.location.city},{" "}
-              {selectedOrder.location.state}
-            </p>
+            <p>{selectedOrder.location.address}</p>
           </div>
         </div>
 
@@ -36,8 +38,8 @@ export default function OrderDetailProfile({ selectedOrder }) {
                 <ProductItem
                   name={p.name}
                   quantity={p.pivot.quantity}
-                  price={p.unitprice?.price ? p.unitprice?.price : 1}
-                  image="https://images.pexels.com/photos/90946/pexels-photo-90946.jpeg?cs=srgb&dl=pexels-madebymath-90946.jpg&fm=jpg"
+                  price={p.unit_price?.price ? p.unit_price?.price : 1}
+                  image={p.media[0].original_url}
                 />
               </div>
             ))}

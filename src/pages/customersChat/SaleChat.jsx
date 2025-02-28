@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { MessageCircleMore } from "lucide-react";
-import Chat from "./Chat";
+import Chat from "../../components/Chat";
 
-function CustomerChat() {
+function SaleChat({ id, name }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -16,10 +16,19 @@ function CustomerChat() {
         </span>
       </DrawerTrigger>
       <DrawerContent>
-        <Chat />
+        <Chat
+          selectedComplaints={{
+            customer: {
+              user_id: id,
+              user: {
+                name: name,
+              },
+            },
+          }}
+        />
       </DrawerContent>
     </Drawer>
   );
 }
 
-export default CustomerChat;
+export default SaleChat;

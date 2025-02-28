@@ -39,7 +39,6 @@ export function LoginForm({ className, ...props }) {
         localStorage.setItem("token", JSON.stringify(res.data.token));
         const roles = res.data.user.roles || [];
         if (roles.some((role) => role.name === "warehouse")) {
-          console.log("warehouse");
           navigate("/warehouse-dashboard");
           return;
         }

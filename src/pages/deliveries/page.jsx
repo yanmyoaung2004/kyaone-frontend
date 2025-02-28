@@ -253,6 +253,7 @@ export default function DeliveriesPage() {
                 <TableBody>
                   {orderTruck.map((order, index) => (
                     <TableRow key={index}>
+                      {console.log(order.route)}
                       <TableCell className="font-medium">{index + 1}</TableCell>
                       <TableCell>{order.driver_name}</TableCell>
                       <TableCell>{order.truck_name}</TableCell>

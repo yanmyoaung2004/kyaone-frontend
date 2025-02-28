@@ -12,12 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -34,9 +28,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { LayoutDashboard } from "lucide-react";
-import { Link } from "react-router";
-import { BadgeAlert } from "lucide-react";
 import SideBar from "../../pages/DriversApp/SideBar";
 import Header from "../../pages/DriversApp/Header";
 import { useEffect } from "react";
@@ -63,22 +54,22 @@ export default function EscalatedIssues() {
   });
 
   useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
     axios
       .get(`api/orders`)
-      .then((resp) => setOrders(resp.data))
+      .then((resp) => {
+        setOrders(resp.data);
+        console.log(resp.data);
+      })
       .catch((err) => console.log(err));
   }, []);
 
   useEffect(() => {
     axios
       .get("/api/escalated-issues")
-      .then((resp) => setIssues(resp.data))
+      .then((resp) => {
+        setIssues(resp.data);
+        console.log(resp.data);
+      })
       .catch((err) => console.log(err));
   }, []);
 

@@ -17,14 +17,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDispatch } from "react-redux";
 import { signoutSuccess } from "../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export function ProfileDropDown() {
+  const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const handleLogout = () => {
-    console.log("click");
-
     dispatch(signoutSuccess());
     localStorage.removeItem("token");
     navigate("/login");
@@ -40,8 +39,10 @@ export function ProfileDropDown() {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
 
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>{currentUser.name}</DropdownMenuItem>
+        <DropdownMenuItem>{currentUser.email}</DropdownMenuItem>
         <DropdownMenuItem onClick={handleLogout}>
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>

@@ -45,7 +45,7 @@ export default function PurchaseList() {
     setSearchTerm(e.target.value);
   };
 
-  const handleClear = () => {
+  const handleClear = async () => {
     setSearchTerm("");
   };
 
@@ -102,19 +102,13 @@ export default function PurchaseList() {
                   {formatToSpecificDateTime(product.created_at)}
                 </TableCell>
                 <TableCell>
-                  <Button variant="outline" size="sm" className="mr-2">
-                    Assign
-                  </Button>
+                  <Link to={`/purchase-assign/${product.invoice_number}`}>
+                    <Button variant="outline" size="sm" className="mr-2">
+                      Assign
+                    </Button>
+                  </Link>
                   <Link to={`/purchase-detail/${product.invoice_number}`}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mr-2"
-                      onClick={() => {
-                        setEditingProduct(product);
-                        setIsModalOpen(true);
-                      }}
-                    >
+                    <Button variant="outline" size="sm" className="mr-2">
                       Detail
                     </Button>
                   </Link>

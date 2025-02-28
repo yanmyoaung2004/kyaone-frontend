@@ -11,7 +11,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { PlusCircle, Search } from "lucide-react";
 import CityModal from "./WarehouseModal";
 import { PackageSearch } from "lucide-react";
@@ -24,6 +30,9 @@ export default function Warehouse() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
 
   const fetchData = async () => {
     try {
@@ -62,6 +71,12 @@ export default function Warehouse() {
   const filterProducts = warehouses.filter((product) => {
     return product.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
+
+  const totalPages = Math.ceil(filterProducts.length / ordersPerPage);
+  const paginatedOrders = filterProducts.slice(
+    (currentPage - 1) * ordersPerPage,
+    currentPage * ordersPerPage
+  );
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -115,7 +130,7 @@ export default function Warehouse() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filterProducts.map((product) => (
+            {paginatedOrders.map((product) => (
               <TableRow key={product.id}>
                 <TableCell>WH-{product.id}</TableCell>
                 <TableCell>{product.name}</TableCell>
@@ -123,15 +138,7 @@ export default function Warehouse() {
                 <TableCell>{product.phone}</TableCell>
                 <TableCell>
                   <Link to={`/warehouse-product/${product.id}`}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mr-2"
-                      onClick={() => {
-                        setEditingProduct(product);
-                        setIsModalOpen(true);
-                      }}
-                    >
+                    <Button variant="outline" size="sm" className="mr-2">
                       Detail
                     </Button>
                   </Link>
@@ -158,6 +165,30 @@ export default function Warehouse() {
             ))}
           </TableBody>
         </Table>
+        <Pagination className="py-5">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="cursor-pointer hover:bg-transparent"
+              />
+            </PaginationItem>
+            <span className="font-semibold text-sm">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <PaginationItem>
+              <PaginationNext
+                className="cursor-pointer hover:bg-transparent"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
       {isModalOpen && (
         <CityModal

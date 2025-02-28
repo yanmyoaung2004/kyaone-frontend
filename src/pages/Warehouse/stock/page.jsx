@@ -10,6 +10,13 @@ import { BarChart2 } from "lucide-react";
 import axios from "axios";
 import { Search } from "lucide-react";
 import { X } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export default function StockManagement() {
   const [stock, setStock] = useState([]);
@@ -35,13 +42,14 @@ export default function StockManagement() {
     item.name.toLowerCase()?.includes(searchTerm.toLowerCase())
   );
 
-  const handleRestock = (productId, quantity) => {
+  const handleRestock = (productId, quantity, safetyStock) => {
     setStock(
       stock.map((item) =>
         item.id === productId
           ? {
               ...item,
               currentStock: item.currentStock + quantity,
+              reorderLevel: safetyStock,
               lastRestockDate: new Date().toISOString().split("T")[0],
             }
           : item
@@ -93,32 +101,38 @@ export default function StockManagement() {
             />
             {selectedProduct && (
               <RestockForm
+                setSelectedProduct={setSelectedProduct}
                 product={selectedProduct}
                 onRestock={handleRestock}
               />
             )}
           </div>
-          <div className="flex justify-between items-center mt-4">
-            <button
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-            >
-              Previous
-            </button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-200 rounded disabled:opacity-50"
-            >
-              Next
-            </button>
-          </div>
+          <Pagination className="py-5">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={currentPage === 1}
+                  className="cursor-pointer hover:bg-transparent"
+                />
+              </PaginationItem>
+              <span className="font-semibold text-sm">
+                Page {currentPage} of {totalPages}
+              </span>
+
+              <PaginationItem>
+                <PaginationNext
+                  className="cursor-pointer hover:bg-transparent"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </CardContent>
       </Card>
     </div>

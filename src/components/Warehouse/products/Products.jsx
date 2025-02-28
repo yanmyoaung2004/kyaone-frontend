@@ -11,6 +11,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 import { PlusCircle, Search } from "lucide-react";
 import ProductModal from "./ProductModal";
@@ -24,6 +31,9 @@ export default function Products() {
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [categories, setCategories] = useState([]);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
 
   const fetchProducts = async () => {
     try {
@@ -62,6 +72,12 @@ export default function Products() {
   const filterProducts = products.filter((product) => {
     return product.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
+
+  const totalPages = Math.ceil(filterProducts.length / ordersPerPage);
+  const paginatedOrders = filterProducts.slice(
+    (currentPage - 1) * ordersPerPage,
+    currentPage * ordersPerPage
+  );
 
   const handleInputChange = (e) => {
     setSearchTerm(e.target.value);
@@ -129,7 +145,7 @@ export default function Products() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filterProducts.map((product) => (
+            {paginatedOrders.map((product) => (
               <TableRow key={product.id}>
                 <TableCell>PD-{product.id}</TableCell>
                 <TableCell>{product.name}</TableCell>
@@ -160,6 +176,30 @@ export default function Products() {
             ))}
           </TableBody>
         </Table>
+        <Pagination className="py-5">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="cursor-pointer hover:bg-transparent"
+              />
+            </PaginationItem>
+            <span className="font-semibold text-sm">
+              Page {currentPage} of {totalPages}
+            </span>
+
+            <PaginationItem>
+              <PaginationNext
+                className="cursor-pointer hover:bg-transparent"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
       {isModalOpen && (
         <ProductModal

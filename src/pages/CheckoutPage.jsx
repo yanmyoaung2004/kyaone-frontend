@@ -17,6 +17,8 @@ import { DataContext } from "../context/DataContext";
 import { ShoppingCart, Truck, CreditCard } from "lucide-react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { Textarea } from "@/components/ui/textarea";
+
 import {
   handleFailureToast,
   handleSuccessToast,
@@ -28,7 +30,8 @@ import LocationSelector from "../components/googleMap/components/location-select
 export default function CheckoutPage() {
   const { cartItems, setCartItems, setRefresh, refresh } =
     useContext(DataContext);
-  const [shipmentCost, setShipmentCost] = useState(10.0);
+
+  const [shipmentCost, setShipmentCost] = useState(0);
   const [locationChoice, setLocationChoice] = useState("dropdown");
   const [total, setTotal] = useState(0.0);
   const [cities, setCities] = useState([]);
@@ -41,6 +44,7 @@ export default function CheckoutPage() {
     phone: "",
     city: "",
     address: "",
+    note: "",
   });
 
   const subTotal = cartItems.reduce(
@@ -116,31 +120,37 @@ export default function CheckoutPage() {
     }
   };
 
-  function extractCity(address) {
-    const parts = address.split(",");
-    for (let i = 0; i < parts.length; i++) {
-      const part = parts[i].trim();
-      if (
-        part.toLowerCase().includes("myanmar") ||
-        part.toLowerCase().includes("burma")
-      ) {
-        return parts[i - 1].trim();
-      }
-    }
-    return "";
-  }
-
   const getAddressFromMap = (rawAddress, withinService) => {
     if (rawAddress) {
-      const city = extractCity(rawAddress);
-      setShipmentInfo((prev) => ({ ...prev, address: rawAddress, city: city }));
+      setShipmentInfo((prev) => ({ ...prev, address: rawAddress }));
       setIsValidLocation(withinService);
     }
+  };
+  const getCity = (city) => {
+    setShipmentInfo((prev) => ({ ...prev, city: city }));
   };
 
   useEffect(() => {
     setTotal(subTotal + shipmentCost);
   }, [shipmentCost, subTotal]);
+
+  useEffect(() => {
+    if (locationChoice === "map") {
+      setShipmentCost(
+        cities
+          .map((c) => {
+            if (
+              c.id.toString() === shipmentInfo.city ||
+              c.name === shipmentInfo.city
+            ) {
+              return Number(c.shippingCost);
+            }
+            return 0;
+          })
+          .find((cost) => cost !== 0)
+      );
+    }
+  }, [shipmentInfo.city]);
 
   return (
     <CustomerLayout>
@@ -217,10 +227,7 @@ export default function CheckoutPage() {
                         ${shipmentCost.toFixed(2)}
                       </p>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-600">Tax</p>
-                      <p className="text-sm font-medium text-gray-900">$0.00</p>
-                    </div>
+
                     <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                       <p className="text-base font-medium text-gray-900">
                         Order total
@@ -303,9 +310,19 @@ export default function CheckoutPage() {
                         <div className="mb-3">
                           <Label htmlFor="city">City</Label>
                           <Select
-                            onValueChange={(value) =>
-                              handleFormChange("city", value)
-                            }
+                            onValueChange={(value) => {
+                              handleFormChange("city", value);
+                              setShipmentCost(
+                                cities
+                                  .map((c) => {
+                                    if (c.id.toString() === value) {
+                                      return Number(c.shippingCost);
+                                    }
+                                    return 0;
+                                  })
+                                  .find((cost) => cost !== 0)
+                              );
+                            }}
                             value={shipmentInfo.city.toString()}
                           >
                             <SelectTrigger>
@@ -342,11 +359,23 @@ export default function CheckoutPage() {
                         <div className="border-1 border border-gray-300 rounded p-1">
                           <LocationSelector
                             getAddressFromMap={getAddressFromMap}
+                            getCity={getCity}
                           />
                         </div>
                       </div>
                     )}
 
+                    <div className="mt-3">
+                      <Label htmlFor="note">Note</Label>
+                      <Textarea
+                        id="note"
+                        name="note"
+                        placeholder="Write note here..."
+                        onChange={(e) =>
+                          handleFormChange("note", e.target.value)
+                        }
+                      />
+                    </div>
                     <div className="mt-8 flex justify-end">
                       <Button
                         size="lg"

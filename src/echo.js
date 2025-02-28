@@ -1,20 +1,30 @@
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
-if (!window.Echo) {
-  window.pusher = Pusher;
-  window.Echo = new Echo({
-    broadcaster: "pusher",
-    key: "627d4e3594ce53596e94",
-    cluster: "ap1",
-    forceTLS: true,
-  });
-}
-document.addEventListener("DOMContentLoaded", function () {
-  const userID = window.userID;
-  window.Echo.channel("public-updates").listen(
-    "public.notification",
-    (response) => {
-      console.log("Event received:", response);
-    }
-  );
+
+window.Pusher = Pusher;
+
+const storedToken = localStorage.getItem("token");
+const token = storedToken
+  ? storedToken.startsWith('"')
+    ? JSON.parse(storedToken)
+    : storedToken
+  : null;
+
+const echo = new Echo({
+  broadcaster: "pusher",
+  key: "1320b6c967e0876bca0f",
+  cluster: "ap1",
+  // forceTLS: true,
+  encrypted: true,
+  // authEndpoint: "http://127.0.0.1:8000/broadcasting/auth",
+  // authEndpoint: "http://192.168.99.21:8000/broadcasting/auth",
+  // authEndpoint: "http://192.168.43.75:8000/broadcasting/auth",
+  authEndpoint: "http://192.168.1.38:8000/broadcasting/auth",
+  auth: {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  },
 });
+
+export default echo;

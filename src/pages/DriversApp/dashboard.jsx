@@ -1,20 +1,15 @@
-import { Bell, LayoutDashboard, CheckCheck, Ban } from "lucide-react";
+import { CheckCheck, Ban } from "lucide-react";
 import { useState } from "react";
-
-import { Input } from "@/components/ui/input";
-
 import { CardDescription } from "@/components/ui/card";
 import { Package, Truck } from "lucide-react";
 
 import { ActiveDeliveriesList } from "../../components/Drivers/active-deliveries-list";
-import { TruckStatus } from "../../components/Drivers/truck-status";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useEffect } from "react";
 import axios from "axios";
 import OrderDetailsModal from "../../components/Drivers/order-details-modal";
 import moment from "moment/moment";
-import { useToast } from "@/hooks/use-toast";
 import { useSelector } from "react-redux";
 import SideBar from "./SideBar";
 import Header from "./Header";
@@ -38,47 +33,24 @@ function MetricCard({ icon: Icon, title, value }) {
 }
 
 export default function DriverDashboard() {
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [driver, setDriver] = useState({});
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState({});
-  const [orderCount, setOrderCount] = useState(0);
-  const [truckId, setTruckId] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(null);
   const [refresh, setRefresh] = useState(false);
-  const { toast } = useToast();
   const { currentUser } = useSelector((state) => state.user);
 
-  useEffect(() => {
-    const timer = setInterval(() => setCurrentTime(new Date()), 1000);
-    toast({
-      title: "Order marked as complete",
-    });
-    return () => clearInterval(timer);
-  }, []);
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(`api/driver/orderassign/${currentUser.id}`);
+      console.log(res.data);
+      setOrders(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    axios
-      .get(`api/dirvers/${currentUser.id}`)
-      .then((response) => {
-        setDriver(response.data);
-        let trucks = response.data?.order_assing_truck;
-        if (trucks?.length > 0) {
-          setTruckId(trucks[0].truck_id);
-          axios
-            .get("/api/truck/" + trucks[0].truck_id + "/orders")
-            .then((response) => {
-              setOrders(response.data.orders);
-              setOrderCount(response.data.order_count);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    fetchData();
   }, [refresh]);
 
   return (
@@ -87,7 +59,7 @@ export default function DriverDashboard() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header currentTime={currentTime} />
+        <Header />
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100">
           <div className="container mx-auto px-6 py-8">
             <>
@@ -95,27 +67,29 @@ export default function DriverDashboard() {
                 <MetricCard
                   icon={Package}
                   title="Total Deliveries"
-                  value={orderCount}
+                  value={orders.length}
                 />{" "}
                 <MetricCard
                   icon={CheckCheck}
                   title="Deliveries Completed"
                   value={
-                    orders?.filter((order) => order.status === "completed")
-                      .length
+                    orders?.filter(
+                      (order) => order.order.status === "completed"
+                    ).length
                   }
                 />
                 <MetricCard
                   icon={Ban}
                   title="Deliveries Cancelled"
                   value={
-                    orders?.filter((order) => order.status === "cancelled")
-                      .length
+                    orders?.filter(
+                      (order) => order.order.status === "cancelled"
+                    ).length
                   }
                 />
               </div>
 
-              <div className="mt-5 grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="mt-5">
                 <Card className="col-span-2">
                   <CardHeader>
                     <CardTitle>Active Deliveries</CardTitle>
@@ -128,7 +102,6 @@ export default function DriverDashboard() {
                     />
                   </CardContent>
                 </Card>
-                {truckId && <TruckStatus truckId={truckId} />}
               </div>
               <div className="container mx-auto ">
                 <header className="flex justify-between items-center mb-6">
@@ -189,14 +162,17 @@ export default function DriverDashboard() {
           </div>
         </main>
       </div>
-      <OrderDetailsModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        order={selectedOrder}
-        customer={selectedOrder?.customer}
-        products={selectedOrder?.products}
-        setRefresh={setRefresh}
-      />
+
+      {isModalOpen && (
+        <OrderDetailsModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          order={selectedOrder.order}
+          customer={selectedOrder?.customer}
+          products={selectedOrder?.products}
+          setRefresh={setRefresh}
+        />
+      )}
     </div>
   );
 }

@@ -98,6 +98,10 @@ export default function CustomerInteractionPage() {
             <CardHeader>
               <div className="flex justify-between items-center">
                 <CardTitle>Customer Details</CardTitle>
+                <TabsList>
+                  <TabsTrigger value="profile">Profile</TabsTrigger>
+                  <TabsTrigger value="chat">Chat</TabsTrigger>
+                </TabsList>
               </div>
             </CardHeader>
             <CardContent>
@@ -105,6 +109,9 @@ export default function CustomerInteractionPage() {
                 {selectedComplaints && (
                   <CustomerProfile selectedComplaints={selectedComplaints} />
                 )}
+              </TabsContent>
+              <TabsContent value="chat">
+                <Chat selectedComplaints={selectedComplaints} />
               </TabsContent>
             </CardContent>
           </Tabs>

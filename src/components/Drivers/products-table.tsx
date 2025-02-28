@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle, XCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const products = [
   { name: "Product A", quantity: 2, price: 29.99, status: "Delivered" },
@@ -14,7 +13,8 @@ const products = [
   { name: "Product C", quantity: 3, price: 19.99, status: "Delivered" },
 ];
 
-export default function ProductsTable({ products, order }) {
+export default function ProductsTable({ products }) {
+  console.log(products);
   return (
     <Card className="col-span-2">
       <CardHeader>
@@ -26,9 +26,6 @@ export default function ProductsTable({ products, order }) {
             <TableRow>
               <TableHead>Product Name</TableHead>
               <TableHead>Quantity</TableHead>
-              {/* <TableHead>Price</TableHead> */}
-              <TableHead>Total Price</TableHead>
-              {/* <TableHead>Delivery Status</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -36,8 +33,6 @@ export default function ProductsTable({ products, order }) {
               <TableRow key={index}>
                 <TableCell>{product?.name}</TableCell>
                 <TableCell>{product?.pivot?.quantity}</TableCell>
-                {/* <TableCell>$ {product?.unitprice?.price}</TableCell> */}
-                <TableCell>$ {order?.total_price}</TableCell>
               </TableRow>
             ))}
           </TableBody>
