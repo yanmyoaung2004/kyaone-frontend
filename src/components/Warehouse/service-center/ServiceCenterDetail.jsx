@@ -23,6 +23,7 @@ export default function ServiceCenterDetail({
   onClose,
   onSave,
   product,
+  refresh,
 }) {
   const [formData, setFormData] = useState({
     name: "",
@@ -54,40 +55,35 @@ export default function ServiceCenterDetail({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = new FormData();
-    data.append("name", formData.name);
-    data.append("phone", formData.phone);
-    data.append("location", formData.location);
+    const data = {
+      name: formData.name,
+      phone: formData.phone,
+      location: formData.location,
+    };
 
     try {
       let res;
 
       if (product) {
-        res = await axios.put(`api/service-centers/${product.id}`, data);
-        if (res.status === 201) {
-          handleSuccessToast("Service center updated successfully!");
-          console.log(res.data);
-          // onSave({
-          //   id: res.data.city.id,
-          //   name: res.data.city.name,
-          //   eta: res.data.city.eta,
-          // });
-          onClose();
-        }
+        console.log(data);
+        res = await axios.post(`api/service-centers/${product.id}`, {
+          ...data,
+          _method: "PUT",
+        });
+        handleSuccessToast("Service center updated successfully!");
+        onClose();
       } else {
         res = await axios.post("/api/service-centers", data);
-        if (res.status === 201) {
-          handleSuccessToast("Sercice Center created successfully!");
-          console.log(res.data);
-          onSave({
-            id: res.data.data.id,
-            name: res.data.data.name,
-            phone: res.data.data.phone,
-            location: res.data.data.locatoin,
-          });
-          onClose();
-        }
+        handleSuccessToast("Sercice Center created successfully!");
+        // onSave({
+        //   id: res.data.data.id,
+        //   name: res.data.data.name,
+        //   phone: res.data.data.phone,
+        //   location: res.data.data.locatoin,
+        // });
+        onClose();
       }
+      refresh();
     } catch (error) {
       handleFailureToast("Error occur!");
       console.error("Error creating service center:", error);

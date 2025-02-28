@@ -185,7 +185,7 @@ export function DriverManagement() {
         <DriverCreateDialog onClose={handleCloseModal} onSave={createDriver} />
       )}
 
-      <Notifications />
+      {/* <Notifications /> */}
     </div>
   );
 }

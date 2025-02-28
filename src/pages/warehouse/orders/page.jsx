@@ -37,6 +37,7 @@ export default function Orders() {
   const [selectedComplaintId, setSelectedComplaintId] = useState(null);
   const [selectedServiceCenter, setSelectedServiceCenter] = useState(null);
   const [cities, setCities] = useState([]);
+  const [cityFilter, setCityFilter] = useState("All");
 
   const handleOrderClick = (order) => {
     setSelectedOrder(order);
@@ -99,9 +100,14 @@ export default function Orders() {
       console.log(error);
     }
   };
-
-  // const cityFilter = (c.id) => {};
-
+  // console.log(cityFilter);
+  const filteredOrders = orders.filter((o) => {
+    const matchesCity = cityFilter === "All" || o.city.id === cityFilter;
+    const matchesSearchTerm =
+      o.id.toString().includes(searchTerm) ||
+      o.customer.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCity && matchesSearchTerm;
+  });
   useEffect(() => {
     fetchData();
   }, []);
@@ -157,7 +163,7 @@ export default function Orders() {
                 </Button>
               )}
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            {/* <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by Status" />
               </SelectTrigger>
@@ -169,25 +175,31 @@ export default function Orders() {
                 <SelectItem value="Delivered">Delivered</SelectItem>
                 <SelectItem value="Cancelled">Cancelled</SelectItem>
               </SelectContent>
-            </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            </Select> */}
+            <Select
+              value={cityFilter}
+              onValueChange={setCityFilter}
+              className="h-full"
+            >
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="Filter by Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="All">Cities</SelectItem>
+                <SelectItem value="All">All Cities</SelectItem>
                 {cities &&
                   cities.map((c) => (
-                    <SelectItem value={c.id}>{c.name}</SelectItem>
+                    <SelectItem value={c.id} key={c.id}>
+                      {c.name}
+                    </SelectItem>
                   ))}
               </SelectContent>
             </Select>
           </div>
 
           <div className="flex flex-col lg:flex-row gap-6">
-            {orders.length > 0 && (
+            {filteredOrders.length > 0 && (
               <OrderList
-                orders={orders}
+                orders={filteredOrders}
                 onOrderClick={handleOrderClick}
                 onComplaintClick={setSelectedComplaintId}
                 onServiceCenterClick={setSelectedServiceCenter}
@@ -198,7 +210,7 @@ export default function Orders() {
             )}
             {selectedOrder && (
               <OrderDetails
-                order={selectedOrders}
+                order={selectedOrder}
                 onStatusUpdate={handleStatusUpdate}
               />
             )}

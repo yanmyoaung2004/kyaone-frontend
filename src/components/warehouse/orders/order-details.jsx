@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Package, Truck, Calendar, MapPin } from "lucide-react";
+import { Package, Truck, Calendar, MapPin, Building } from "lucide-react";
 
 export function OrderDetails({ order, onStatusUpdate }) {
   const [status, setStatus] = useState(order.status);
@@ -43,11 +43,15 @@ export function OrderDetails({ order, onStatusUpdate }) {
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
             <Package className="h-5 w-5 text-muted-foreground" />
-            <span className="font-medium">{order.customerName}</span>
+            <span className="font-medium">{order.customer}</span>
           </div>
           <div className="flex items-center space-x-2">
             <MapPin className="h-5 w-5 text-muted-foreground" />
             <span className="text-sm">{order.address}</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Building className="h-5 w-5 text-muted-foreground" />
+            <span className="text-sm">{order.city.name}</span>
           </div>
         </div>
         <Separator />
@@ -77,22 +81,21 @@ export function OrderDetails({ order, onStatusUpdate }) {
             <span className="text-sm">Estimated Delivery</span>
             <div className="flex items-center space-x-1">
               <Calendar className="h-4 w-4 text-muted-foreground" />
-              <span>{order.estimatedDelivery || "Not Scheduled"}</span>
+              <span>{order.city.eta || "Not Scheduled"}</span>
             </div>
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col space-y-2">
+      {/* <CardFooter className="flex flex-col space-y-2">
         <Select value={status} onValueChange={setStatus}>
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Change Status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="Pending">Pending</SelectItem>
-            <SelectItem value="Processing">Processing</SelectItem>
-            <SelectItem value="Shipped">Shipped</SelectItem>
-            <SelectItem value="Delivered">Delivered</SelectItem>
-            <SelectItem value="Cancelled">Cancelled</SelectItem>
+            <SelectItem value="pending">Pending</SelectItem>
+            <SelectItem value="processing">Processing</SelectItem>
+            <SelectItem value="completed">Completed</SelectItem>
+            <SelectItem value="cancelled">Cancelled</SelectItem>
           </SelectContent>
         </Select>
         <Button
@@ -102,7 +105,7 @@ export function OrderDetails({ order, onStatusUpdate }) {
         >
           Update Status
         </Button>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 }

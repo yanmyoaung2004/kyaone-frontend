@@ -18,13 +18,14 @@ import { PackageSearch } from "lucide-react";
 import { X } from "lucide-react";
 import axios from "axios";
 import ServiceCenterDetail from "./ServiceCenterDetail";
+import { handleSuccessToast } from "../../../helpers/ToastService";
 
 export default function ServiceCenter() {
   const [serviceCenters, setServicCenters] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [refresh, setRefresh] = useState(false);
   const fetchData = async () => {
     try {
       const res = await axios.get(`/api/service-centers`);
@@ -36,7 +37,7 @@ export default function ServiceCenter() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [refresh]);
 
   const handleAddProduct = (newProduct) => {
     setServicCenters([...serviceCenters, { ...newProduct }]);
@@ -52,9 +53,10 @@ export default function ServiceCenter() {
 
   const handleDeleteProduct = async (id) => {
     try {
-      const res = await axios.delete(`/api/cities/${id}`);
+      const res = await axios.delete(`/api/service-centers/${id}`);
       if (res.status === 200) {
         setServicCenters(serviceCenters.filter((p) => p.id !== id));
+        handleSuccessToast("Service Center deleted successfully");
       }
     } catch (error) {
       console.log(error);
@@ -77,7 +79,7 @@ export default function ServiceCenter() {
     <div>
       <div className="text-3xl font-bold mb-8 flex items-center flex-start">
         <PackageSearch size={24} />
-        City Management
+        Service Center Management
       </div>
       <div className="flex justify-between items-center mb-6">
         <div className="relative flex-1 mr-2">
@@ -155,6 +157,7 @@ export default function ServiceCenter() {
             setIsModalOpen(false);
             setEditingProduct(null);
           }}
+          refresh={() => setRefresh(!refresh)}
           onSave={(product) => {
             if (editingProduct) {
               handleEditProduct(product);

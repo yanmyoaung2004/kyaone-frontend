@@ -48,16 +48,13 @@ export function RestockForm({ product, onRestock }) {
               <strong>Product:</strong> {product.name}
             </p>
             <p>
-              <strong>SKU:</strong> {product.sku}
-            </p>
-            <p>
               <strong>Current Stock:</strong> {product.currentStock}
             </p>
           </div>
           <div>
             <label
               htmlFor="quantity"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Quantity to Add
             </label>

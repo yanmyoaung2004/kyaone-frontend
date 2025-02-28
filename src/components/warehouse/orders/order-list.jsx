@@ -25,7 +25,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-
+import { CheckCircle, XCircle } from "lucide-react";
 const getStatusColor = (status) => {
   switch (status) {
     case "Pending":
@@ -70,6 +70,7 @@ export function OrderList({
             <TableHead className="text-center">Order ID</TableHead>
             <TableHead className="text-center">Customer Name</TableHead>
             <TableHead className="text-center">Status</TableHead>
+            <TableHead className="text-center">City</TableHead>
             <TableHead className="text-center">Assigned Truck</TableHead>
 
             <TableHead className="text-center">Service Center</TableHead>
@@ -100,21 +101,30 @@ export function OrderList({
                   {order.status}
                 </span>
               </TableCell>
+              <TableCell className="text-center">{order.city.name}</TableCell>
               <TableCell className="text-center">
-                {order.assignedTruck || "Not Assigned"}
+                <div className="flex items-center justify-center">
+                  {order.assignedTruck ? (
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <XCircle className="h-4 w-4 text-red-500" />
+                  )}
+                </div>
               </TableCell>
 
-              <TableCell className="text-center">
-                {order.serviceCenter ? (
-                  <Button
-                    variant="link"
-                    onClick={() => onServiceCenterClick(order.serviceCenter)}
-                  >
-                    {order.serviceCenter}
-                  </Button>
-                ) : (
-                  "Not Assigned"
-                )}
+              <TableCell>
+                <div className="flex items-center justify-center">
+                  {order.serviceCenter ? (
+                    <Button
+                      variant="link"
+                      onClick={() => onServiceCenterClick(order.serviceCenter)}
+                    >
+                      {order.serviceCenter}
+                    </Button>
+                  ) : (
+                    <XCircle className="h-4 w-4 text-red-500" />
+                  )}
+                </div>
               </TableCell>
               <TableCell className="text-center">
                 <DropdownMenu>
@@ -128,13 +138,13 @@ export function OrderList({
                     <DropdownMenuItem onClick={() => onOrderClick(order)}>
                       View Details
                     </DropdownMenuItem>
-                    <DropdownMenuItem
+                    {/* <DropdownMenuItem
                       onClick={() => {
                         handleAssignTruckClick();
                       }}
                     >
                       Assign Truck
-                    </DropdownMenuItem>
+                    </DropdownMenuItem> */}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
