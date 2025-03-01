@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import {
+  handleSuccessToast,
+  handleFailureToast,
+} from "../../helpers/ToastService";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -25,8 +27,12 @@ export default function EscalationDetails({ selectedIssues }) {
           status: status,
         }
       );
+      if (res.status === 200) {
+        handleSuccessToast("Status updated successfully!");
+      }
     } catch (error) {
       console.log(error);
+      handleFailureToast(error.message);
     }
   };
   const handleStatusChange = (newStatus) => {
@@ -40,18 +46,24 @@ export default function EscalationDetails({ selectedIssues }) {
         <div>
           <Label>Customer</Label>
           <p className="text-lg font-medium">
-            {selectedIssues?.order.customer.user.name}
+            {selectedIssues?.driver.user.name}
           </p>
         </div>
+
         <div>
-          <Label>Order Number</Label>
-          <p>{selectedIssues?.order.invoice.invoice_number.slice(0, 9)}</p>
+          <Label>Route</Label>
+          <p>{selectedIssues?.city}</p>
         </div>
         <div>
           <Label>Priority</Label>
           <p>{selectedIssues?.priority}</p>
         </div>
+        <div>
+          <Label>Truck</Label>
+          <p>{selectedIssues?.truck}</p>
+        </div>
       </div>
+
       <div>
         <Label>Description</Label>
         <p>{selectedIssues?.description}</p>

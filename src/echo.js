@@ -19,7 +19,7 @@ const echo = new Echo({
   // authEndpoint: "http://127.0.0.1:8000/broadcasting/auth",
   // authEndpoint: "http://192.168.99.21:8000/broadcasting/auth",
   // authEndpoint: "http://192.168.43.75:8000/broadcasting/auth",
-  authEndpoint: "http://192.168.1.38:8000/broadcasting/auth",
+  authEndpoint: "http://192.168.110.31:8000/broadcasting/auth",
   auth: {
     headers: {
       Authorization: `Bearer ${token}`,

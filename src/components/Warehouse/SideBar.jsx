@@ -18,8 +18,7 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { Building2 } from "lucide-react";
-import { Building } from "lucide-react";
+import { Tag } from "lucide-react";
 
 const navItems = [
   { icon: Home, label: "Dashboard", href: "/warehouse-dashboard" },
@@ -29,8 +28,10 @@ const navItems = [
     label: "Product Management",
     href: "/product-management",
   },
+  { icon: Tag, label: "Category", href: "/warehouse-categories" },
   { icon: Settings, label: "Warehouses", href: "/warehouses" },
   { icon: ShoppingBasket, label: "Purchase", href: "/purchase" },
+
   { icon: Rotate3d, label: "Warehouse Transfer", href: "/warehouse-transfer" },
   // { icon: Package, label: "Orders", href: "/warehouse-orders" },
   // { icon: Building, label: "City", href: "/warehouse-cities" },

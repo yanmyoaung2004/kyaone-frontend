@@ -26,7 +26,6 @@ export function ActiveDeliveriesList({
   setIsModalOpen,
   setSelectedOrder,
 }: ActiveDeliveriesListProps) {
-  // console.log(orders);
   return (
     <div className="rounded-md border">
       <Table>
@@ -41,39 +40,39 @@ export function ActiveDeliveriesList({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {orders
-            .filter((order) => order?.order?.status === "processing")
-            .map((order) => (
-              <TableRow
-                key={order.id}
-                className="text-center cursor-pointer"
-                onClick={() => {
-                  setSelectedOrder(order);
-                  setIsModalOpen(true);
-                }}
-              >
-                <TableCell>{order?.id}</TableCell>
-                <TableCell>{order?.order?.name}</TableCell>
-                <TableCell>{order?.order?.location?.address}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      order?.order?.status === "completed"
-                        ? "success"
-                        : order?.order?.status === "cancelled"
-                        ? "destructive"
-                        : "default"
-                    }
-                  >
-                    {order?.order?.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {order?.order?.location?.city?.eta || "N/A"}
-                </TableCell>
-                <TableCell>{order?.truck?.license_plate}</TableCell>
-              </TableRow>
-            ))}
+          {orders.map((order) => (
+            <TableRow
+              key={order.id}
+              className="text-center cursor-pointer"
+              onClick={() => {
+                setSelectedOrder(order);
+                setIsModalOpen(true);
+              }}
+            >
+              <TableCell>
+                {order?.order.invoice?.invoice_number.slice(0, 9)}
+              </TableCell>
+              <TableCell>{order?.order?.name}</TableCell>
+              <TableCell>{order?.order?.location?.address}</TableCell>
+              <TableCell>
+                <Badge
+                  variant={
+                    order?.order?.status === "completed"
+                      ? "success"
+                      : order?.order?.status === "cancelled"
+                      ? "destructive"
+                      : "default"
+                  }
+                >
+                  {order?.order?.status}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                {order?.order?.location?.city?.eta || "N/A"}
+              </TableCell>
+              <TableCell>{order?.truck?.license_plate}</TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>

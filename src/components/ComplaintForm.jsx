@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { useNavigate } from "react-router";
 import {
   Card,
   CardContent,
@@ -19,54 +19,85 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useSelector } from "react-redux";
-import axios from "axios";
-import { useNavigate } from "react-router";
-
-const complaintSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-  complaintType: z.enum(["delayed", "faulty", "wrong", "missing"]),
-  description: z.string().min(10, "Description must be at least 10 characters"),
-});
 
 export function ComplaintForm({ department, onSubmit, invoiceId }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    complaintType: "delayed",
+    description: "",
+  });
+  const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const currentUser = useSelector((state) => state.user.currentUser);
   const navigate = useNavigate();
 
-  const form = useForm({
-    resolver: zodResolver(complaintSchema),
-    defaultValues: {
+  useEffect(() => {
+    setFormData((prevData) => ({
+      ...prevData,
       name: currentUser.name,
       email: currentUser.email,
-      complaintType: "delayed",
-      complain: "",
-    },
-  });
+    }));
+  }, [currentUser]);
 
-  const handleSubmit = async (data) => {
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.name || formData.name.length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    }
+    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Invalid email address";
+    }
+    if (!formData.complaintType) {
+      newErrors.complaintType = "Please select a complaint type";
+    }
+    if (!formData.description || formData.description.length < 10) {
+      newErrors.description = "Description must be at least 10 characters";
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleSelectChange = (value) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      complaintType: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isSubmitting) return;
+
+    if (!validate()) return;
+
     setIsSubmitting(true);
+
     try {
-      // await onSubmit(data);
-      form.reset();
+      if (onSubmit) {
+        await onSubmit(formData);
+      }
 
       await axios
         .post("/api/complaints", {
           customer_id: currentUser.id,
           order_id: invoiceId,
-          description: data.description,
-          type: data.complaintType,
+          description: formData.description,
+          type: formData.complaintType,
           status: "open",
         })
         .then((res) => {
           if (res.status === 201) {
             navigate("/");
           }
-        })
-        .catch((e) => console.log(e));
+        });
     } catch (error) {
-      console.error(error);
+      console.error("Error submitting complaint", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -85,18 +116,17 @@ export function ComplaintForm({ department, onSubmit, invoiceId }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Input
               name="name"
               label="Name"
               placeholder="Your full name"
-              {...form.register("name")}
+              value={formData.name}
+              onChange={handleChange}
             />
-            {form.formState.errors.name && (
-              <p className="text-red-500 text-sm">
-                {form.formState.errors.name.message}
-              </p>
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name}</p>
             )}
           </div>
           <div>
@@ -104,16 +134,19 @@ export function ComplaintForm({ department, onSubmit, invoiceId }) {
               name="email"
               label="Email"
               placeholder="your.email@example.com"
-              {...form.register("email")}
+              value={formData.email}
+              onChange={handleChange}
             />
-            {form.formState.errors.name && (
-              <p className="text-red-500 text-sm">
-                {form.formState.errors.email?.message}
-              </p>
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email}</p>
             )}
           </div>
           <div>
-            <Select {...form.register("complaintType")}>
+            <Select
+              name="complaintType"
+              value={formData.complaintType} // Bind value to formData.complaintType
+              onValueChange={handleSelectChange} // Handle change via onValueChange
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Complaint type..." />
               </SelectTrigger>
@@ -124,22 +157,19 @@ export function ComplaintForm({ department, onSubmit, invoiceId }) {
                 <SelectItem value="missing">Order miss</SelectItem>
               </SelectContent>
             </Select>
-            {form.formState.errors.complaintType && (
-              <p className="text-red-500 text-sm">
-                {form.formState.errors.complaintType.message}
-              </p>
+            {errors.complaintType && (
+              <p className="text-red-500 text-sm">{errors.complaintType}</p>
             )}
           </div>
           <div>
             <Textarea
               name="description"
               placeholder="Please provide details about your complaint"
-              {...form.register("description")}
+              value={formData.description}
+              onChange={handleChange}
             />
-            {form.formState.errors.description && (
-              <p className="text-red-500 text-sm">
-                {form.formState.errors.description.message}
-              </p>
+            {errors.description && (
+              <p className="text-red-500 text-sm">{errors.description}</p>
             )}
           </div>
           <Button type="submit" className="w-full" disabled={isSubmitting}>

@@ -64,6 +64,7 @@ import LogisticLayout from "./components/logistics/LogisticLayout";
 import SalesReport from "./pages/reports/SaleReports";
 import ReportList from "./pages/reports/ReportList";
 import ChatCustomerList from "./pages/customersChat/ChatCustomerList";
+import Category from "./components/Warehouse/category/Category";
 
 // App Component
 const App = () => {
@@ -402,6 +403,16 @@ const App = () => {
           <LogisticLayout>
             <Cities />
           </LogisticLayout>
+        </WarehouseProtectedRoute>
+      ),
+    },
+    {
+      path: "/warehouse-categories",
+      element: (
+        <WarehouseProtectedRoute>
+          <WarehouseLayout>
+            <Category />
+          </WarehouseLayout>
         </WarehouseProtectedRoute>
       ),
     },

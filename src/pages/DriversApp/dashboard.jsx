@@ -12,7 +12,19 @@ import OrderDetailsModal from "../../components/Drivers/order-details-modal";
 import moment from "moment/moment";
 import { useSelector } from "react-redux";
 import SideBar from "./SideBar";
+import { Badge } from "@/components/ui/badge";
+
 import Header from "./Header";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatToSpecificDateTime } from "../../helpers/services";
+import { X } from "lucide-react";
 
 function MetricCard({ icon: Icon, title, value }) {
   return (
@@ -32,26 +44,77 @@ function MetricCard({ icon: Icon, title, value }) {
   );
 }
 
+function getCompletedKeys(mapObject) {
+  let completedKeys = [];
+
+  for (const [key, valueArray] of Object.entries(mapObject)) {
+    if (Array.isArray(valueArray) && valueArray.length > 0) {
+      const allComplete = valueArray.every(
+        (item) => item.order.status === "completed"
+      );
+
+      if (allComplete) {
+        completedKeys.push(key);
+      }
+    }
+  }
+
+  return completedKeys;
+}
+
 export default function DriverDashboard() {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(null);
   const [refresh, setRefresh] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
+  const [routes, setRoutes] = useState({});
+  const [selectedRoute, setSelectedRoute] = useState(false);
+  const [selectedOrderList, setSelectedOrderList] = useState([]);
+  const [completedKeys, setCompletedKeys] = useState([]);
+  const [completedShow, setCompletedShow] = useState(false);
 
   const fetchData = async () => {
     try {
       const res = await axios.get(`api/driver/orderassign/${currentUser.id}`);
-      console.log(res.data);
       setOrders(res.data);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const fetchSameRoute = async () => {
+    try {
+      const res = await axios.get(
+        `api/orders/truck/assigned/${currentUser.id}`
+      );
+      console.log(res.data);
+      setCompletedKeys(getCompletedKeys(res.data));
+      console.log(completedKeys);
+      setRoutes(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(completedKeys);
+
   useEffect(() => {
     fetchData();
+    fetchSameRoute();
   }, [refresh]);
+
+  const seeRouteDetail = (orderList) => {
+    setCompletedShow(false);
+    setSelectedRoute(true);
+    setSelectedOrderList(orderList);
+  };
+
+  const seeCompleteDetail = (orderList) => {
+    setSelectedRoute(false);
+    setCompletedShow(true);
+    setSelectedOrderList(orderList);
+  };
 
   return (
     <div className="flex h-screen w-full bg-gray-100">
@@ -90,73 +153,219 @@ export default function DriverDashboard() {
               </div>
 
               <div className="mt-5">
-                <Card className="col-span-2">
-                  <CardHeader>
-                    <CardTitle>Active Deliveries</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <ActiveDeliveriesList
-                      setIsModalOpen={setIsModalOpen}
-                      orders={orders}
-                      setSelectedOrder={setSelectedOrder}
-                    />
-                  </CardContent>
-                </Card>
+                {!selectedRoute && (
+                  <Card className="col-span-2">
+                    <CardHeader>
+                      <CardTitle>Routes List</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="text-center">No.</TableHead>
+                            <TableHead className="text-center">
+                              Driver Name
+                            </TableHead>
+                            <TableHead className="text-center">Truck</TableHead>
+                            <TableHead className="text-center">City</TableHead>
+                            <TableHead className="text-center">
+                              No. of Orders
+                            </TableHead>
+                            <TableHead className="text-center">
+                              Assigned Date
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {Object.keys(routes).length === 0 ? (
+                            <TableRow className="text-center cursor-pointer">
+                              <TableCell>No Order</TableCell>
+                            </TableRow>
+                          ) : (
+                            Object.entries(routes).map(
+                              ([groupKey, orderList]) => {
+                                return (
+                                  completedKeys.some(
+                                    (key) => key !== groupKey
+                                  ) && (
+                                    <TableRow
+                                      onClick={() => {
+                                        seeRouteDetail(orderList);
+                                      }}
+                                      key={groupKey}
+                                      className="text-center cursor-pointer"
+                                    >
+                                      <TableCell>
+                                        {groupKey.slice(0, 9)}
+                                      </TableCell>
+                                      <TableCell>
+                                        {orderList[0].driver.user.name}
+                                      </TableCell>
+                                      <TableCell>
+                                        {orderList[0].truck.license_plate}
+                                      </TableCell>
+                                      <TableCell>
+                                        {orderList[0].order.location.city.name}
+                                      </TableCell>
+                                      <TableCell>{orderList.length}</TableCell>
+                                      <TableCell>
+                                        {formatToSpecificDateTime(
+                                          orderList[0].created_at
+                                        )}
+                                      </TableCell>
+                                    </TableRow>
+                                  )
+                                );
+                              }
+                            )
+                          )}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                )}
+                {selectedRoute && (
+                  <Card className="col-span-2">
+                    <CardHeader>
+                      <CardTitle className="flex w-full justify-between">
+                        <span>Orders List</span>
+                        <span
+                          className="cursor-pointer hover:bg-gray-50"
+                          onClick={() => {
+                            setSelectedRoute(false);
+                          }}
+                        >
+                          <X size={22} />
+                        </span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ActiveDeliveriesList
+                        setIsModalOpen={setIsModalOpen}
+                        orders={selectedOrderList}
+                        setSelectedOrder={setSelectedOrder}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
               </div>
+
               <div className="container mx-auto ">
                 <header className="flex justify-between items-center mb-6">
                   <div className="flex items-center space-x-4">
                     <switch id="driver-mode" />
                   </div>
                 </header>
-                <Card className="mt-6">
-                  <CardHeader>
-                    <CardTitle>Recent Deliveries</CardTitle>
-                    <CardDescription>
-                      Your latest completed deliveries
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {orders
-                        ?.filter((order) => order?.status == "completed")
-                        ?.map((order, index) => (
-                          <div
-                            key={index}
-                            className="flex justify-between items-center p-3 bg-muted rounded-lg"
-                          >
-                            <div>
-                              <p className="font-medium">Order #{order?.id}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {order?.location?.address}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="font-medium">
-                                $ {order?.total_price}
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                Completed at{" "}
-                                {moment(order?.updated_at).format(
-                                  "MMMM Do YYYY, h:mm:ss a"
-                                )}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                {completedShow && (
+                  <Card className="col-span-2">
+                    <CardHeader>
+                      <CardTitle className="flex w-full justify-between">
+                        <span>Orders List</span>
+                        <span
+                          className="cursor-pointer hover:bg-gray-50"
+                          onClick={() => {
+                            setCompletedShow(false);
+                          }}
+                        >
+                          <X size={22} />
+                        </span>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ActiveDeliveriesList
+                        setIsModalOpen={setIsModalOpen}
+                        orders={selectedOrderList}
+                        setSelectedOrder={setSelectedOrder}
+                      />
+                    </CardContent>
+                  </Card>
+                )}
+                {!completedShow && (
+                  <Card className="mt-6">
+                    <CardHeader>
+                      <CardTitle>Recent Deliveries Routes</CardTitle>
+                      <CardDescription>
+                        Your latest completed delivey routes
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="text-center">No.</TableHead>
+                              <TableHead className="text-center">
+                                Driver Name
+                              </TableHead>
+                              <TableHead className="text-center">
+                                Truck
+                              </TableHead>
+                              <TableHead className="text-center">
+                                City
+                              </TableHead>
+                              <TableHead className="text-center">
+                                No. of Orders
+                              </TableHead>
+                              <TableHead className="text-center">
+                                Assigned Date
+                              </TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {Object.keys(routes).length === 0 ? (
+                              <TableRow className="text-center cursor-pointer">
+                                <TableCell>No Order</TableCell>
+                              </TableRow>
+                            ) : (
+                              Object.entries(routes).map(
+                                ([groupKey, orderList]) => {
+                                  return (
+                                    completedKeys.some(
+                                      (key) => key === groupKey
+                                    ) && (
+                                      <TableRow
+                                        onClick={() => {
+                                          seeCompleteDetail(orderList);
+                                        }}
+                                        key={groupKey}
+                                        className="text-center cursor-pointer"
+                                      >
+                                        <TableCell>
+                                          {groupKey.slice(0, 9)}
+                                        </TableCell>
 
-                <div className="mt-6 flex justify-between items-center">
-                  <p className="text-muted-foreground">
-                    You have 3 pending deliveries
-                  </p>
-                  <Button size="lg">
-                    <Truck className="mr-2 h-4 w-4" />
-                    Start Next Delivery
-                  </Button>
-                </div>
+                                        <TableCell>
+                                          {orderList[0].driver.user.name}
+                                        </TableCell>
+                                        <TableCell>
+                                          {orderList[0].truck.license_plate}
+                                        </TableCell>
+                                        <TableCell>
+                                          {
+                                            orderList[0].order.location.city
+                                              .name
+                                          }
+                                        </TableCell>
+                                        <TableCell>
+                                          {orderList.length}
+                                        </TableCell>
+                                        <TableCell>
+                                          {formatToSpecificDateTime(
+                                            orderList[0].created_at
+                                          )}
+                                        </TableCell>
+                                      </TableRow>
+                                    )
+                                  );
+                                }
+                              )
+                            )}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </>
           </div>

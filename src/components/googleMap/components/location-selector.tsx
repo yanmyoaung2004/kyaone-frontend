@@ -125,7 +125,7 @@ export default function LocationSelector({
         </div>
       )}
       <LoadScript
-        googleMapsApiKey="AIzaSyC107QPQ1Zcn1QE00_sJO7fjTIGZMZtViI"
+        googleMapsApiKey=""
         onError={() => setMapError(true)}
         onLoad={() => setIsLoading(false)}
       >

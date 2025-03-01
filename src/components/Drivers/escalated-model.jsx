@@ -33,6 +33,7 @@ import Header from "../../pages/DriversApp/Header";
 import { useEffect } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { handleSuccessToast } from "../../helpers/ToastService";
 
 export default function EscalatedIssues() {
   const [issues, setIssues] = useState([]);
@@ -43,22 +44,48 @@ export default function EscalatedIssues() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [orders, setOrders] = useState([]);
+  const [routes, setRoutes] = useState(null);
   const currentUser = useSelector((state) => state.user.currentUser);
 
   const [newIssue, setNewIssue] = useState({
     description: "",
     priority: "",
-    status: "",
-    order_id: "",
-    driver_id: 2,
+    route_key: "",
+    driver_id: currentUser.id,
   });
+
+  const fetchOrder = async () => {
+    try {
+      const res = await axios.get(
+        `api/orders/truck/assigned/${currentUser.id}`
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchRoutes = async () => {
+    try {
+      const res = await axios.get(
+        `api/orders/truck/assigned/${currentUser.id}`
+      );
+      setRoutes(res.data);
+      // sert
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRoutes();
+    fetchOrder();
+  }, []);
 
   useEffect(() => {
     axios
       .get(`api/orders`)
       .then((resp) => {
         setOrders(resp.data);
-        console.log(resp.data);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -68,7 +95,6 @@ export default function EscalatedIssues() {
       .get("/api/escalated-issues")
       .then((resp) => {
         setIssues(resp.data);
-        console.log(resp.data);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -97,18 +123,16 @@ export default function EscalatedIssues() {
     });
 
   const handleCreateIssue = () => {
-    console.log(newIssue);
-
     axios
       .post("/api/escalated-issues", newIssue)
       .then((res) => {
         setIssues([...issues, res.data.data]);
-        console.log(res);
+        handleSuccessToast("Issue created successfully");
       })
       .catch((err) => console.error(err));
 
     setIsModalOpen(false);
-    setNewIssue({ description: "", priority: "", status: "", order_id: "" });
+    setNewIssue({ description: "", priority: "", route_key: "" });
   };
 
   const getPriorityColor = (priority) => {
@@ -192,48 +216,30 @@ export default function EscalatedIssues() {
                       </SelectContent>
                     </Select>
                   </div>
+
                   <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="status" className="text-right">
-                      Status
-                    </Label>
-                    <Select
-                      value={newIssue.status}
-                      onValueChange={(value) =>
-                        setNewIssue({ ...newIssue, status: value })
-                      }
-                    >
-                      <SelectTrigger className="col-span-3">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="inprogress">In Progress</SelectItem>
-                        <SelectItem value="resolved">Resolved</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="order_id" className="text-right">
-                      Order ID
+                    <Label htmlFor="route_key" className="text-right">
+                      Routes
                     </Label>
                     <Select
                       onValueChange={(value) =>
-                        setNewIssue({ ...newIssue, order_id: value })
+                        setNewIssue({ ...newIssue, route_key: value })
                       }
                     >
                       <SelectTrigger className="col-span-3">
                         <SelectValue placeholder="Select order" />
                       </SelectTrigger>
                       <SelectContent>
-                        {orders &&
-                          orders.map((order) => (
-                            <SelectItem
-                              key={order.id}
-                              value={order.id.toString()}
-                            >
-                              ORD# {order.id}
-                            </SelectItem>
-                          ))}
+                        {routes &&
+                          Object.entries(routes).map(
+                            ([groupKey, orderList]) => {
+                              return (
+                                <SelectItem key={groupKey} value={groupKey}>
+                                  {groupKey.slice(0, 9)}
+                                </SelectItem>
+                              );
+                            }
+                          )}
                       </SelectContent>
                     </Select>
                   </div>
@@ -292,7 +298,7 @@ export default function EscalatedIssues() {
                     </Button>
                   </TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Order ID</TableHead>
+                  <TableHead>Route </TableHead>
 
                   <TableHead>Priority</TableHead>
                   <TableHead>Status</TableHead>
@@ -303,8 +309,7 @@ export default function EscalatedIssues() {
                   <TableRow key={issue.id}>
                     <TableCell className="font-medium">{issue.id}</TableCell>
                     <TableCell>{issue.description}</TableCell>
-                    <TableCell>{issue.order_id}</TableCell>
-
+                    <TableCell>{issue.city}</TableCell>
                     <TableCell>
                       <Badge className={`${getPriorityColor(issue.priority)}`}>
                         {issue.priority}

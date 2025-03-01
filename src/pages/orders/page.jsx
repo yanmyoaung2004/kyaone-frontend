@@ -21,6 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CheckCircle } from "lucide-react";
+import { XCircle } from "lucide-react";
 
 export default function OrdersPage() {
   const [allOrders, setAllOrders] = useState([]);
@@ -117,6 +119,7 @@ export default function OrdersPage() {
                   <TableHead>Delivery Address</TableHead>
                   <TableHead>ETA</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Is Return</TableHead>
                   <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
@@ -144,6 +147,15 @@ export default function OrdersPage() {
                         {order.status}
                       </span>
                     </TableCell>
+
+                    <TableCell className="text-start">
+                      {order.isReturn ? (
+                        <CheckCircle className="w-4 h-4 text-green-500 " />
+                      ) : (
+                        <XCircle className="w-4 h-4 text-red-500" />
+                      )}
+                    </TableCell>
+
                     <TableCell className="text-right">
                       <Button
                         variant="outline"

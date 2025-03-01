@@ -9,7 +9,8 @@ import "./echo";
 // axios.defaults.baseURL = "http://192.168.20.192:8000";
 // axios.defaults.baseURL = "http://127.0.0.1:8000";
 // axios.defaults.baseURL = "http://192.168.99.21:8000";
-axios.defaults.baseURL = "http://192.168.1.38:8000";
+// axios.defaults.baseURL = "http://192.168.1.38:8000";
+axios.defaults.baseURL = "http://192.168.110.31:8000";
 //
 // useEffect(() => {}, []);
 

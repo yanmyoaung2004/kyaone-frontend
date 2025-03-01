@@ -1,6 +1,5 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { Bar, BarChart, CartesianGrid, LabelList, XAxis } from "recharts";
 
 import {
@@ -47,13 +46,14 @@ export function TopRegion({ chartData }) {
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
-                tickFormatter={(value) => value.slice(0, 3)}
+                tickFormatter={(value) => value}
               />
               <ChartTooltip
                 cursor={false}
                 content={<ChartTooltipContent hideLabel />}
               />
-              <Bar dataKey="orders" fill="var(--color-orders)" radius={8}>
+              {/* Update dataKey to match the property in the chartData */}
+              <Bar dataKey="value" fill="var(--color-orders)" radius={8}>
                 <LabelList
                   position="top"
                   offset={12}

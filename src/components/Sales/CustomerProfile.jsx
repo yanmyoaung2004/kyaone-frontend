@@ -1,34 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import axios from "axios";
 import {
-  handleFailureToast,
-  handleSuccessToast,
-  handleWarningToast,
-} from "../../helpers/ToastService";
-import { useState } from "react";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
-export default function CustomerProfile({ selectedComplaints }) {
-  const { customer, order, description } = selectedComplaints;
-  const [isResolved, setIsResolved] = useState(
-    selectedComplaints.status === "resolved"
-  );
+export default function CustomerProfile({ selectedCustomer, setSelected }) {
+  const { complaints } = selectedCustomer;
 
-  const clickResolve = async () => {
-    try {
-      const res = await axios.put(
-        `api/complaints/status/update/${selectedComplaints.id}/resolved`
-      );
-      if (res.status === 200) {
-        setIsResolved(true);
-        handleSuccessToast("Complaint is resolved successfully!");
-      }
-    } catch (error) {
-      handleFailureToast("Failed to resolve!");
-      console.log(error);
-    }
-  };
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <Card>
@@ -39,10 +24,10 @@ export default function CustomerProfile({ selectedComplaints }) {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InfoItem label="Name" value={order.name} />
-            <InfoItem label="Email" value={customer.user.email} />
-            <InfoItem label="Phone" value={order.phone} />
-            <InfoItem label="Address" value={order.location.address} />
+            <InfoItem label="Name" value={selectedCustomer.name} />
+            <InfoItem label="Email" value={selectedCustomer.email} />
+            <InfoItem label="Phone" value={selectedCustomer.phone} />
+            <InfoItem label="Address" value={selectedCustomer.address} />
           </div>
         </CardContent>
       </Card>
@@ -50,34 +35,89 @@ export default function CustomerProfile({ selectedComplaints }) {
       <Card>
         <CardHeader>
           <CardTitle className="text-xl font-semibold text-primary">
-            Complaint Details
+            Complaints
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <InfoItem
-            label="Invoice ID"
-            value={order.invoice.invoice_number.slice(0, 9)}
-          />
-
-          <div>
-            <Label className="text-sm font-medium text-muted-foreground">
-              Description
-            </Label>
-            <p className="mt-1 text-lg">{description}</p>
-          </div>
-          <div className="flex justify-end">
-            {isResolved ? (
-              <Button
-                onClick={() => {
-                  handleWarningToast("Already resolved!");
-                }}
-              >
-                Resolved
-              </Button>
-            ) : (
-              <Button onClick={clickResolve}>Resolve</Button>
-            )}
-          </div>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-center">Invoice ID</TableHead>
+                <TableHead className="text-center">Order ID</TableHead>
+                <TableHead className="text-center">Type</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-center">Description</TableHead>
+                <TableHead className="text-center">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {complaints.map((complaint) => (
+                <TableRow
+                  key={complaint.id}
+                  className="hover:bg-gray-100 transition-colors"
+                >
+                  <TableCell className="text-center">
+                    {complaint.order.invoice.invoice_number.slice(0, 9)}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {complaint.order_id}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge
+                      className={
+                        complaint.type === "delayed"
+                          ? "bg-red-500"
+                          : complaint.type === "faulty"
+                          ? "bg-yellow-500"
+                          : complaint.type === "wrong"
+                          ? "bg-red-500"
+                          : complaint.type === "missing"
+                          ? "bg-blue-500"
+                          : "bg-green-500"
+                      }
+                    >
+                      {complaint.type}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge
+                      className={
+                        complaint.status === "open"
+                          ? "bg-blue-500"
+                          : complaint.status === "in_progress"
+                          ? "bg-yellow-500"
+                          : complaint.status === "resolved"
+                          ? "bg-green-500"
+                          : "bg-red-500"
+                      }
+                    >
+                      {complaint.status === "open"
+                        ? "Open"
+                        : complaint.status === "in_progress"
+                        ? "In Progress"
+                        : complaint.status === "resolved"
+                        ? "Resolved"
+                        : "Closed"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    {complaint.description}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setSelected(complaint);
+                      }}
+                    >
+                      View
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
     </div>

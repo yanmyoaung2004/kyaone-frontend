@@ -11,7 +11,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Mail, AlertCircle, CheckCircle, Clock } from "lucide-react";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import WrongOrderModal from "../WrongOrderModal";
 export function ComplaintDetailsModal({ complaint, onClose, onStatusUpdate }) {
   const getStatusColor = (status) => {
     switch (status) {
@@ -28,11 +35,11 @@ export function ComplaintDetailsModal({ complaint, onClose, onStatusUpdate }) {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case "New":
+      case "open":
         return <AlertCircle className="w-4 h-4" />;
-      case "In Progress":
+      case "in_progress":
         return <Clock className="w-4 h-4" />;
-      case "Resolved":
+      case "resolved":
         return <CheckCircle className="w-4 h-4" />;
       default:
         return null;
@@ -44,7 +51,7 @@ export function ComplaintDetailsModal({ complaint, onClose, onStatusUpdate }) {
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">
-            Complaint DetaDetails
+            Complaint Details
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="mt-4 max-h-[60vh]">
@@ -55,7 +62,7 @@ export function ComplaintDetailsModal({ complaint, onClose, onStatusUpdate }) {
                   src={`https://api.dicebear.com/6.x/initials/svg?seed=${complaint.customerName}`}
                 />
                 <AvatarFallback>
-                  {complaint.customerName
+                  {complaint.customer?.user?.name
                     .split(" ")
                     .map((n) => n[0])
                     .join("")}
@@ -63,11 +70,11 @@ export function ComplaintDetailsModal({ complaint, onClose, onStatusUpdate }) {
               </Avatar>
               <div>
                 <h3 className="text-lg font-semibold">
-                  {complaint.customerName}
+                  {complaint.customer?.user?.name}
                 </h3>
                 <div className="flex items-center text-sm text-gray-500">
                   <Mail className="w-4 h-4 mr-2" />
-                  {complaint.email}
+                  {complaint.customer?.user?.email}
                 </div>
               </div>
             </div>
@@ -76,52 +83,65 @@ export function ComplaintDetailsModal({ complaint, onClose, onStatusUpdate }) {
               <h4 className="text-sm font-medium text-gray-500 mb-1">
                 Subject
               </h4>
-              <p className="text-lg font-medium">{complaint.subject}</p>
+              <p className="text-md font-medium">{complaint.type}</p>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-500 mb-1">
                 Description
               </h4>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">
+              <p className="text-md whitespace-pre-wrap">
                 {complaint.description}
               </p>
             </div>
             <div>
               <h4 className="text-sm font-medium text-gray-500 mb-1">Status</h4>
-              <Badge
-                variant="secondary"
-                className={`${getStatusColor(
-                  complaint.status
-                )} flex items-center space-x-1 text-xs px-2 py-1`}
-              >
-                {getStatusIcon(complaint.status)}
-                <span>{complaint.status}</span>
-              </Badge>
+              <div className="flex ">
+                <Badge
+                  className={
+                    complaint.status === "open"
+                      ? "bg-blue-500"
+                      : complaint.status === "in_progress"
+                      ? "bg-yellow-500"
+                      : complaint.status === "resolved"
+                      ? "bg-green-500"
+                      : "bg-red-500"
+                  }
+                >
+                  {complaint.status === "open"
+                    ? "Open"
+                    : complaint.status === "in_progress"
+                    ? "In Progress"
+                    : complaint.status === "resolved"
+                    ? "Resolved"
+                    : "Closed"}
+                </Badge>
+              </div>
             </div>
           </div>
         </ScrollArea>
         <DialogFooter className="mt-6">
-          <div className="flex justify-between w-full">
-            <Button onClick={onClose} variant="outline">
-              Close
-            </Button>
-            <div className="space-x-2">
-              <Button
-                onClick={() => onStatusUpdate("In Progress")}
-                variant={
-                  complaint.status === "In Progress" ? "default" : "outline"
-                }
+          <div className="flex justify-between items-end w-full">
+            <div className="flex flex-col items-center space-y-3">
+              <span className="mr-2 text-sm  font-bold text-gray-500">
+                Update Status :{" "}
+              </span>
+              <Select
+                onValueChange={(value) => onStatusUpdate(value)}
+                defaultValue={complaint.status}
               >
-                In Progress
-              </Button>
-              <Button
-                onClick={() => onStatusUpdate("Resolved")}
-                variant={
-                  complaint.status === "Resolved" ? "default" : "outline"
-                }
-              >
-                Resolved
-              </Button>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="open">Open</SelectItem>
+                  <SelectItem value="in_progress">In Progress</SelectItem>
+                  <SelectItem value="resolved">Resolved</SelectItem>
+                  <SelectItem value="closed">Closed</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <WrongOrderModal selectComplaint={complaint} />
             </div>
           </div>
         </DialogFooter>

@@ -228,11 +228,13 @@ export default function DeliveriesPage() {
                   ))}
                 </TableBody>
               </Table>
-              <DeliveryTracking
-                isOpen={seeOrderDetail}
-                onClose={() => setSeeOrderDetail(false)}
-                delivery={selectedDelivery}
-              />
+              {seeOrderDetail && (
+                <DeliveryTracking
+                  // isOpen={seeOrderDetail}
+                  onClose={() => setSeeOrderDetail(false)}
+                  delivery={selectedDelivery}
+                />
+              )}
             </div>
           )}
 

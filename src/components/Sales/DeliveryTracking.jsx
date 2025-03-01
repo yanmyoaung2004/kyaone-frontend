@@ -25,7 +25,7 @@ import { MapPin, Package, Truck, Eye } from "lucide-react";
 const deliveries = [
   {
     id: 1,
-    customer: "John Doe",
+    customer: "John ",
     eta: "2025-02-15T14:30:00Z",
     status: "Pending",
   },
