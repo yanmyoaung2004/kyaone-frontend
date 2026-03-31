@@ -57,6 +57,18 @@ A comprehensive React-based e-commerce management system for MyanTech that handl
 - **Build Tool:** Vite
 - **Type Checking:** TypeScript
 
+
+##  Backend Integration
+
+This UI connects to the main backend system:
+
+👉 [https://github.com/yanmyoaung2004/kyone](https://github.com/yanmyoaung2004/kyone)
+
+Make sure the backend server is running before starting the UI.
+
+---
+
+
 ## 📦 Installation
 
 1. Clone the repository:
